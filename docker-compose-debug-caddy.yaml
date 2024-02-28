@@ -1,0 +1,48 @@
+version: "3"
+
+volumes:
+  caddy-data:
+  caddy-config:
+ 
+services:
+  caddy:
+#   cf. https://blog.kurokobo.com/archives/3669#Caddy_acme_server
+    image: caddy:2
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+      - 9000:9000
+    environment:
+      - DOMAIN=${DOMAIN}
+      - EMAIL4CERTS=${EMAIL4CERTS}
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      # CA certificates, required to add OS by update-ca-certificates
+      - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt
+      - ./certs/root.key:/data/caddy/pki/authorities/local/root.key
+      - caddy-data:/data
+      - caddy-config:/config
+    healthcheck:
+      # https://caddy.community/t/what-is-the-best-practise-for-doing-a-health-check-for-caddy-containers/12995
+      test: "wget --no-verbose --tries=1 --spider http://localhost:2019/metrics || exit 1"
+      interval: 5s
+      retries: 20
+
+
+  test-caddy:
+    image: httpd:2
+    environment:
+     - foo=foo
+
+  test-ws:
+    image: itaru2622/gorilla-websocket:bookworm
+    build:
+       context: ./test-websocket
+       dockerfile: Dockerfile
+    environment:
+      - ENABLE_WSS=true
+      - SCRIPT=*.go
+    working_dir: /opt/gorilla-websocket/examples/chat
+    volumes:
+       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
