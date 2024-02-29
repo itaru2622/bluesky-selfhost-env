@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+echo "DOMAIN: ${DOMAIN}"
+echo "rDir:   ${rDir}"
+echo "pDir:   ${pDir}"
+
+pushd ${rDir}/indigo
+
+patch -p1 < ${pDir}/101-dockerbuild-behind-proxy.diff
+
+popd
