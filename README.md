@@ -2,15 +2,16 @@
 
 this repository describes the way to self-host bluesky with
 
- - reproducibility: disclosure full configuration and ops, includes reverse proxy rule.
+ - reproducibility: disclosure config and operation in full, including reverse proxy rule.
  - simple:          all bluesky components runs on one host, by docker-compose.
+ - less remapping:  simple rules among FQDN => reverse proxy => docker-container, for easy understanding and tuning.
 
 at current, working with code asof 2024-01-06 of bluesky-social.<br>
 it may not work with latest codes.
 
 ## references
 
-special thanks to prior works on selfhosting.
+special thanks to prior works on self-hosting.
    - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
    - https://github.com/ikuradon/atproto-starter-kit/tree/main
 
@@ -33,10 +34,10 @@ other dependencies:
 
 ## operations (powered by Makefile)
 
-below, it assumes self hosting domain is mybluesky.local.com (defined in Makefile as default).<br>
+below, it assumes self-hosting domain is mybluesky.local.com (defined in Makefile).<br>
 you can overwrite the domain name by environment variable as below:
 
-0) set domain name for selfhosting
+0) set domain name for self-hosting bluesky
 ```bash
 export DOMAIN=whatever.yourdomain.com
 ```
@@ -52,10 +53,10 @@ make    mkBranch_asof asof=2024-01-06 branch=work
 ```
 
 
-2) prepare for your network
+2) prepare on your network
 
 ```
-2.1) make DNS A Recodes for your self hosting domain, at least:
+2.1) make DNS A-Records for your self-hosting domain, at least:
      -    ${DOMAIN}
      -  *.${DOMAIN}
 
@@ -67,7 +68,7 @@ make    mkBranch_asof asof=2024-01-06 branch=work
 3) check if it's ready to self-host bluesky.
 
 ```bash
-# check DNS server responses for your selfhost domain
+# check DNS server responses for your self-host domain
 dig  ${DOMAIN}
 dig  any.${DOMAIN}
 
@@ -84,17 +85,17 @@ make    docker-stop f=docker-compose-debug-caddy.yaml
 => if testOK then go ahead, otherwise check your environment.
 
 
-4) build docker images, to prepare selfhosting...
+4) build docker images, to prepare self-hosting...
 
 ```bash
 # 4.1) build images with original, first
 DOMAIN= docker-compose -f docker-compose-starter.yaml build
 
-# 4.2) apply patch for selfhosting
+# 4.2) apply patch for self-hosting
 #      as described in https://syui.ai/blog/post/2024/01/08/bluesky/
 make patch-selfhost
 
-# 4.3) build social-app for selfhosting...
+# 4.3) build social-app for self-hosting...
 make build-social-app
 ```
 
@@ -105,38 +106,37 @@ make build-social-app
 make genPass
 
 # start required containers (database, caddy etc).
-make docker-start f=./docker-compose-starter.yaml
+make docker-start
 
 # wait until log message becomes silent.
 
 # start bluesky containers, finally...
-make docker-start-bsky f=./docker-compose-starter.yaml
+make docker-start-bsky
 ```
 
-## play with self-host blusky.
+## play with self-hosted blusky.
 
 on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```
 
-## stop containters
+## stop all containters
 
 ```bash
-make docker-stop f=./docker-compose-starter.yaml
+make docker-stop
 ```
 
-## sample of DNS server configuration(bind9)
+## DNS server configuration sample (bind9)
 
 description of test network:
 
 ```
-
-DOMAIN for selfhost: mybluesky.local.com
+DOMAIN for self-hosting: mybluesky.local.com
 
 IP:
   - docker host for selfhost: 192.168.1.51
   - DNS server:               192.168.1.27
   - DNS forwarders:           8.8.8.8 (upper level DNS server;dns.google.)
 
-DNS A records:
+DNS A-Records:
   -   mybluesky.local.com  : 192.168.1.51
   - *.mybluesky.local.com  : 192.168.1.51
 ```

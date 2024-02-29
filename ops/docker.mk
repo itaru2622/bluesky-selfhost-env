@@ -20,7 +20,7 @@ docker-start:: setupdir config/caddy/Caddyfile certs/ca-certificates.crt ${passf
 	    PASS=$${PASS} \
         docker-compose -f ${f} up -d ${Sdep}
 docker-start:: docker-watchlog
-docker-start:: docker-start-bsky
+
 docker-start-bsky::
 	. ${passfile} && DOMAIN=${DOMAIN} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
 	    ADMIN_PASSWORD=$${ADMIN_PASSWORD} \
@@ -40,7 +40,9 @@ docker-start-bsky::
 	    TRIAGE_PASSWORD=$${TRIAGE_PASSWORD} \
 	    POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} \
 	    PASS=$${PASS} \
-	docker-compose -f ${f} up ${Sbsky}
+	docker-compose -f ${f} up -d ${Sbsky}
+docker-start-bsky:: docker-watchlog
+
 docker-watchlog:
 	-docker-compose -f ${f} logs -f || true
 

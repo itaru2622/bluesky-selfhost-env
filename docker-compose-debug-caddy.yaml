@@ -30,10 +30,15 @@ services:
       retries: 20
 
 
-  test-caddy:
+# to generate HTTPS certifications on-demand >>>>>
+  caddy-sidecar:
     image: httpd:2
     environment:
-     - foo=foo
+      - GOINSECURE=${DOMAIN},*.${DOMAIN}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+# to generate HTTPS certifications on-demand <<<<<
 
   test-ws:
     image: itaru2622/gorilla-websocket:bookworm

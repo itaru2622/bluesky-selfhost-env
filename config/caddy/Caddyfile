@@ -6,12 +6,12 @@
 {
 #	debug
         on_demand_tls {
-          ask http://test-caddy:80
+          ask http://caddy-sidecar:80
         }
 }
 # global options: ends   <<<<
 
-# self hosting CA with ACME,  for self signed certicates >>>>
+# self-hosting CA with ACME,  for self signed certicates >>>>
 #   accessible as https://ca.DOMAIN:9000/acme/local/directory
 #   cf. https://blog.kurokobo.com/archives/3669#Caddy_acme_server
 #
@@ -19,49 +19,46 @@ ca.{$DOMAIN}:9000 {
 	tls internal
 	acme_server
 }
-# self hosting CA with ACME,  for self signed certicates <<<<
+# self-hosting CA with ACME,  for self signed certicates <<<<
 
-# reverse proxying rules: start >>>>>
+# starts; reverse proxying rules >>>>>
 #
 #  FQDN_FOR_OUTER {
-#     tls  internal(for self-signed) | your@email.address(for public-signed)
-#     reverse_proxy http://container:port
+#	tls internal(for self-signed) | your@email.address(for public-signed) {
+#         on_demand
+#       }
+#       reverse_proxy http://container:port
 # }
 
-# for debug HTTPS=>HTTP proxying  >>>
-#     try curl https://test-caddy.DOMAIN/
-test-caddy.{$DOMAIN} {
+# to check if sidecar working, this reverse proxy record maybe used for debugging. >>>>
+caddy-sidecar.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://test-caddy:80
+	reverse_proxy http://caddy-sidecar:80
 }
+# to check if sidecar working, this reverse proxy record maybe used for debugging. <<<<
 
+# to check if caddy works for HTTPS=>HTTP and WSS=>WS as reverse proxy >>>>>
 test-ws.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-# it seems no need below lines, even https://caddy.community/t/websockets-over-https/16871 says it needed... <<<<<
+#
+# this block seems no need, even https://caddy.community/t/websockets-over-https/16871 says it needed... <<<<<
 #	@ws {
 #		header Connection *Upgrade*
 #		header Upgrade websocket
 #	}
-# <<<<<<
+#
 	reverse_proxy http://test-ws:8080
-# it seems no need below line
+
+# below line also seems no need.
 #	reverse_proxy @ws http://test-ws:8080
-}
 
-# for debug HTTPS=>HTTP proxying  <<<
-
-# added by debugging >>>>>>
-search.{$DOMAIN} {
-	tls {$EMAIL4CERTS} {
-          on_demand
-        }
-	reverse_proxy http://search:3999
 }
-# added by debugging <<<<<<<
+# to check if caddy works for HTTPS=>HTTP and WSS=>WS as reverse proxy <<<<<
+
 
 plc.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
@@ -84,11 +81,11 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 	reverse_proxy http://bsky:3000
 }
 
-mod.{$DOMAIN} {
+pds.{$DOMAIN}, {$DOMAIN}, *.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://mod:3000
+	reverse_proxy http://pds:3000
 }
 
 social-app.{$DOMAIN} {
@@ -98,12 +95,21 @@ social-app.{$DOMAIN} {
 	reverse_proxy http://social-app:8100
 }
 
-pds.{$DOMAIN}, {$DOMAIN}, *.{$DOMAIN} {
+mod.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://pds:3000
+	reverse_proxy http://mod:3000
 }
+
+
+search.{$DOMAIN} {
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://search:3999
+}
+
 
 # not sure, for safe, below >>>
 public.api.{$DOMAIN} {
@@ -113,4 +119,4 @@ public.api.{$DOMAIN} {
 	reverse_proxy http://pds:3000
 }
 
-# reverse proxying rules: ends  <<<<
+# ends: reverse proxying rules  <<<<
