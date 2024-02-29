@@ -6,7 +6,7 @@ patch-selfhost: ${rDir}/social-app/.selfhost-${DOMAIN}
 ${rDir}/social-app/.selfhost-${DOMAIN}::
 	@echo "make branch and applying patch..."
 	(cd ${rDir}/social-app; git status; git checkout ${branch2patch} -b selfhost-${DOMAIN} )
-	for ops in `ls ${wDir}/patching/*.sh`; do rDir=${rDir} DOMAIN=${DOMAIN}  $${ops} ; done
+	for ops in `ls ${wDir}/patching/*.sh`; do wDir=${wDir} rDir=${rDir} pDir=${wDir}/patching DOMAIN=${DOMAIN}  $${ops} ; done
 	touch $@
 	(cd ${rDir}/social-app; git add . ; git commit -m "update: selfhosting domain: ${DOMAIN}"; git diff main | cat )
 

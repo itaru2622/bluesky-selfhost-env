@@ -40,6 +40,11 @@ services:
     build:
        context: ./test-websocket
        dockerfile: Dockerfile
+       args:
+        - http_proxy=${http_proxy}
+        - https_proxy=${https_proxy}
+        - no_proxy=${no_proxy}
+        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     environment:
       - ENABLE_WSS=true
       - SCRIPT=*.go

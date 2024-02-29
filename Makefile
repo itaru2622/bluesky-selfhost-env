@@ -56,6 +56,8 @@ delRepoDirAll:
 genPass: ${passfile}
 ${passfile}:
 	./config/pass-gen/gen.sh > $@
+	cat $@
+	@echo "passwords generated and stored in $@"
 
 # copy CA certificates locally to use all containers(for self-signed certificates.)
 certs/ca-certificates.crt:

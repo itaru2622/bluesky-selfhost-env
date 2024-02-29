@@ -91,7 +91,7 @@ mod.{$DOMAIN} {
 	reverse_proxy http://mod:3000
 }
 
-socialapp.{$DOMAIN} {
+social-app.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
