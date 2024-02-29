@@ -1,35 +1,44 @@
-# bluesky selfhost environment
+# self-hosting bluesky 
 
-NOTE: testing with code asof 2024-01-06 of bluesky-social codes.
-under investigating for recent codes.
+at current, working with code asof 2024-01-06 of bluesky-social.<br>
+it may not work with latest codes.
 
 ## references
 
-special thanks to below prior works on selfhosting.
-   - https://github.com/bluesky-social/atproto/discussions/2026
-   - https://syui.ai/blog/post/2024/01/08/bluesky/
+special thanks to prior works on selfhosting.
+   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
    - https://github.com/ikuradon/atproto-starter-kit/tree/main
 
-## source code to use
+## sources in use.
 
 | components     | url (origin)                                           |
-|----------------|--------------------------------------------------------|
-| did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
+|----------------|:-------------------------------------------------------|
 | atproto        | https://github.com/bluesky-social/atproto.git          |
 | indigo         | https://github.com/bluesky-social/indigo.git           |
 | social-app     | https://github.com/bluesky-social/social-app.git       |
-| caddy(revProxy)| official docker image of cady:2                        |
-| bind9(DNS srv) | https://github.com/itaru2622/docker-bind9.git or others|
+| did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
+
+other dependencies:
+
+| components     | url (origin)                                                            |
+|----------------|:------------------------------------------------------------------------|
+| recverse proxy | https://github.com/caddyserver/caddy (official docker image of caddy:2) |
+| DNS server     | bind9 or others, such as https://github.com/itaru2622/docker-bind9.git  |
 
 
-below ops assumes your self hosting domain is: mybluesky.local.com
+## operations (powered by Makefile)
 
-## ops powered by Makefile
-
-1) get codes and checkout by DayTime(2024-01-06)
+below, it assumes self hosting domain is mybluesky.local.com<br>
+you can change domain name by evironment variable as below.
 
 ```bash
-# clone codes from all repos
+export DOMAIN=whatever.yourdomain.com
+```
+
+1) get sources and checkout by DayTime(2024-01-06)
+
+```bash
+# get sources from all repositories
 make    cloneAll
 
 # checkout codes asof 2024-01-06 for all sources.
@@ -40,16 +49,16 @@ make    mkBranch_asof asof=2024-01-06 branch=work
 2) prepare for your network
 
 ```
-2.1) make DNS A recods for your self hosting domain, at least:
+2.1) make DNS A Recodes for your self hosting domain, at least:
      -    mybluesky.local.com
      -  *.mybluesky.local.com
 
-2.2) prepare CA certificate (if self-signed )
-     -  put it into ./certs/root.{crt,key}
-     -  you also needs to deploy certificates to your hostmachine and browser.
+2.2) generate and install CA certificate (for self-signed certificate)
+     -  after generation, copy crt and key as ./certs/root.{crt,key}
+     -  note: don't forget to install root.crt to your host machine and browser.
 ```
 
-3) test your network if it is ready to selfhost bluesky.
+3) check if it's ready to self-host bluesky.
 
 ```bash
 # check DNS server responses for your selfhost domain
@@ -57,11 +66,10 @@ dig  mybluesky.local.com
 dig  any.mybluesky.local.com
 
 # start containers for test
-export  DOMAIN=mybluesky.local.com
 make    docker-start f=docker-compose-debug-caddy.yaml Sdep=
 
 # check HTTPS and WSS with your docker environment
-curl https://test-caddy.mybluesky.local.com/
+curl https://test-ws.mybluesky.local.com/
 open https://test-ws.mybluesky.local.com/ on browser.
 
 # stop test containers.
@@ -70,13 +78,14 @@ make    docker-stop f=docker-compose-debug-caddy.yaml
 => if testOK then go ahead, otherwise check your environment.
 
 
-4) prepare selfhosting...
+4) build docker images, to prepare selfhosting...
 
 ```bash
-# 4.1) build docker images for bluesky (with original code)
+# 4.1) build images with original, first
 DOMAIN= docker-compose -f docker-compose-starter.yaml build
 
-# 4.2) apply patch (as described in https://syui.ai/blog/post/2024/01/08/bluesky/)
+# 4.2) apply patch for selfhosting
+#      as described in https://syui.ai/blog/post/2024/01/08/bluesky/
 make patch-selfhost
 
 # 4.3) build social-app for selfhosting...
@@ -86,25 +95,44 @@ make build-social-app
 5) run bluesky with selfhosting
 
 ```bash
-export  DOMAIN=mybluesky.local.com
+# generate passwords for bluesky containers:
+make genPass
 
-# start required containers.
+# start required containers (database, caddy etc).
 make docker-start f=./docker-compose-starter.yaml
 
 # wait until log message becomes silent.
 
-# start main containers.
+# start bluesky containers
 make docker-start-bsky f=./docker-compose-starter.yaml
 ```
 
-## play with https://social-app.mybluesky.local.com/  in your browser.
+## play with self-host blusky.
+
+on your browser, access ```https://social-app.mybluesky.local.com/```
+
+## stop containters
 
 ```bash
-# stop all containers.
 make docker-stop f=./docker-compose-starter.yaml
 ```
 
-## sample of bind9 DNS server configuration
+## sample of DNS server configuration(bind9)
+
+description of test network:
+
+```
+IP:
+  - docker host for selfhost: 192.168.1.51
+  - DNS server:               192.168.1.27
+  - DNS forwarders:           8.8.8.8 (upper level DNS server;dns.google.)
+
+DNS A records:
+  -   mybluesky.local.com  : 192.168.1.51
+  - *.mybluesky.local.com  : 192.168.1.51
+```
+
+the above would be described in bind9 configuration file as below:
 
 ```
 ::::::::::::::
@@ -121,7 +149,7 @@ options {
         // HTTP 80, from any
         listen-on  port 80  tls none http default  { any; };
         listen-on-v6      { none; };
-        forwarders        { 8.8.8.8 ; };  # { 8.8.8.8; };
+        forwarders        { 8.8.8.8 ; };  # dns.gogle.
         allow-recursion   { any; };
         allow-query       { any; };
         allow-query-cache { any; };
@@ -147,4 +175,12 @@ $TTL 3600	; 1 hour
 mybluesky		A	192.168.1.51
 $ORIGIN mybluesky.local.com.
 *			A	192.168.1.51
+```
+
+cf. the most simple way to use the above DNS server(192.168.1.27) in temporal,<br>
+add it in /etc/resolv.conf as below on all testing machines
+(docker host, client machines for browser)
+
+```
+nameserver 192.168.1.27
 ```

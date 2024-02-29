@@ -1,36 +1,43 @@
+# definitions  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# domain name of self-hosting bluesky (NEED to care TLD, ie: NG=>mybluesky.local)
+DOMAIN ?=mybluesky.local.com
 
-# definitions, dirs for top level and repo dirs
+# folders, top level and repos
 wDir :=${PWD}
 rDir :=${wDir}/repos
 
-# dirs of repo
-nrepo    :=atproto indigo social-app pds did-method-plc  
-repoDirs :=$(addprefix ${rDir}/, ${nrepo})
-# repoDirs: ${rDir}/atproto, ... etc.
+# folders of repositories; get repoDirs=${rDir}/atproto, ... etc.
+_nrepo   :=atproto indigo social-app did-method-plc pds
+repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
+# prefix of github (https://github.com/ | git@github.com:)
+gh  ?=$(addsuffix /, https://github.com)
+#gh ?=$(addsuffix :, git@github.com)
 
-# variables for github (gh=https://github.com/ | git@github.com:)
-gh   =$(addsuffix /, https://github.com)
-gh   =$(addsuffix :, git@github.com)
-
+# default log level.
 LOG_LEVEL_DEFAULT  ?=debug
 
-#         domain name of self hosting(NEED to care TLD, ie: NG=>.local)
-DOMAIN  ?=mybluesky.local.com
-
-# EMAIL4CERTS:  email address to lets encript or "internal"( caddy builtin CA)
+# EMAIL4CERTS:  email address for lets encript or "internal"(to use caddy builtin ACME)
 EMAIL4CERTS   ?=internal
 
-# docker composer related
-f      ?=docker-compose-starter.yaml
-Sdep  ?=caddy test-caddy test-ws database redis opensearch
+# for docker ops
+f     ?=docker-compose-starter.yaml
+# services for two-step starting.
+Sdep  ?=caddy database redis opensearch test-caddy test-ws
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
 
-# password for bluesky components
+# passwords file
 passfile=config/secrets-passwords.env
 
-# get source from github
+# target(operations) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# get all sources from github
 cloneAll:   ${repoDirs}
+
+# get source in indivisual
+# HINT: make clone_one social-app
+clone_one:  ${rDir}/${d}
+
 ${rDir}/atproto:
 	git clone ${gh}bluesky-social/atproto.git $@
 ${rDir}/indigo:
@@ -41,33 +48,37 @@ ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
 ${rDir}/did-method-plc:
 	git clone ${gh}did-method-plc/did-method-plc $@
+# delete all repos.
 delRepoDirAll:
 	rm -rf ${rDir}/*
-# make clone_one d=social-app
-clone_one:  ${rDir}/${d}
 
-
-# generation for test env
+# generate passwords for test env
+genPass: ${passfile}
 ${passfile}:
 	./config/pass-gen/gen.sh > $@
-genPass: ${passfile}
+
+# copy CA certificates locally to use all containers(for self-signed certificates.)
 certs/ca-certificates.crt:
 	cp -p /etc/ssl/certs/ca-certificates.crt $@
 
+# include other ops.
 include ops/git.mk
 include ops/docker.mk
 include ops/patch.mk
 
-echo:
-	@echo "nrepo:    ${nrepo}"
-	@echo "repoDirs: ${repoDirs}"
-	@echo "gh:       ${gh}"
-	@echo "f:        ${f}"
-
-# make exec under=./repos/* cmd='git status|cat`
-# make exec under=./repos/* cmd='git checkout main'
+# execute the command under folders (one or multiple).
+# HINT: make exec under=./repos/* cmd='git status|cat` => execute git status for all repos.
+# HINT: make exec under=./repos/* cmd='git checkout main' => checkout to main for all repos.
 exec: ${under}
 	for d in ${under}; do \
 		echo "### exec cmd @ $${d}" ;\
 		(cd $${d};   ${cmd} ); \
 	done;
+
+# to check Makefile configuration
+# HINT: make echo
+echo:
+	@echo "_nrepo:   ${_nrepo}"
+	@echo "repoDirs: ${repoDirs}"
+	@echo "gh:       ${gh}"
+	@echo "f:        ${f}"
