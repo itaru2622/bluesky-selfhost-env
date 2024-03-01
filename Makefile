@@ -2,6 +2,10 @@
 # domain name of self-hosting bluesky (NEED to care TLD, ie: NG=>mybluesky.local)
 DOMAIN ?=mybluesky.local.com
 
+# get commit hash by datetime to checkout new branch for work with
+asof           ?=$(shell date '+%Y-%m-%dT%H%M%S')
+getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
+
 # folders, top level and repos
 wDir :=${PWD}
 rDir :=${wDir}/repos
@@ -14,10 +18,11 @@ repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 gh  ?=$(addsuffix /, https://github.com)
 #gh ?=$(addsuffix :, git@github.com)
 
+
 # default log level.
 LOG_LEVEL_DEFAULT  ?=debug
 
-# EMAIL4CERTS:  email address for lets encript or "internal"(to use caddy builtin ACME)
+# email address for lets encript or "internal"(to use caddy builtin ACME)
 EMAIL4CERTS   ?=internal
 
 # for docker ops
@@ -80,7 +85,11 @@ exec: ${under}
 # to check Makefile configuration
 # HINT: make echo
 echo:
+	@echo "########## >>>>>>>>>>>>>>"
+	@echo "DOMAIN:   ${DOMAIN}"
+	@echo "asof:     ${asof}"
 	@echo "_nrepo:   ${_nrepo}"
 	@echo "repoDirs: ${repoDirs}"
 	@echo "gh:       ${gh}"
 	@echo "f:        ${f}"
+	@echo "########## <<<<<<<<<<<<<<"

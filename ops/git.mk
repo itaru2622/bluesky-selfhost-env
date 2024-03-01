@@ -2,10 +2,6 @@
 # refer toplevel makefile for variables undefined.
 
 # variables,  for github/git ops
-
-# branching to work with, based on datetime(YYYY-MM-DD or YYYY-MM-DD'T'HHMMSS)
-asof           ?=$(shell date '+%Y-%m-%dT%H%M%S')
-getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
 printlastlog   :=git log --pretty='format:%h %ad  %aE   %s' --date=iso-strict -1
 
 

@@ -90,7 +90,7 @@ services:
     restart: always
 
   opensearch:
-    image: itaru2622/bluesky-indigo-opensearch
+    image: itaru2622/bluesky-indigo-opensearch:${asof}
     build:
       context: ./repos/indigo/
       dockerfile: cmd/palomar/Dockerfile.opensearch
@@ -123,7 +123,7 @@ services:
     restart: always
 
   plc:
-    image: itaru2622/did-method-plc
+    image: itaru2622/did-method-plc:${asof}
     build:
       context: ./repos/did-method-plc/
       dockerfile: packages/server/Dockerfile
@@ -156,7 +156,7 @@ services:
       - caddy
       
   pds:
-    image: itaru2622/bluesky-atproto-pds
+    image: itaru2622/bluesky-atproto-pds:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/pds/Dockerfile
@@ -209,7 +209,7 @@ services:
       - caddy
 
   bgs:
-    image: itaru2622/bluesky-indigo-bgs
+    image: itaru2622/bluesky-indigo-bgs:${asof}
     build:
       context: ./repos/indigo/
       dockerfile: cmd/bigsky/Dockerfile
@@ -245,7 +245,7 @@ services:
 
   bsky:
     # appview-api (api.${DOMAIN})
-    image: itaru2622/bluesky-atproto-bsky
+    image: itaru2622/bluesky-atproto-bsky:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/bsky/Dockerfile
@@ -302,7 +302,7 @@ services:
 
   bsky-daemon:
     # appview-daemon
-    image: itaru2622/bluesky-atproto-bsky
+    image: itaru2622/bluesky-atproto-bsky:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/bsky/Dockerfile
@@ -357,7 +357,7 @@ services:
       - caddy
 
   bsky-indexer:
-    image: itaru2622/bluesky-atproto-bsky
+    image: itaru2622/bluesky-atproto-bsky:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/bsky/Dockerfile
@@ -412,7 +412,7 @@ services:
       - caddy
 
   bsky-ingester:
-    image: itaru2622/bluesky-atproto-bsky
+    image: itaru2622/bluesky-atproto-bsky:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/bsky/Dockerfile
@@ -468,7 +468,7 @@ services:
 
   bsky-cdn:
     #appview-cdn
-    image: itaru2622/bluesky-atproto-bsky
+    image: itaru2622/bluesky-atproto-bsky:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/bsky/Dockerfile
@@ -522,7 +522,7 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-socialapp${DOMAIN}
+    image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
     build:
       context: ./repos/social-app/
       dockerfile: Dockerfile
@@ -548,7 +548,7 @@ services:
 
 
   search:
-    image: itaru2622/bluesky-indigo-palomar
+    image: itaru2622/bluesky-indigo-palomar:${asof}
     build:
       context: ./repos/indigo/
       dockerfile: cmd/palomar/Dockerfile
@@ -584,7 +584,7 @@ services:
 
   mod:
     # moderation-api:
-    image: itaru2622/bluesky-atproto-ozone
+    image: itaru2622/bluesky-atproto-ozone:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/ozone/Dockerfile
@@ -627,7 +627,7 @@ services:
       - caddy
 
   mod-daemon:
-    image: itaru2622/bluesky-atproto-ozone
+    image: itaru2622/bluesky-atproto-ozone:${asof}
     build:
       context: ./repos/atproto/
       dockerfile: services/ozone/Dockerfile

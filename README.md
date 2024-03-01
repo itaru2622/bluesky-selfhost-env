@@ -2,9 +2,10 @@
 
 this repository describes the way to self-host bluesky with
 
- - reproducibility: disclosure config and operation in full, including reverse proxy rule.
+ - configurable hosting domain:  easy to tunable by environment variable (DOMAIN)
+ - reproducibility: disclosure all configs and operations, including reverse proxy rules.
  - simple:          all bluesky components runs on one host, by docker-compose.
- - less remapping:  simple rules among FQDN => reverse proxy => docker-container, for easy understanding and tuning.
+ - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
 at current, working with code asof 2024-01-06 of bluesky-social.<br>
 it may not work with latest codes.
@@ -39,6 +40,7 @@ you can overwrite the domain name by environment variable as below:
 
 0) set domain name for self-hosting bluesky
 ```bash
+# set domain name for self-hosting bluesky
 export DOMAIN=whatever.yourdomain.com
 ```
 
@@ -49,7 +51,8 @@ export DOMAIN=whatever.yourdomain.com
 make    cloneAll
 
 # checkout codes asof 2024-01-06 for all sources.
-make    mkBranch_asof asof=2024-01-06 branch=work
+export asof=2024-01-06
+make   mkBranch_asof branch=work
 ```
 
 
@@ -88,15 +91,16 @@ make    docker-stop f=docker-compose-debug-caddy.yaml
 4) build docker images, to prepare self-hosting...
 
 ```bash
-# 4.1) build images with original, first
-DOMAIN= docker-compose -f docker-compose-starter.yaml build
+# 4.1) build images with original
+make build DOMAIN=
 
 # 4.2) apply patch for self-hosting
 #      as described in https://syui.ai/blog/post/2024/01/08/bluesky/
+# NOTE: this ops checkout new branch before applying patch, and keep staying new branch
 make patch-selfhost
 
 # 4.3) build social-app for self-hosting...
-make build-social-app
+make build services=social-app
 ```
 
 5) run bluesky with selfhosting

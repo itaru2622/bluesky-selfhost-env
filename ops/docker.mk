@@ -1,6 +1,10 @@
 
+build:
+	DOMAIN=${DOMAIN} asof=${asof} docker-compose -f ${f} build ${services}
+
+
 docker-start:: setupdir config/caddy/Caddyfile certs/ca-certificates.crt ${passfile}
-	. ${passfile} && DOMAIN=${DOMAIN} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
+	. ${passfile} && DOMAIN=${DOMAIN} asof=${asof} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
 	    ADMIN_PASSWORD=$${ADMIN_PASSWORD} \
 	    BGS_ADMIN_KEY=$${BGS_ADMIN_KEY} \
 	    IMG_URI_KEY=$${IMG_URI_KEY} \
@@ -22,7 +26,7 @@ docker-start:: setupdir config/caddy/Caddyfile certs/ca-certificates.crt ${passf
 docker-start:: docker-watchlog
 
 docker-start-bsky::
-	. ${passfile} && DOMAIN=${DOMAIN} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
+	. ${passfile} && DOMAIN=${DOMAIN} asof=${asof} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
 	    ADMIN_PASSWORD=$${ADMIN_PASSWORD} \
 	    BGS_ADMIN_KEY=$${BGS_ADMIN_KEY} \
 	    IMG_URI_KEY=$${IMG_URI_KEY} \
