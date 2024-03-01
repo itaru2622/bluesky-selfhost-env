@@ -74,6 +74,7 @@ certs/ca-certificates.crt:
 include ops/git.mk
 include ops/docker.mk
 include ops/patch.mk
+include ops/api-bsky.mk
 
 # execute the command under folders (one or multiple).
 # HINT: make exec under=./repos/* cmd='git status|cat` => execute git status for all repos.
