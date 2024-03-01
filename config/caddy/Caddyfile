@@ -110,6 +110,13 @@ search.{$DOMAIN} {
 	reverse_proxy http://search:3999
 }
 
+feed-generator.{$DOMAIN} {
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://feed-generator:3000
+}
+
 
 # not sure, for safe, below >>>
 public.api.{$DOMAIN} {

@@ -6,6 +6,8 @@ docker-start::      setupdir config/caddy/Caddyfile certs/ca-certificates.crt ${
 docker-start::      docker-watchlog
 docker-start-bsky:: _applySbsky _docker_up
 docker-start-bsky:: docker-watchlog
+docker-start-bsky-feedgen:: _applySfeed _docker_up
+docker-start-bsky-feedgen:: docker-watchlog
 docker-stop:
 	docker-compose -f ${f} down -v
 	docker system  prune -f
@@ -19,6 +21,7 @@ docker-watchlog:
 
 _docker_up:
 	. ${passfile} && DOMAIN=${DOMAIN} asof=${asof} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
+	    FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID} \
 	    ADMIN_PASSWORD=$${ADMIN_PASSWORD} \
 	    BGS_ADMIN_KEY=$${BGS_ADMIN_KEY} \
 	    IMG_URI_KEY=$${IMG_URI_KEY} \
@@ -35,15 +38,18 @@ _docker_up:
 	    SERVICE_SIGNING_KEY=$${SERVICE_SIGNING_KEY} \
 	    TRIAGE_PASSWORD=$${TRIAGE_PASSWORD} \
 	    POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} \
+	    FEEDGENERATOR_PASSWORD=$${FEEDGENERATOR_PASSWORD} \
 	    PASS=$${PASS} \
         docker-compose -f ${f} up -d ${services}
 
 
 setupdir:
-	mkdir -p data/pds data/appview/cache data/image/static data/image/tmp
+	mkdir -p ${wDir}/data/pds ${wDir}/data/appview/cache ${wDir}/data/image/static ${wDir}/data/image/tmp ${wDir}/data/feed-generator ${wDir}/data/accounts
 
 # target to configure variable
 _applySdep:
 	$(eval services=${Sdep})
 _applySbsky:
 	$(eval services=${Sbsky})
+_applySfeed:
+	$(eval services=${Sfeed})

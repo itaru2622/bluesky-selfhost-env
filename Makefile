@@ -30,6 +30,7 @@ f     ?=docker-compose-starter.yaml
 # services for two-step starting.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws pgadmin
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
+Sfeed ?=feed-generator
 
 # passwords file
 passfile=config/secrets-passwords.env

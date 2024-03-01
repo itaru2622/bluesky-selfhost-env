@@ -124,6 +124,21 @@ make docker-start
 make docker-start-bsky
 ```
 
+6) run bluesky feed-generator
+```bash
+# check if social-app is ready to serve.
+curl -L https://social-app.${DOMAIN}/
+
+# create account for feed-generator
+make api_CreateAccount_feedgen
+
+cat ./data/accounts/feedgen.secrets | jq .did | sed 's/"//g'
+>did:plc:6xki...
+
+# start boosky feed-generator
+make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:6xki...
+```
+
 ## play with self-hosted blusky.
 
 on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```

@@ -681,10 +681,27 @@ services:
 
   feed-generator:
     image: itaru2622/bluesky-feed-generator:${asof}
-    ports:
-      - 2586:3000
     build:
       context: ./repos/feed-generator/
+    ports:
+      - 2586:3000
+    environment:
+      - GOINSECURE=${DOMAIN},*.${DOMAIN}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - NODE_ENV=development
+      - FEEDGEN_PORT=3000
+      - FEEDGEN_LISTENHOST=0.0.0.0
+      - FEEDGEN_SQLITE_LOCATION=/data/db.sqlite
+      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://bgs.${DOMAIN}
+      - FEEDGEN_HOSTNAME=feed-generator.${DOMAIN}
+      - FEEDGEN_SUBSCRIPTION_RECONNECT_DELAY=3000
+#  Set this to the DID of the account you'll use to publish the feed. You can find your accounts DID by https://pds.${DOMAIN}/xrpc/com.atproto.identity.resolveHandle?handle=feed-generator.${DOMAIN}
+#     - FEEDGEN_PUBLISHER_DID=did:plc:237apsyaiw4mypx3zzo3wwgc
+      - FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID}
+      - FEEDGENERATOR_PASSWORD=${FEEDGENERATOR_PASSWORD}
     restart: always
-#   volumes:
-#      - ./data/feed-generator/:/data/
+    volumes:
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+      - ./data/feed-generator/:/data/
