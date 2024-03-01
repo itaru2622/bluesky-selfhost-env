@@ -196,9 +196,9 @@ services:
       - PDS_REPO_SIGNING_KEY_K256_PRIVATE_KEY_HEX=${PDS_REPO_SIGNING_KEY_K256_PRIVATE_KEY_HEX}
       - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}
       # atproto/packages/pds/example.env <<<<
-      - PDS_DATA_DIRECTORY=/data
-      - PDS_BLOBSTORE_DISK_LOCATION=/data/image/static
-      - PDS_BLOBSTORE_DISK_TMP_LOCATION=/data/image/tmp
+      - PDS_DATA_DIRECTORY=/pds
+      - PDS_BLOBSTORE_DISK_LOCATION=/pds/image/static
+      - PDS_BLOBSTORE_DISK_TMP_LOCATION=/pds/image/tmp
       - PDS_DB_POSTGRES_URL=postgres://postgres:postgres@database/pds
       - PDS_DID_PLC_URL=https://plc.${DOMAIN}
       - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
@@ -214,7 +214,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/pds/:/data/
+      - ./data/pds/:/pds/
     restart: always
     depends_on:
       - database
