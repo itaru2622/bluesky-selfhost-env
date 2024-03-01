@@ -87,12 +87,11 @@ services:
     image: dpage/pgadmin4
     ports:
       - 54321:80
-    volumes:
     environment:
       PGADMIN_DEFAULT_EMAIL:    example@example.com
       PGADMIN_DEFAULT_PASSWORD: password
-    volumes:
-       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+#   volumes:
+#      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
     depends_on:
       - database
 
@@ -160,7 +159,7 @@ services:
       - LOG_DESTINATION=1
       - ENABLE_MIGRATIONS=true
       # this requires setting up a local postgresql user and database
-      - DATABASE_URL="postgresql://postgres:postgres@database/plc"
+      - DATABASE_URL=postgres://postgres:postgres@database/plc
       - DB_CREDS_JSON={"username":"postgres","password":"postgres","host":"database","port":"5432","database":"plc"}
       - DB_MIGRATE_CREDS_JSON={"username":"postgres","password":"postgres","host":"database","port":"5432","database":"plc"}
     restart: always
@@ -200,7 +199,7 @@ services:
       - PDS_DATA_DIRECTORY=/data
       - PDS_BLOBSTORE_DISK_LOCATION=/data/image/static
       - PDS_BLOBSTORE_DISK_TMP_LOCATION=/data/image/tmp
-      - PDS_DB_POSTGRES_URL=postgresql://postgres:postgres@database/pds
+      - PDS_DB_POSTGRES_URL=postgres://postgres:postgres@database/pds
       - PDS_DID_PLC_URL=https://plc.${DOMAIN}
       - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
       - PDS_BSKY_APP_VIEW_DID=did:web:api.${DOMAIN}
@@ -241,8 +240,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
-      - DATABASE_URL=postgresql://postgres:postgres@database/bgs
-      - CARSTORE_DATABASE_URL=postgresql://postgres:postgres@database/carstore
+      - DATABASE_URL=postgres://postgres:postgres@database/bgs
+      - CARSTORE_DATABASE_URL=postgres://postgres:postgres@database/carstore
       - DATA_DIR=/data
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
@@ -279,8 +278,8 @@ services:
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - ENABLE_MIGRATIONS=true
-      - DB_PRIMARY_POSTGRES_URL=postgresql://postgres:postgres@database/bsky
-      - DB_REPLICA_POSTGRES_URLS=postgresql://postgres:postgres@database/bsky
+      - DB_PRIMARY_POSTGRES_URL=postgres://postgres:postgres@database/bsky
+      - DB_REPLICA_POSTGRES_URLS=postgres://postgres:postgres@database/bsky
       - DB_REPLICA_TAGS_ANY=0
       - MODERATION_SERVICE_DID=did:web:mod.${DOMAIN}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -334,8 +333,8 @@ services:
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - ENABLE_MIGRATIONS=true
-      - DB_PRIMARY_POSTGRES_URL=postgresql://postgres:postgres@database/bsky
-      - DB_REPLICA_POSTGRES_URLS=postgresql://postgres:postgres@database/bsky
+      - DB_PRIMARY_POSTGRES_URL=postgres://postgres:postgres@database/bsky
+      - DB_REPLICA_POSTGRES_URLS=postgres://postgres:postgres@database/bsky
       - DB_REPLICA_TAGS_ANY=0
       - MODERATION_SERVICE_DID=did:web:mod.${DOMAIN}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -389,8 +388,8 @@ services:
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - ENABLE_MIGRATIONS=true
-      - DB_PRIMARY_POSTGRES_URL=postgresql://postgres:postgres@database/bsky
-      - DB_REPLICA_POSTGRES_URLS=postgresql://postgres:postgres@database/bsky
+      - DB_PRIMARY_POSTGRES_URL=postgres://postgres:postgres@database/bsky
+      - DB_REPLICA_POSTGRES_URLS=postgres://postgres:postgres@database/bsky
       - DB_REPLICA_TAGS_ANY=0
       - MODERATION_SERVICE_DID=did:web:mod.${DOMAIN}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -444,8 +443,8 @@ services:
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - ENABLE_MIGRATIONS=true
-      - DB_PRIMARY_POSTGRES_URL=postgresql://postgres:postgres@database/bsky
-      - DB_REPLICA_POSTGRES_URLS=postgresql://postgres:postgres@database/bsky
+      - DB_PRIMARY_POSTGRES_URL=postgres://postgres:postgres@database/bsky
+      - DB_REPLICA_POSTGRES_URLS=postgres://postgres:postgres@database/bsky
       - DB_REPLICA_TAGS_ANY=0
       - MODERATION_SERVICE_DID=did:web:mod.${DOMAIN}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -499,8 +498,8 @@ services:
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - ENABLE_MIGRATIONS=true
-      - DB_PRIMARY_POSTGRES_URL=postgresql://postgres:postgres@database/bsky
-      - DB_REPLICA_POSTGRES_URLS=postgresql://postgres:postgres@database/bsky
+      - DB_PRIMARY_POSTGRES_URL=postgres://postgres:postgres@database/bsky
+      - DB_REPLICA_POSTGRES_URLS=postgres://postgres:postgres@database/bsky
       - DB_REPLICA_TAGS_ANY=0
       - MODERATION_SERVICE_DID=did:web:mod.${DOMAIN}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -582,7 +581,7 @@ services:
 #       refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
       - ATP_BGS_HOST=wss://bgs.${DOMAIN}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
-      - DATABASE_URL=postgresql://postgres:postgres@database/search
+      - DATABASE_URL=postgres://postgres:postgres@database/search
       - PALOMAR_BIND=3999
       - ES_USERNAME=
       - ES_PASSWORD=
@@ -627,7 +626,7 @@ services:
       - OZONE_APPVIEW_DID=did:web:api.${DOMAIN}
       - OZONE_PDS_URL=https://${DOMAIN}
       - OZONE_PDS_DID=did:web:${DOMAIN}
-      - OZONE_DB_POSTGRES_URL=postgresql://postgres:postgres@database/mod
+      - OZONE_DB_POSTGRES_URL=postgres://postgres:postgres@database/mod
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
@@ -668,7 +667,7 @@ services:
       - OZONE_APPVIEW_DID=did:web:api.${DOMAIN}
       - OZONE_PDS_URL=https://${DOMAIN}
       - OZONE_PDS_DID=did:web:${DOMAIN}
-      - OZONE_DB_POSTGRES_URL=postgresql://postgres:postgres@database/mod
+      - OZONE_DB_POSTGRES_URL=postgres://postgres:postgres@database/mod
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
