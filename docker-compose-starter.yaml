@@ -83,6 +83,19 @@ services:
 #     - ./data/database/:/var/lib/postgresql/data/
     restart: always
 
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 54321:80
+    volumes:
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    example@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    depends_on:
+      - database
+
   redis:
     image: redis:7-bookworm
 #   volumes:

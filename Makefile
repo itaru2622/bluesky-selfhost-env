@@ -28,7 +28,7 @@ EMAIL4CERTS   ?=internal
 # for docker ops
 f     ?=docker-compose-starter.yaml
 # services for two-step starting.
-Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws
+Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws pgadmin
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
 
 # passwords file
