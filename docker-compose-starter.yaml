@@ -50,7 +50,7 @@ services:
   test-ws:
     image: itaru2622/gorilla-websocket:bookworm
     build:
-      context: ./test-websocket
+      context: ./tests/websocket-service
       dockerfile: Dockerfile
       args:
        - http_proxy=${http_proxy}
