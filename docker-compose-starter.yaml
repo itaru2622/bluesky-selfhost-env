@@ -587,7 +587,6 @@ services:
       - ES_PASSWORD=
 #     - ES_CERT_FILE=
       - ES_HOSTS=http://opensearch:9200
-
     restart: always
     depends_on:
       - opensearch
@@ -679,3 +678,13 @@ services:
       - mod
       - database
       - caddy
+
+  feed-generator:
+    image: itaru2622/bluesky-feed-generator:${asof}
+    ports:
+      - 2586:3000
+    build:
+      context: ./repos/feed-generator/
+    restart: always
+#   volumes:
+#      - ./data/feed-generator/:/data/

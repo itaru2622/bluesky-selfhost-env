@@ -23,6 +23,7 @@ special thanks to prior works on self-hosting.
 | atproto        | https://github.com/bluesky-social/atproto.git          |
 | indigo         | https://github.com/bluesky-social/indigo.git           |
 | social-app     | https://github.com/bluesky-social/social-app.git       |
+| feed-generator | https://github.com/bluesky-social/feed-generator.git   |
 | did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
 
 other dependencies:
@@ -91,6 +92,11 @@ make    docker-stop f=./docker-compose-debug-caddy.yaml
 4) build docker images, to prepare self-hosting...
 
 ```bash
+# 4.0) apply mimimum patch for self-docker-image-build, regardless self-hosting.
+#      as described in https://github.com/bluesky-social/atproto/discussions/2026 for feed-generator/Dockerfile etc.
+# NOTE: this ops checkout new branch before applying patch, and keep staying new branch
+make patch-dockerbuild
+
 # 4.1) build images with original
 make build DOMAIN=
 
