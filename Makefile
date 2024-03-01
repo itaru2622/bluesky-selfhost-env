@@ -11,7 +11,7 @@ wDir :=${PWD}
 rDir :=${wDir}/repos
 
 # folders of repositories; get repoDirs=${rDir}/atproto, ... etc.
-_nrepo   :=atproto indigo social-app did-method-plc pds
+_nrepo   :=atproto indigo social-app feed-generator did-method-plc pds
 repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
 # prefix of github (https://github.com/ | git@github.com:)
@@ -49,6 +49,8 @@ ${rDir}/indigo:
 	git clone ${gh}bluesky-social/indigo.git $@
 ${rDir}/social-app:
 	git clone ${gh}bluesky-social/social-app.git $@
+${rDir}/feed-generator:
+	git clone ${gh}bluesky-social/feed-generator.git $@
 ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
 ${rDir}/did-method-plc:

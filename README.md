@@ -76,14 +76,14 @@ dig  ${DOMAIN}
 dig  any.${DOMAIN}
 
 # start containers for test
-make    docker-start f=docker-compose-debug-caddy.yaml Sdep=
+make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
 # check HTTPS and WSS with your docker environment
 curl https://test-ws.${DOMAIN}/
 open https://test-ws.${DOMAIN}/ on browser.
 
 # stop test containers.
-make    docker-stop f=docker-compose-debug-caddy.yaml
+make    docker-stop f=./docker-compose-debug-caddy.yaml
 ```
 => if testOK then go ahead, otherwise check your environment.
 
