@@ -229,3 +229,17 @@ add it in /etc/resolv.conf as below on all testing machines
 ```
 nameserver 192.168.1.27
 ```
+
+## Hack
+
+1) get mapping rules in docker-compose
+
+```bash
+cat ./docker-compose-starter.yaml | grep {DOMAIN} | sed 's/^ .*- //' | grep -v \# | grep -v image: | sort -u
+```
+
+2) get mapping rule in reverse proxy (caddy )
+```bash
+# dump rules, no idea to convert into  easy reading format...
+cat config/caddy/Caddyfile
+```
