@@ -39,11 +39,19 @@ other dependencies:
 below, it assumes self-hosting domain is mybluesky.local.com (defined in Makefile).<br>
 you can overwrite the domain name by environment variable as below:
 
-0) set domain name for self-hosting bluesky
+0) configure params for ops
+
 ```bash
-# set domain name for self-hosting bluesky
+# 1) set domain name for self-hosting bluesky
 export DOMAIN=whatever.yourdomain.com
+
+# 2) set asof daytime, for bluesky-social codes (current testing with 2024-01-06)
+export asof=2024-01-06
+
+# 2) check your configuration, from the point of view of ops.
+make echo
 ```
+
 
 1) get sources and checkout by DayTime(2024-01-06)
 
@@ -51,8 +59,7 @@ export DOMAIN=whatever.yourdomain.com
 # get sources from all repositories
 make    cloneAll
 
-# checkout codes asof 2024-01-06 for all sources.
-export asof=2024-01-06
+# checkout codes according to asof param, for all sources.
 make   mkBranch_asof branch=work
 ```
 
@@ -132,7 +139,8 @@ curl -L https://social-app.${DOMAIN}/
 # create account for feed-generator
 make api_CreateAccount_feedgen
 
-cat ./data/accounts/feedgen.secrets | jq .did | sed 's/"//g'
+# find feedgen DID in the above response.
+cat ${aDir}/feedgen.secrets | jq .did | sed 's/"//g'
 >did:plc:6xki...
 
 # start boosky feed-generator

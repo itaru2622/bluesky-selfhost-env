@@ -8,6 +8,8 @@ getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
 
 # folders, top level and repos
 wDir :=${PWD}
+# default folder to store created accounts while ops (feed-generator etc).
+aDir ?=${wDir}/data/accounts
 rDir :=${wDir}/repos
 
 # folders of repositories; get repoDirs=${rDir}/atproto, ... etc.
@@ -92,8 +94,11 @@ echo:
 	@echo "########## >>>>>>>>>>>>>>"
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
+	@echo "wDir:     ${wDir}"
+	@echo "rDir:     ${rDir}"
 	@echo "_nrepo:   ${_nrepo}"
 	@echo "repoDirs: ${repoDirs}"
 	@echo "gh:       ${gh}"
 	@echo "f:        ${f}"
+	@echo "aDir:     ${aDir}"
 	@echo "########## <<<<<<<<<<<<<<"

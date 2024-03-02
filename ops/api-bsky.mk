@@ -23,7 +23,7 @@ getFeedgenUserinfo:
 	$(eval handle=feedgen)
 	$(eval email=no-reply-${handle}@${DOMAIN})
 	$(eval password=`cat ${passfile} | grep FEEDGENERATOR_PASSWORD | sed 's/.*=//'`)
-	$(eval resp=${wDir}/data/accounts/${handle}.secrets)
+	$(eval resp=${aDir}/${handle}.secrets)
 
 _echo_reqAccount:
 	@echo "handle:     ${handle}"

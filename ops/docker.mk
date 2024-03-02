@@ -44,7 +44,7 @@ _docker_up:
 
 
 setupdir:
-	mkdir -p ${wDir}/data/pds ${wDir}/data/appview/cache ${wDir}/data/image/static ${wDir}/data/image/tmp ${wDir}/data/feed-generator ${wDir}/data/accounts
+	mkdir -p ${wDir}/data/pds ${wDir}/data/appview/cache ${wDir}/data/image/static ${wDir}/data/image/tmp ${wDir}/data/feed-generator ${aDir}
 
 # target to configure variable
 _applySdep:
