@@ -3,3 +3,4 @@ repos/**
 data/**
 certs/**
 config/**secret**
+**/__pycache__
