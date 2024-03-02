@@ -81,7 +81,7 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 	reverse_proxy http://bsky:3000
 }
 
-{$DOMAIN}, pds.{$DOMAIN}, *.{$DOMAIN} {
+pds.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -93,6 +93,17 @@ social-app.{$DOMAIN} {
           on_demand
         }
 	reverse_proxy http://social-app:8100
+}
+
+#
+# for below endpoints, lots of request seem to come and it needs to dispatch correct container, but not sure how to do it.
+#    cf. https://github.com/ikuradon/atproto-starter-kit/blob/main/compose.yaml
+{$DOMAIN}, *.{$DOMAIN} {
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+
+	reverse_proxy http://pds:3000
 }
 
 mod.{$DOMAIN} {
