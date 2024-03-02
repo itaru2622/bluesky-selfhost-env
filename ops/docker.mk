@@ -9,11 +9,11 @@ docker-start-bsky:: docker-watchlog
 docker-start-bsky-feedgen:: _applySfeed _docker_up
 docker-start-bsky-feedgen:: docker-watchlog
 docker-stop:
-	docker-compose -f ${f} down -v
+	docker-compose -f ${f} down -v ${services}
 	docker system  prune -f
 	docker volume  prune -f
 	docker network prune -f
-	sudo rm -rf ./data
+	sudo rm -rf ${wDir}/data
 #	rm -rf ${passfile}
 
 docker-watchlog:
