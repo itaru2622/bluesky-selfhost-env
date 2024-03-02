@@ -243,3 +243,17 @@ cat ./docker-compose-starter.yaml | grep {DOMAIN} | sed 's/^ .*- //' | grep -v \
 # dump rules, no idea to convert into  easy reading format...
 cat config/caddy/Caddyfile
 ```
+
+2) create accounts in easy
+
+```bash
+export u=foo
+make api_CreateAccount handle=${u} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+
+#then, to make other account, just re-assign $u and call the above, like below.
+export u=bar
+make api_CreateAccount handle=${u} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+
+export u=baz
+make api_CreateAccount handle=${u} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+```
