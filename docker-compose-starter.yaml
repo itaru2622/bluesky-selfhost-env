@@ -206,7 +206,7 @@ services:
       - PDS_MOD_SERVICE_URL=https://mod.${DOMAIN}
       - PDS_MOD_SERVICE_DID=did:web:mod.${DOMAIN}
       - PDS_CRAWLERS=https://bgs.${DOMAIN}
-      - PDS_EMAIL_SMTP_URL=smtp://User:PASS@smtp.gmail.com
+      - PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL}
       - PDS_EMAIL_FROM_ADDRESS=no-reply@gmail.com
       - PDS_INVITE_REQUIRED=false
       - PDS_INVITE_INTERVAL=604800000

@@ -48,7 +48,10 @@ export DOMAIN=whatever.yourdomain.com
 # 2) set asof daytime, for bluesky-social codes (current testing with 2024-01-06)
 export asof=2024-01-06
 
-# 2) check your configuration, from the point of view of ops.
+# 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
+export PDS_EMAIL_SMTP_URL=smtps://
+
+# 4) check your configuration, from the point of view of ops.
 make echo
 ```
 
