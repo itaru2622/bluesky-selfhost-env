@@ -81,7 +81,7 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 	reverse_proxy http://bsky:3000
 }
 
-pds.{$DOMAIN}, {$DOMAIN}, *.{$DOMAIN} {
+{$DOMAIN}, pds.{$DOMAIN}, *.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -118,12 +118,14 @@ feed-generator.{$DOMAIN} {
 }
 
 
-# not sure, for safe, below >>>
+# ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env >>>>>>>>
+# in docker-compose, APPVIEW === bsky
 public.api.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://pds:3000
+	reverse_proxy http://bsky:3000
 }
+# ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env <<<<<<<<
 
 # ends: reverse proxying rules  <<<<
