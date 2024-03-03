@@ -7,11 +7,10 @@ api_CreateAccount:	_mkmsg_createAccount  _sendMsg
 
 #HINT: make api_CreateAccount_feedgen
 api_CreateAccount_feedgen: getFeedgenUserinfo _mkmsg_createAccount _sendMsg _echo_reqAccount
+	-cat ${resp} | jq .did | sed 's/"//g'
 
 _sendMsg:
 	@curl -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
-
-
 
 _mkmsg_createAccount:
 	$(eval url='https://pds.${DOMAIN}/xrpc/com.atproto.server.createAccount')
