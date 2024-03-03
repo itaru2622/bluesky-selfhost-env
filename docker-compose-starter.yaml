@@ -80,7 +80,7 @@ services:
       - POSTGRES_DB=healthcheck
     volumes:
       - ./config/init-postgres:/docker-entrypoint-initdb.d/
-#     - ./data/database/:/var/lib/postgresql/data/
+#     - ${dDir}/database/:/var/lib/postgresql/data/
     restart: always
 
   pgadmin:
@@ -98,7 +98,7 @@ services:
   redis:
     image: redis:7-bookworm
 #   volumes:
-#     - ./data/redis/:/data/
+#     - ${dDir}/redis/:/data/
     restart: always
 
   opensearch:
@@ -131,7 +131,7 @@ services:
         soft: -1
         hard: -1
 #   volumes:
-#     - ./data/opensearch/:/usr/share/opensearch/data/
+#     - ${dDir}/opensearch/:/usr/share/opensearch/data/
     restart: always
 
   plc:
@@ -214,7 +214,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/pds/:/pds/
+      - ${dDir}/pds/:/pds/
     restart: always
     depends_on:
       - database
@@ -249,7 +249,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-#      - ./data/bgs/:/data/
+#      - ${dDir}/bgs/:/data/
     restart: always
     depends_on:
       - database
@@ -305,7 +305,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/appview/cache/:/cache/
+      - ${dDir}/appview/cache/:/cache/
     restart: always
     depends_on:
       - database
@@ -360,7 +360,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/appview/cache/:/cache/
+      - ${dDir}/appview/cache/:/cache/
     restart: always
     depends_on:
       - bsky
@@ -415,7 +415,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/appview/cache/:/cache/
+      - ${dDir}/appview/cache/:/cache/
     restart: always
     depends_on:
       - bsky
@@ -470,7 +470,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/appview/cache/:/cache/
+      - ${dDir}/appview/cache/:/cache/
     restart: always
     depends_on:
       - bsky
@@ -525,7 +525,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/appview/cache/:/cache/
+      - ${dDir}/appview/cache/:/cache/
     restart: always
     depends_on:
       - bsky
@@ -704,4 +704,4 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./data/feed-generator/:/data/
+      - ${dDir}/feed-generator/:/data/

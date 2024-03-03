@@ -1,44 +1,71 @@
-# definitions  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# domain name of self-hosting bluesky (NEED to care TLD, ie: NG=>mybluesky.local)
+##########################################################################################
+# starts: definitions, need to care in especial.
+
+# domain of self-hosting bluesky (care TLD, otherwise get failure, ie: NG=>mybluesky.local)
 DOMAIN ?=mybluesky.local.com
 
-# get commit hash by datetime to checkout new branch for work with
-asof           ?=$(shell date '+%Y-%m-%dT%H%M%S')
+# email address to get public-signed certs ("internal" for self-signed certs by caddy)
+EMAIL4CERTS ?=internal
+
+# mail account, which PDS wants.
+PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
+
+# datetime for resolving git commit hash to work with
+asof ?=2024-01-06
+
+# ends: definitions, need to care in especial.
+##########################################################################################
+##########################################################################################
+# other definitions
+
+# alternative of 'asof' to resolve by current daytime.
+#asof          ?=$(shell date '+%Y-%m-%dT%H%M%S')
 getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
 
-# path of folders and files >>>>>>>>>>>>
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# paths for folders and files
+
 # top level folder
 wDir :=${PWD}
-# account folder (for feed-generator and others which created with bluesky API by ops).
-aDir ?=${wDir}/data/accounts
-# repos top level folder
-rDir ?=${wDir}/repos
-# passwords file
-passfile ?=${wDir}/config/secrets-passwords.env
-# docker-compose file
-f     ?=${wDir}/docker-compose-starter.yaml
 
-# folders of repositories; get repoDirs=${rDir}/atproto, ... etc.
+# data folder to persist container's into filesystem
+dDir ?=${wDir}/data
+
+# account folder (for feed-generator and others, created with bluesky API during ops).
+aDir ?=${dDir}/accounts
+
+# top level repos folder
+rDir ?=${wDir}/repos
+
+# file path to store generated passwords with openssl, during ops.
+passfile ?=${wDir}/config/secrets-passwords.env
+
+# docker-compose file
+f ?=${wDir}/docker-compose-starter.yaml
+
+# folders of repos
 _nrepo   :=atproto indigo social-app feed-generator did-method-plc pds
 repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# other parameters
 
 # prefix of github (https://github.com/ | git@github.com:)
 gh  ?=$(addsuffix /, https://github.com)
 #gh ?=$(addsuffix :, git@github.com)
 
 # default log level.
-LOG_LEVEL_DEFAULT  ?=debug
+LOG_LEVEL_DEFAULT ?=debug
 
-# email address for lets encript or "internal"(to use caddy builtin ACME)
-EMAIL4CERTS   ?=internal
-
-# services for N-step starting.
+# services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws pgadmin
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
 Sfeed ?=feed-generator
 
-# target(operations) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+##########################################################################################
+##########################################################################################
+# starts:  targets for  operations
+
 
 # get all sources from github
 cloneAll:   ${repoDirs}
@@ -74,7 +101,12 @@ ${passfile}:
 certs/ca-certificates.crt:
 	cp -p /etc/ssl/certs/ca-certificates.crt $@
 
+setupdir:
+	mkdir -p ${dDir}/pds ${dDir}/appview/cache ${dDir}/image/static ${dDir}/image/tmp ${dDir}/feed-generator ${aDir}
+
+################################
 # include other ops.
+################################
 include ops/git.mk
 include ops/docker.mk
 include ops/patch.mk
@@ -89,7 +121,7 @@ exec: ${under}
 		(cd $${d};   ${cmd} ); \
 	done;
 
-# to check Makefile configuration
+# to show ops configurations
 # HINT: make echo
 echo:
 	@echo ""
@@ -99,11 +131,12 @@ echo:
 	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
 	@echo ""
 	@echo "passfile: ${passfile}"
+	@echo "dDir:     ${dDir}"
 	@echo "aDir:     ${aDir}"
-	@echo "wDir:     ${wDir}"
 	@echo "rDir:     ${rDir}"
 	@echo "_nrepo:   ${_nrepo}"
 	@echo "repoDirs: ${repoDirs}"
-	@echo "gh:       ${gh}"
 	@echo "f:        ${f}"
+	@echo "wDir:     ${wDir}"
+	@echo "gh:       ${gh}"
 	@echo "########## <<<<<<<<<<<<<<"

@@ -13,7 +13,7 @@ docker-stop:
 	docker system  prune -f
 	docker volume  prune -f
 	docker network prune -f
-	sudo rm -rf ${wDir}/data
+	sudo rm -rf ${dDir}
 #	rm -rf ${passfile}
 
 docker-watchlog:
@@ -21,6 +21,7 @@ docker-watchlog:
 
 _docker_up:
 	. ${passfile} && DOMAIN=${DOMAIN} asof=${asof} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
+	    dDir=${dDir} \
 	    PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL} \
 	    FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID} \
 	    ADMIN_PASSWORD=$${ADMIN_PASSWORD} \
@@ -43,9 +44,6 @@ _docker_up:
 	    PASS=$${PASS} \
         docker-compose -f ${f} up -d ${services}
 
-
-setupdir:
-	mkdir -p ${wDir}/data/pds ${wDir}/data/appview/cache ${wDir}/data/image/static ${wDir}/data/image/tmp ${wDir}/data/feed-generator ${aDir}
 
 # target to configure variable
 _applySdep:

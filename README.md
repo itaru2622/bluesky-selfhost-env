@@ -53,6 +53,9 @@ export PDS_EMAIL_SMTP_URL=smtps://
 
 # 4) check your configuration, from the point of view of ops.
 make echo
+
+# 5) generate passwords for bluesky containers, and check those value:
+make genPass
 ```
 
 
@@ -131,31 +134,28 @@ make build services=social-app
 5) run bluesky with selfhosting
 
 ```bash
-# generate passwords for bluesky containers, and check those value:
-make genPass
-
-# start required containers (database, caddy etc).
+# 5.1) start required containers (database, caddy etc).
 make docker-start
 
 # wait until log message becomes silent.
 
-# start bluesky containers, finally...
+# 5.2) start bluesky containers, finally...
 make docker-start-bsky
 ```
 
 6) run bluesky feed-generator
 ```bash
-# check if social-app is ready to serve.
+# 6.1) check if social-app is ready to serve.
 curl -L https://social-app.${DOMAIN}/
 
-# create account for feed-generator
+# 6.2) create account for feed-generator
 make api_CreateAccount_feedgen
 
 # find feedgen DID in the above response.
 cat ${aDir}/feedgen.secrets | jq .did | sed 's/"//g'
 >did:plc:6xki...
 
-# start boosky feed-generator
+# 6.3) start boosky feed-generator
 make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:6xki...
 ```
 
