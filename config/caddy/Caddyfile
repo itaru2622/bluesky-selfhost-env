@@ -119,7 +119,7 @@ feed-generator.{$DOMAIN} {
 
 # ends:  simple mapping <<<<<
 
-# starts:  DOMAIN and requiring rewrite >>>>>>>>>>>
+# starts:  DOMAIN and *.DOMAIN >>>>>>>>>>>
 
 {$DOMAIN} {
         tls {$EMAIL4CERTS} {
@@ -138,18 +138,42 @@ feed-generator.{$DOMAIN} {
         tls {$EMAIL4CERTS} {
           on_demand
         }
-
-        redir /xrpc*                      https://pds.{$DOMAIN}
-        redir /.well-known*               https://pds.{$DOMAIN}
-        redir /robots.txt*                https://pds.{$DOMAIN}
-
-        # others:  redirect with regex rewrite "^https://(.*).{$DOMAIN}/(.*)" => "https://{$DOMAIN}/profile/$${1}/$${2}"
-        #    cf. https://github.com/caddyserver/caddy/issues/6142 and  https://www.regular-expressions.info/refext.html
-
-        @matcher {
-            header_regexp host Host ^(?P<some>.*)\.{$DOMAIN}$
+#  it needs both of header_regexp and path_regexp with rewrite then reverse_proxy.
+#---------------
+#      *.DOMAIN/xrpc*  => http://pds:3000
+        @pds1 {
+            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            path_regexp   path      ^(/xrpc.*)
         }
-        redir  @matcher                   https://{$DOMAIN}/profile/{http.regexp.host.some}{uri}
+        rewrite        @pds1        {http.regexp.path.1}
+        reverse_proxy  @pds1        http://pds:3000
+
+#---------------
+#      *.DOMAIN/.well-known.* => http://pds:3000
+        @pds2 {
+            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            path_regexp   path      ^(/\.well-known.*)
+        }
+        rewrite        @pds2        {http.regexp.path.1}
+        reverse_proxy  @pds2        http://pds:3000
+
+#---------------
+#      *.DOMAIN/robot.txt* => http://pds:3000
+        @pds3 {
+            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            path_regexp   path      ^(/robots\.txt*)
+        }
+        rewrite        @pds3        {http.regexp.path.1}
+        reverse_proxy  @pds3        http://pds:3000
+
+#---------------
+#     (.*).DOMAIN/(.*) => http://social-app:8100/profile/$$1/$$2
+        @social {
+            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            path_regexp   path      ^(.*)
+        }
+        rewrite        @social   /profile/{http.regexp.host.1}{http.regexp.path.1}
+        reverse_proxy  @social   http://social-app:8100
 }
 
 # ends:  just DOMAIN and requiring rewrite ... <<<<<<<<<<<
