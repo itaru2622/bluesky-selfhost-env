@@ -89,9 +89,18 @@ dig  any.${DOMAIN}
 # start containers for test
 make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
-# check HTTPS and WSS with your docker environment
-curl https://test-ws.${DOMAIN}/
-open https://test-ws.${DOMAIN}/ on browser.
+# test HTTPS and WSS with your docker environment
+curl -L https://test-ws.${DOMAIN}/
+open -L https://test-ws.${DOMAIN}/ on browser.
+
+# test reverse proxy mapping if it works as expected for bluesky
+#  those should be redirect to PDS
+curl -L https://${DOMAIN}/xrpc/any-request | jq
+curl -L https://some-hostname.${DOMAIN}/xrpc/any-request | jq
+
+#  those should be redirect to social-app
+curl -L https://${DOMAIN}/others | jq
+curl -L https://some-hostname.${DOMAIN}/others | jq
 
 # stop test containers.
 make    docker-stop f=./docker-compose-debug-caddy.yaml

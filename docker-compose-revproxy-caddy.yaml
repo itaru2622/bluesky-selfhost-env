@@ -3,7 +3,7 @@ version: "3"
 volumes:
   caddy-data:
   caddy-config:
- 
+
 services:
   caddy:
 #   cf. https://blog.kurokobo.com/archives/3669#Caddy_acme_server

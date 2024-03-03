@@ -6,4 +6,5 @@ app = FastAPI()
 
 @app.get("/{full_path:path}")
 def catch_all(req: Request, full_path: str):
-    return {"path" : full_path, "query": req._query_params, "headers": req._headers}
+    return {"host" : req._headers.get('host'), "path": full_path}
+    #return {"path" : full_path, "query": req._query_params, "headers": req._headers}

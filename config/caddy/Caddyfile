@@ -1,6 +1,6 @@
 #
+# this mapping rules are converted into Caddyfile from traefik rules of https://github.com/ikuradon/atproto-starter-kit/blob/main/compose.yaml
 # cf. https://caddyserver.com/docs/caddyfile
-#     https://caddyserver.com/docs/caddyfile/directives/tls
 #
 # global options: starts >>>>
 {
@@ -30,16 +30,16 @@ ca.{$DOMAIN}:9000 {
 #       reverse_proxy http://container:port
 # }
 
-# to check if sidecar working, this reverse proxy record maybe used for debugging. >>>>
+# starts: to check if sidecar working, this record maybe need just for debugging. >>>>
 caddy-sidecar.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
 	reverse_proxy http://caddy-sidecar:80
 }
-# to check if sidecar working, this reverse proxy record maybe used for debugging. <<<<
+# ends: to check if sidecar working, this record maybe need just for debugging. <<<<
 
-# to check if caddy works for HTTPS=>HTTP and WSS=>WS as reverse proxy >>>>>
+# starts: to check if caddy works as reverse proxy, for HTTPS=>HTTP and WSS=>WS >>>>>>>>>>
 test-ws.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -57,8 +57,9 @@ test-ws.{$DOMAIN} {
 #	reverse_proxy @ws http://test-ws:8080
 
 }
-# to check if caddy works for HTTPS=>HTTP and WSS=>WS as reverse proxy <<<<<
+# ends: to check if caddy works as reverse proxy, for HTTPS=>HTTP and WSS=>WS >>>>>>>>>>
 
+# starts: simple mapping >>>>>
 
 plc.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
@@ -95,24 +96,12 @@ social-app.{$DOMAIN} {
 	reverse_proxy http://social-app:8100
 }
 
-#
-# for below endpoints, lots of request seem to come and it needs to dispatch correct container, but not sure how to do it.
-#    cf. https://github.com/ikuradon/atproto-starter-kit/blob/main/compose.yaml
-{$DOMAIN}, *.{$DOMAIN} {
-	tls {$EMAIL4CERTS} {
-          on_demand
-        }
-
-	reverse_proxy http://pds:3000
-}
-
 mod.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
 	reverse_proxy http://mod:3000
 }
-
 
 search.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
@@ -128,15 +117,47 @@ feed-generator.{$DOMAIN} {
 	reverse_proxy http://feed-generator:3000
 }
 
+# ends:  simple mapping <<<<<
 
-# ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env >>>>>>>>
-# in docker-compose, APPVIEW === bsky
+# starts:  DOMAIN and requiring rewrite >>>>>>>>>>>
+
+{$DOMAIN} {
+        tls {$EMAIL4CERTS} {
+          on_demand
+        }
+        redir /xrpc*        https://pds.{$DOMAIN}{uri}
+        redir /.well-known* https://pds.{$DOMAIN}{uri}
+        redir /robots.txt*  https://pds.{$DOMAIN}{uri}
+
+        # others (default)
+        redir               https://social-app.{$DOMAIN}{uri}
+}
+
+*.{$DOMAIN} {
+        tls {$EMAIL4CERTS} {
+          on_demand
+        }
+        redir /xrpc*        https://pds.{$DOMAIN}{uri}
+        redir /.well-known* https://pds.{$DOMAIN}{uri}
+        redir /robots.txt*  https://pds.{$DOMAIN}{uri}
+
+        # others:  redirect with regex rewrite "^https://(.*).{$DOMAIN}/(.*)" => "https://{$DOMAIN}/profile/$${1}/$${2}"
+        #    cf. https://github.com/caddyserver/caddy/issues/6142 and  https://www.regular-expressions.info/refext.html
+        @matcher {
+            header_regexp host Host ^(?P<some>.*)\.{$DOMAIN}$
+        }
+        redir  @matcher https://{$DOMAIN}/profile/{http.regexp.host.some}{uri}
+}
+
+# ends:  just DOMAIN and requiring rewrite ... <<<<<<<<<<<
+
+# starts: additional (long FQDN) >>>>>>>>>
+
+# for ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env
 public.api.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
 	reverse_proxy http://bsky:3000
 }
-# ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env <<<<<<<<
-
-# ends: reverse proxying rules  <<<<
+# ends: additional (long FQDN)   <<<<<<<<<
