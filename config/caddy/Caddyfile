@@ -125,28 +125,31 @@ feed-generator.{$DOMAIN} {
         tls {$EMAIL4CERTS} {
           on_demand
         }
-        redir /xrpc*        https://pds.{$DOMAIN}{uri}
-        redir /.well-known* https://pds.{$DOMAIN}{uri}
-        redir /robots.txt*  https://pds.{$DOMAIN}{uri}
+
+        reverse_proxy /xrpc*              http://pds:3000
+        reverse_proxy /.well-known*       http://pds:3000
+        reverse_proxy /robots.txt*        http://pds:3000
 
         # others (default)
-        redir               https://social-app.{$DOMAIN}{uri}
+        reverse_proxy                     http://social-app:8100
 }
 
 *.{$DOMAIN} {
         tls {$EMAIL4CERTS} {
           on_demand
         }
-        redir /xrpc*        https://pds.{$DOMAIN}{uri}
-        redir /.well-known* https://pds.{$DOMAIN}{uri}
-        redir /robots.txt*  https://pds.{$DOMAIN}{uri}
+
+        redir /xrpc*                      https://pds.{$DOMAIN}
+        redir /.well-known*               https://pds.{$DOMAIN}
+        redir /robots.txt*                https://pds.{$DOMAIN}
 
         # others:  redirect with regex rewrite "^https://(.*).{$DOMAIN}/(.*)" => "https://{$DOMAIN}/profile/$${1}/$${2}"
         #    cf. https://github.com/caddyserver/caddy/issues/6142 and  https://www.regular-expressions.info/refext.html
+
         @matcher {
             header_regexp host Host ^(?P<some>.*)\.{$DOMAIN}$
         }
-        redir  @matcher https://{$DOMAIN}/profile/{http.regexp.host.some}{uri}
+        redir  @matcher                   https://{$DOMAIN}/profile/{http.regexp.host.some}{uri}
 }
 
 # ends:  just DOMAIN and requiring rewrite ... <<<<<<<<<<<
