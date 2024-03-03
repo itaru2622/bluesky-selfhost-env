@@ -6,20 +6,26 @@ DOMAIN ?=mybluesky.local.com
 asof           ?=$(shell date '+%Y-%m-%dT%H%M%S')
 getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
 
-# folders, top level and repos
+# path of folders and files >>>>>>>>>>>>
+# top level folder
 wDir :=${PWD}
-# default folder to store created accounts while ops (feed-generator etc).
+# account folder (for feed-generator and others which created with bluesky API by ops).
 aDir ?=${wDir}/data/accounts
-rDir :=${wDir}/repos
+# repos top level folder
+rDir ?=${wDir}/repos
+# passwords file
+passfile ?=${wDir}/config/secrets-passwords.env
+# docker-compose file
+f     ?=${wDir}/docker-compose-starter.yaml
 
 # folders of repositories; get repoDirs=${rDir}/atproto, ... etc.
 _nrepo   :=atproto indigo social-app feed-generator did-method-plc pds
 repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
+
 # prefix of github (https://github.com/ | git@github.com:)
 gh  ?=$(addsuffix /, https://github.com)
 #gh ?=$(addsuffix :, git@github.com)
-
 
 # default log level.
 LOG_LEVEL_DEFAULT  ?=debug
@@ -27,15 +33,10 @@ LOG_LEVEL_DEFAULT  ?=debug
 # email address for lets encript or "internal"(to use caddy builtin ACME)
 EMAIL4CERTS   ?=internal
 
-# for docker ops
-f     ?=docker-compose-starter.yaml
-# services for two-step starting.
+# services for N-step starting.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws pgadmin
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
 Sfeed ?=feed-generator
-
-# passwords file
-passfile=config/secrets-passwords.env
 
 # target(operations) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -97,11 +98,12 @@ echo:
 	@echo "asof:     ${asof}"
 	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
 	@echo ""
+	@echo "passfile: ${passfile}"
+	@echo "aDir:     ${aDir}"
 	@echo "wDir:     ${wDir}"
 	@echo "rDir:     ${rDir}"
 	@echo "_nrepo:   ${_nrepo}"
 	@echo "repoDirs: ${repoDirs}"
 	@echo "gh:       ${gh}"
 	@echo "f:        ${f}"
-	@echo "aDir:     ${aDir}"
 	@echo "########## <<<<<<<<<<<<<<"
