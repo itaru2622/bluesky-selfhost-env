@@ -91,9 +91,12 @@ exec: ${under}
 # to check Makefile configuration
 # HINT: make echo
 echo:
+	@echo ""
 	@echo "########## >>>>>>>>>>>>>>"
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
+	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
+	@echo ""
 	@echo "wDir:     ${wDir}"
 	@echo "rDir:     ${rDir}"
 	@echo "_nrepo:   ${_nrepo}"
