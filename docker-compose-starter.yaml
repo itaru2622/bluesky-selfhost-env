@@ -694,11 +694,13 @@ services:
       - FEEDGEN_SQLITE_LOCATION=/data/db.sqlite
       - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://bgs.${DOMAIN}
       - FEEDGEN_HOSTNAME=feed-generator.${DOMAIN}
+      - FEEDGEN_SERVICE_DID=did:web:feed-generator.${DOMAIN}
       - FEEDGEN_SUBSCRIPTION_RECONNECT_DELAY=3000
 #  Set this to the DID of the account you'll use to publish the feed. You can find your accounts DID by https://pds.${DOMAIN}/xrpc/com.atproto.identity.resolveHandle?handle=feed-generator.${DOMAIN}
 #     - FEEDGEN_PUBLISHER_DID=did:plc:237apsyaiw4mypx3zzo3wwgc
       - FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID}
-      - FEEDGENERATOR_PASSWORD=${FEEDGENERATOR_PASSWORD}
+      - FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}
+      - FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD}
     restart: always
     volumes:
       # supporting self-signed certificates, easiest way >>>>

@@ -51,6 +51,9 @@ export asof=2024-01-06
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
 
+# 4) set FEEDGENERATOR_EMAIL for account in bluesky
+export FEEDGENERATOR_EMAIL=feedgen@your.valid.com
+
 # 4) check your configuration, from the point of view of ops.
 make echo
 
@@ -257,12 +260,12 @@ cat config/caddy/Caddyfile
 
 ```bash
 export u=foo
-make api_CreateAccount handle=${u} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+make api_CreateAccount handle=${u}.${DOMAIN} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
 
-#then, to make other account, just re-assign $u and call the above, like below.
+#then, to make other account, just re-assign $u and call the above ops, like below.
 export u=bar
-make api_CreateAccount handle=${u} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+!make
 
 export u=baz
-make api_CreateAccount handle=${u} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+!make
 ```

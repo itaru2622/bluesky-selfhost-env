@@ -10,6 +10,12 @@ EMAIL4CERTS ?=internal
 # mail account, which PDS wants.
 PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 
+# mail address for feed-generator account.
+FEEDGENERATOR_EMAIL ?=feedgen@example.com
+# handle of feed-generator within bluesky
+FEEDGEN_PUBLISHER_HANDLE ?=feedgen.${DOMAIN}
+
+
 # datetime for resolving git commit hash to work with
 asof ?=2024-01-06
 
@@ -128,8 +134,12 @@ echo:
 	@echo "########## >>>>>>>>>>>>>>"
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
-	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
 	@echo ""
+	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
+	@echo "FEEDGENERATOR_EMAIL: ${FEEDGENERATOR_EMAIL}"
+	@echo "FEEDGEN_PUBLISHER_HANDLE: ${FEEDGEN_PUBLISHER_HANDLE}"
+	@echo ""
+	@echo "wDir:     ${wDir}"
 	@echo "passfile: ${passfile}"
 	@echo "dDir:     ${dDir}"
 	@echo "aDir:     ${aDir}"
@@ -137,6 +147,6 @@ echo:
 	@echo "_nrepo:   ${_nrepo}"
 	@echo "repoDirs: ${repoDirs}"
 	@echo "f:        ${f}"
-	@echo "wDir:     ${wDir}"
 	@echo "gh:       ${gh}"
+	@echo ""
 	@echo "########## <<<<<<<<<<<<<<"
