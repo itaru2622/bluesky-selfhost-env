@@ -582,7 +582,7 @@ services:
       - ATP_BGS_HOST=wss://bgs.${DOMAIN}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - DATABASE_URL=postgres://postgres:postgres@database/search
-      - PALOMAR_BIND=3999
+      - PALOMAR_BIND=0.0.0.0:3999
       - ES_USERNAME=
       - ES_PASSWORD=
 #     - ES_CERT_FILE=
