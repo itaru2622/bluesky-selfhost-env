@@ -680,7 +680,7 @@ services:
       - caddy
 
   feed-generator:
-    image: itaru2622/bluesky-feed-generator:${asof}
+    image: itaru2622/bluesky-feed-generator:${asof}${DOMAIN}
     build:
       context: ./repos/feed-generator/
     ports:
