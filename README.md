@@ -51,8 +51,8 @@ export asof=2024-01-06
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
 
-# 4) set FEEDGENERATOR_EMAIL for account in bluesky
-export FEEDGENERATOR_EMAIL=feedgen@your.valid.com
+# 4) set FEEDGEN_EMAIL for account in bluesky
+export FEEDGEN_EMAIL=feedgen@your.valid.com
 
 # 4) check your configuration, from the point of view of ops.
 make echo
@@ -154,12 +154,8 @@ curl -L https://social-app.${DOMAIN}/
 # 6.2) create account for feed-generator
 make api_CreateAccount_feedgen
 
-# find feedgen DID in the above response.
-cat ${aDir}/feedgen.secrets | jq .did | sed 's/"//g'
->did:plc:6xki...
-
 # 6.3) start boosky feed-generator
-make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:6xki...
+make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
 ```
 
 ## play with self-hosted blusky.
@@ -170,6 +166,40 @@ on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://s
 
 ```bash
 make docker-stop
+```
+
+## Hack
+
+1) create accounts in easy
+
+```bash
+export u=foo
+make api_CreateAccount handle=${u}.${DOMAIN} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
+
+#then, to make other account, just re-assign $u and call the above ops, like below.
+export u=bar
+!make
+
+export u=baz
+!make
+```
+
+
+2) get mapping rules in docker-compose
+
+```bash
+cat ./docker-compose-starter.yaml | grep {DOMAIN} | sed 's/^ .*- //' | grep -v \# | grep -v image: | sort -u
+```
+
+3) get mapping rule in reverse proxy (caddy )
+```bash
+# dump rules, no idea to convert into  easy reading format...
+cat config/caddy/Caddyfile
+```
+
+4) check mapping of original
+```bash
+find repos/* -type f | grep -v /.git/  | grep -v /.github/ | grep -v __ | xargs grep -n -A2 -B2 -f atproto-starter-kit/envs.txt  | grep -A2 -B2 -f /tmp/url-or-did.txt > /tmp/res.txt
 ```
 
 ## DNS server configuration sample (bind9)
@@ -240,32 +270,4 @@ add it in /etc/resolv.conf as below on all testing machines
 
 ```
 nameserver 192.168.1.27
-```
-
-## Hack
-
-1) get mapping rules in docker-compose
-
-```bash
-cat ./docker-compose-starter.yaml | grep {DOMAIN} | sed 's/^ .*- //' | grep -v \# | grep -v image: | sort -u
-```
-
-2) get mapping rule in reverse proxy (caddy )
-```bash
-# dump rules, no idea to convert into  easy reading format...
-cat config/caddy/Caddyfile
-```
-
-2) create accounts in easy
-
-```bash
-export u=foo
-make api_CreateAccount handle=${u}.${DOMAIN} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
-
-#then, to make other account, just re-assign $u and call the above ops, like below.
-export u=bar
-!make
-
-export u=baz
-!make
 ```
