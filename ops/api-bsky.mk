@@ -20,7 +20,7 @@ _mkmsg_createAccount:
 
 getFeedgenUserinfo:
 	$(eval handle=${FEEDGEN_PUBLISHER_HANDLE})
-	$(eval email=${FEEDGENERATOR_EMAIL})
+	$(eval email=${FEEDGEN_EMAIL})
 	$(eval password=$(shell cat ${passfile} | grep FEEDGEN_PUBLISHER_PASSWORD | awk -F= '{ print $$2}'))
 	$(eval resp=${aDir}/${handle}.secrets)
 

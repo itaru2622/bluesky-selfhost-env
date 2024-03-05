@@ -10,10 +10,9 @@ EMAIL4CERTS ?=internal
 # mail account, which PDS wants.
 PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 
-# mail address for feed-generator account.
-FEEDGENERATOR_EMAIL ?=feedgen@example.com
-# handle of feed-generator within bluesky
+# feed-generator account in bluesky to send posts
 FEEDGEN_PUBLISHER_HANDLE ?=feedgen.${DOMAIN}
+FEEDGEN_EMAIL ?=feedgen@example.com
 
 
 # datetime for resolving git commit hash to work with
@@ -67,6 +66,15 @@ LOG_LEVEL_DEFAULT ?=debug
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws pgadmin
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
 Sfeed ?=feed-generator
+
+
+# load passfile content as Makefile variables if exists
+ifeq ($(shell test -e ${passfile} && echo -n exists),exists)
+   include ${passfile}
+endif
+
+# load URL and DIDs from file regarding self-hosting bluesky (under testing)
+#include ops/env-url-did.mk
 
 ##########################################################################################
 ##########################################################################################
@@ -136,8 +144,9 @@ echo:
 	@echo "asof:     ${asof}"
 	@echo ""
 	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
-	@echo "FEEDGENERATOR_EMAIL: ${FEEDGENERATOR_EMAIL}"
+	@echo "FEEDGEN_EMAIL: ${FEEDGEN_EMAIL}"
 	@echo "FEEDGEN_PUBLISHER_HANDLE: ${FEEDGEN_PUBLISHER_HANDLE}"
+	@echo "FEEDGEN_PUBLISHER_PASSWORD: ${FEEDGEN_PUBLISHER_PASSWORD}"
 	@echo ""
 	@echo "wDir:     ${wDir}"
 	@echo "passfile: ${passfile}"
@@ -149,4 +158,5 @@ echo:
 	@echo "f:        ${f}"
 	@echo "gh:       ${gh}"
 	@echo ""
+	@echo "OZONE_PUBLIC_URL=${OZONE_PUBLIC_URL}"
 	@echo "########## <<<<<<<<<<<<<<"
