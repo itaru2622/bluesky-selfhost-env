@@ -47,7 +47,7 @@ services:
 # to generate HTTPS certifications on-demand <<<<<
 
 # debug for caddy>>> 
-  test-ws:
+  test-wss:
     image: itaru2622/gorilla-websocket:bookworm
     build:
       context: ./tests/websocket-service
@@ -65,6 +65,23 @@ services:
     working_dir: /opt/gorilla-websocket/examples/chat
     volumes:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
+  test-ws:
+    image: itaru2622/gorilla-websocket:bookworm
+    build:
+       context: ./tests/websocket-service
+       dockerfile: Dockerfile
+       args:
+        - http_proxy=${http_proxy}
+        - https_proxy=${https_proxy}
+        - no_proxy=${no_proxy}
+        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    environment:
+      - SCRIPT=*.go
+    working_dir: /opt/gorilla-websocket/examples/chat
+    volumes:
+       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
 # debug for caddy <<<
 
   database:
@@ -232,24 +249,28 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 2470:2470
+    command: /bigsky
     environment:
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - GODEBUG=netdns=go+4
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - DATABASE_URL=postgres://postgres:postgres@database/bgs
       - CARSTORE_DATABASE_URL=postgres://postgres:postgres@database/carstore
-      - DATA_DIR=/data
+      - DATA_DIR=/data/bigsky
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
+# NG  - HANDLE_RESOLVER_HOSTS=api.${DOMAIN},pds.${DOMAIN},${DOMAIN}
+# NG  - HANDLE_RESOLVER_HOSTS=pds.${DOMAIN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-#      - ${dDir}/bgs/:/data/
+#      - ${dDir}/bgs/:/data/bigsky
     restart: always
     depends_on:
       - database
@@ -578,6 +599,7 @@ services:
     environment:
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - ES_INSECURE_SSL=true
 #       refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
       - ATP_BGS_HOST=wss://bgs.${DOMAIN}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
@@ -627,8 +649,8 @@ services:
       - OZONE_PDS_DID=did:web:${DOMAIN}
       - OZONE_DB_POSTGRES_URL=postgres://postgres:postgres@database/mod
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
+      - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
       - OZONE_MODERATOR_PASSWORD=${OZONE_MODERATOR_PASSWORD}
       - OZONE_TRIAGE_PASSWORD=${OZONE_TRIAGE_PASSWORD}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
@@ -668,8 +690,8 @@ services:
       - OZONE_PDS_DID=did:web:${DOMAIN}
       - OZONE_DB_POSTGRES_URL=postgres://postgres:postgres@database/mod
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
+      - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
       - OZONE_MODERATOR_PASSWORD=${OZONE_MODERATOR_PASSWORD}
       - OZONE_TRIAGE_PASSWORD=${OZONE_TRIAGE_PASSWORD}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}

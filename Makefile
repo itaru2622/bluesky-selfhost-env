@@ -63,7 +63,7 @@ gh  ?=$(addsuffix /, https://github.com)
 LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
-Sdep  ?=caddy caddy-sidecar database redis opensearch test-ws pgadmin
+Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
 Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
 Sfeed ?=feed-generator
 
@@ -159,4 +159,5 @@ echo:
 	@echo "gh:       ${gh}"
 	@echo ""
 	@echo "OZONE_PUBLIC_URL=${OZONE_PUBLIC_URL}"
+	@echo "LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT}"
 	@echo "########## <<<<<<<<<<<<<<"

@@ -8,6 +8,11 @@
         on_demand_tls {
           ask http://caddy-sidecar:80
         }
+#    limits to HTTP/1.1 >>>
+        servers  {
+          protocols  h1
+        }
+#    limits to HTTP/1.1 <<<
 }
 # global options: ends   <<<<
 
@@ -39,25 +44,38 @@ caddy-sidecar.{$DOMAIN} {
 }
 # ends: to check if sidecar working, this record maybe need just for debugging. <<<<
 
-# starts: to check if caddy works as reverse proxy, for HTTPS=>HTTP and WSS=>WS >>>>>>>>>>
-test-ws.{$DOMAIN} {
+# starts: to check if caddy works as reverse proxy, for HTTP(S) and WS(S) >>>>>>>>>>
+#  for HTTPS/WSS => HTTP/WS, you can test websocket by ```wscat -c wss://test-wss.mybluesky.local.com/ws```
+test-wss.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-#
-# this block seems no need, even https://caddy.community/t/websockets-over-https/16871 says it needed... <<<<<
-#	@ws {
-#		header Connection *Upgrade*
-#		header Upgrade websocket
-#	}
-#
-	reverse_proxy http://test-ws:8080
 
-# below line also seems no need.
-#	reverse_proxy @ws http://test-ws:8080
+	@ws {
+		header Connection *Upgrade*
+		header Upgrade websocket
+	}
+
+	reverse_proxy @ws http://test-wss:8080
+	reverse_proxy http://test-wss:8080
 
 }
-# ends: to check if caddy works as reverse proxy, for HTTPS=>HTTP and WSS=>WS >>>>>>>>>>
+
+#  for HTTP/WS => HTTP/WS, you can test websocket by ```wscat -c ws://test-ws.mybluesky.local.com/ws```
+http://test-ws.{$DOMAIN} {
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	@ws {
+		header Connection *Upgrade*
+		header Upgrade websocket
+	}
+
+	reverse_proxy @ws http://test-ws:8080
+	reverse_proxy http://test-ws:8080
+}
+
+# ends: to check if caddy works as reverse proxy, for HTTP(S) and WS(S) <<<<<<<<<<
 
 # starts: simple mapping >>>>>
 
@@ -86,7 +104,15 @@ pds.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://pds:3000
+
+        @ws {
+          header Connection *Upgrade*
+          header Upgrade websocket
+        }
+
+        reverse_proxy @ws http://pds:3000
+        reverse_proxy     http://pds:3000
+
 }
 
 social-app.{$DOMAIN} {
@@ -120,15 +146,21 @@ feed-generator.{$DOMAIN} {
 # ends:  simple mapping <<<<<
 
 # starts:  DOMAIN and *.DOMAIN >>>>>>>>>>>
-
 {$DOMAIN} {
         tls {$EMAIL4CERTS} {
           on_demand
         }
 
+        @ws {
+          header Connection *Upgrade*
+          header Upgrade websocket
+        }
+
+        reverse_proxy @ws                 http://pds:3000
         reverse_proxy /xrpc*              http://pds:3000
         reverse_proxy /.well-known*       http://pds:3000
         reverse_proxy /robots.txt*        http://pds:3000
+
 
         # others (default)
         reverse_proxy                     http://social-app:8100
@@ -140,6 +172,17 @@ feed-generator.{$DOMAIN} {
         }
 #  it needs both of header_regexp and path_regexp with rewrite then reverse_proxy.
 #---------------
+#      websocket
+        @ws {
+          header Connection *Upgrade*
+          header Upgrade websocket
+          header_regexp host Host ^(.*)\.{$DOMAIN}$
+	  path_regexp   path      ^(.*)
+        }
+        rewrite       @ws           {http.regexp.path.1}
+        reverse_proxy @ws           http://pds:3000
+
+#---------------
 #      *.DOMAIN/xrpc*  => http://pds:3000
         @pds1 {
             header_regexp host Host ^(.*)\.{$DOMAIN}$
@@ -149,7 +192,7 @@ feed-generator.{$DOMAIN} {
         reverse_proxy  @pds1        http://pds:3000
 
 #---------------
-#      *.DOMAIN/.well-known.* => http://pds:3000
+#      *.DOMAIN/.well-known* => http://pds:3000
         @pds2 {
             header_regexp host Host ^(.*)\.{$DOMAIN}$
             path_regexp   path      ^(/\.well-known.*)

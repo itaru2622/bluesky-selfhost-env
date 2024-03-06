@@ -7,7 +7,7 @@ GEN_LONG_PASS="openssl ecparam --name secp256k1 --genkey --noout --outform DER |
 GEN_SHORT_PASS="openssl rand --hex 16"
 #GEN_SHORT_PASS="echo 'short-pass'"
 
-####### generate pass >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+####### generate secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ADMIN_PASSWORD=$(eval "${GEN_LONG_PASS}")
 BGS_ADMIN_KEY=$(eval "${GEN_LONG_PASS}")
@@ -19,6 +19,7 @@ OZONE_MODERATOR_PASSWORD=$(eval "${GEN_LONG_PASS}")
 OZONE_SIGNING_KEY_HEX=$(eval "${GEN_LONG_PASS}")
 OZONE_TRIAGE_PASSWORD=$(eval "${GEN_LONG_PASS}")
 
+POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 PDS_ADMIN_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 PDS_JWT_SECRET=$(eval "${GEN_SHORT_PASS}")
@@ -33,7 +34,7 @@ FEEDGEN_PUBLISHER_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 PASS=$(eval "${GEN_LONG_PASS}")
 
 
-########### dump pass   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+########### dump secrets   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
 echo "BGS_ADMIN_KEY=${BGS_ADMIN_KEY}"
@@ -48,6 +49,7 @@ echo "PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD}"
 echo "PDS_JWT_SECRET=${PDS_JWT_SECRET}"
 echo "PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}"
 echo "PDS_REPO_SIGNING_KEY_K256_PRIVATE_KEY_HEX=${PDS_REPO_SIGNING_KEY_K256_PRIVATE_KEY_HEX}"
+echo "POSTGRES_USER=${POSTGRES_USER}"
 echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
 echo "SERVICE_SIGNING_KEY=${SERVICE_SIGNING_KEY}"
 echo "TRIAGE_PASSWORD=${TRIAGE_PASSWORD}"

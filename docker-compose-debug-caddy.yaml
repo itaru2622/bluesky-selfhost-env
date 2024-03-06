@@ -40,7 +40,7 @@ services:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 # to generate HTTPS certifications on-demand <<<<<
 
-  test-ws:
+  test-wss:
     image: itaru2622/gorilla-websocket:bookworm
     build:
        context: ./tests/websocket-service
@@ -56,6 +56,23 @@ services:
     working_dir: /opt/gorilla-websocket/examples/chat
     volumes:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
+  test-ws:
+    image: itaru2622/gorilla-websocket:bookworm
+    build:
+       context: ./tests/websocket-service
+       dockerfile: Dockerfile
+       args:
+        - http_proxy=${http_proxy}
+        - https_proxy=${https_proxy}
+        - no_proxy=${no_proxy}
+        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    environment:
+      - SCRIPT=*.go
+    working_dir: /opt/gorilla-websocket/examples/chat
+    volumes:
+       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
 
   # starts: fake to check caddy mapping rule for social-app and pds >>>>>>>>>>
   social-app:

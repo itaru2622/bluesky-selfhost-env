@@ -10,11 +10,31 @@ this repository describes the way to self-host bluesky with
 at current, working with code asof 2024-01-06 of bluesky-social.<br>
 it may not work with latest codes.
 
+## current status regarding self-hosting:
+
+on Mar.06 2024, as below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
+
+   -  ok: create user on pds via social-app, and bluesky API.
+   -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: post articles on social-app
+   -  ok: vote 'like' to  article on social-app
+   -  ok: reply to article on social-app
+   -  ok: start following in others profile page on social-app
+   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
+   -  ok: find posts in 'search' on social-app
+   -  NG: find users in 'search' on social-app  <- reason unknown yet.
+   -  NG: find feeds in 'search' on social-app  <- investigation not started
+   -  not tested: regarding moderation
+   -  ok: websocket working; tested with wss://test-wss.${DOMAIN}/ and ws://test-ws.${DOMAIN}/
+
+It seems: indexer and feed-generator are not working by unknown reason even those are staying 'up' status.
+
+
 ## references
 
 special thanks to prior works on self-hosting.
-   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
    - https://github.com/ikuradon/atproto-starter-kit/tree/main
+   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
 
 ## sources in use.
 
@@ -96,8 +116,9 @@ dig  any.${DOMAIN}
 make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
 # test HTTPS and WSS with your docker environment
-curl -L https://test-ws.${DOMAIN}/
-open -L https://test-ws.${DOMAIN}/ on browser.
+curl -L https://test-wss.${DOMAIN}/
+open -L https://test-wss.${DOMAIN}/ on browser.
+wscat -c https://test-wss.${DOMAIN}/ws with CUI nodejs wscat package
 
 # test reverse proxy mapping if it works as expected for bluesky
 #  those should be redirect to PDS
