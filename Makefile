@@ -18,6 +18,8 @@ FEEDGEN_EMAIL ?=feedgen@example.com
 # datetime for resolving git commit hash to work with
 asof ?=2024-01-06
 
+
+
 # ends: definitions, need to care in especial.
 ##########################################################################################
 ##########################################################################################
@@ -31,7 +33,7 @@ getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
 # paths for folders and files
 
 # top level folder
-wDir :=${PWD}
+wDir ?=${PWD}
 
 # data folder to persist container's into filesystem
 dDir ?=${wDir}/data
@@ -64,7 +66,7 @@ LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
-Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon
+Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon test-indigo
 Sfeed ?=feed-generator
 
 
@@ -99,7 +101,7 @@ ${rDir}/feed-generator:
 ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
 ${rDir}/did-method-plc:
-	git clone ${gh}did-method-plc/did-method-plc $@
+	git clone ${gh}did-method-plc/did-method-plc.git $@
 # delete all repos.
 delRepoDirAll:
 	rm -rf ${rDir}/*
@@ -127,11 +129,12 @@ include ops/patch.mk
 include ops/api-bsky.mk
 
 # execute the command under folders (one or multiple).
-# HINT: make exec under=./repos/* cmd='git status|cat` => execute git status for all repos.
+# HINT: make exec under=./repos/* cmd='git status|cat' => execute git status for all repos.
 # HINT: make exec under=./repos/* cmd='git checkout main' => checkout to main for all repos.
+# HINT: make exec under=./repos/* cmd='git log --decorate=full | head -3 | cat '
 exec: ${under}
 	for d in ${under}; do \
-		echo "### exec cmd @ $${d}" ;\
+		echo "############ exec cmd @ $${d} ########################################" ;\
 		(cd $${d};   ${cmd} ); \
 	done;
 

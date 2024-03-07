@@ -83,6 +83,20 @@ services:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 
 # debug for caddy <<<
+# debug for bluesky with indigo subcmds >>>
+  test-indigo:
+    image: itaru2622/bluesky-indigo-tools:${asof}
+    build:
+       context: ./repos/indigo/
+       dockerfile: Dockerfile
+    command: tail -f /dev/null
+    environment:
+      - GOINSECURE=${DOMAIN},*.${DOMAIN}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
+# debug for bluesky with indigo subcmds <<<
 
   database:
     image: postgres:16-bookworm
