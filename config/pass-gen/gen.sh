@@ -33,6 +33,16 @@ FEEDGEN_PUBLISHER_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 
 PASS=$(eval "${GEN_LONG_PASS}")
 
+# the same as atproto/packages/dev-env/src/const.ts
+# use short password
+ADMIN_PASSWORD=admin-pass
+MODERATOR_PASSWORD=mod-pass
+TRIAGE_PASSWORD=triage-pass
+PDS_JWT_SECRET=jwt-secret
+
+# the same passwords for all admins, atproto/packages/dev-env/src/*.ts
+OZONE_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+PDS_ADMIN_PASSWORD=${ADMIN_PASSWORD}
 
 ########### dump secrets   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
