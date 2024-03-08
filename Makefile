@@ -59,7 +59,7 @@ repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
 # prefix of github (https://github.com/ | git@github.com:)
 gh  ?=$(addsuffix /, https://github.com)
-#gh ?=$(addsuffix :, git@github.com)
+ghe ?=$(addsuffix :, git@github.com)
 
 # default log level.
 LOG_LEVEL_DEFAULT ?=debug
@@ -92,16 +92,22 @@ clone_one:  ${rDir}/${d}
 
 ${rDir}/atproto:
 	git clone ${gh}bluesky-social/atproto.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-atproto.git)
 ${rDir}/indigo:
 	git clone ${gh}bluesky-social/indigo.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-indigo.git)
 ${rDir}/social-app:
 	git clone ${gh}bluesky-social/social-app.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-social-app.git)
 ${rDir}/feed-generator:
 	git clone ${gh}bluesky-social/feed-generator.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-feed-generator.git)
 ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-pds.git)
 ${rDir}/did-method-plc:
 	git clone ${gh}did-method-plc/did-method-plc.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-did-method-plc.git)
 # delete all repos.
 delRepoDirAll:
 	rm -rf ${rDir}/*
