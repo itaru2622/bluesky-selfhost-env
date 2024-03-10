@@ -1,9 +1,9 @@
 diff --git a/Dockerfile b/Dockerfile
 new file mode 100644
-index 0000000..c99b7f3
+index 0000000..0882979
 --- /dev/null
 +++ b/Dockerfile
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,13 @@
 +FROM golang:1.21-bookworm
 +
 +RUN apt update; apt install -y dumb-init ca-certificates runit    bash-completion git make curl
@@ -12,5 +12,8 @@ index 0000000..c99b7f3
 +COPY . .
 +
 +RUN make build
++# add/install websocat, refer ./HACKING.md
++RUN apt install -y cargo libssl-dev; cargo install --features=ssl websocat --root /usr/local
++
 +CMD tail -f /dev/null
 +ENV PATH .:/bluesky-indigo:${PATH}
