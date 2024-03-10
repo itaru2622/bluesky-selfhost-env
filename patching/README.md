@@ -24,6 +24,7 @@ basic design is inspired from prior work of syui.ai. and re-designed some as bel
 
 | number(as prefix) | description |
 |:------------------|:------------|
+|0xx                | patches to debug bluesky with {dev-env of atproto and social-app } regardless self-hosting, to check environment parameters for docker containers.|
 |1xx                | patches requires to build docker image with official source, regardless self-hosting like below:<br> |
 |                   |   - add Dockerfile,  like 110-*.sh                                                      |
 |                   |   - proxy consideration for build docker image, like 150-*.sh                           |

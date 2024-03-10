@@ -1,0 +1,32 @@
+diff --git a/packages/dev-env/src/debug.ts b/packages/dev-env/src/debug.ts
+new file mode 100644
+index 000000000..9d858f5ec
+--- /dev/null
++++ b/packages/dev-env/src/debug.ts
+@@ -0,0 +1,26 @@
++/*
++**
++** sample use:
++
++import { Debugdump } from './debug'
++Debugdump.dump("some heading text ", {'some':'jsonable', 'youwant': 'tocheck' })
++
++**
++*/
++
++import * as fs   from 'fs';
++//import * as path from 'path';
++
++export class Debugdump {
++  constructor() {}
++
++  static dump( heading: string, obj?: any, path: string ='/dev/stdout')
++  {
++     let msg =  '>>> ' + heading
++     if (obj)  { msg += '\n' + JSON.stringify(obj, null, 2) + '\n<<< ' + heading + '\n'}
++     else      { msg += '<<<\n' }
++
++     fs.appendFileSync(path, msg, 'utf8')
++  }
++}
++
