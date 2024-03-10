@@ -7,7 +7,7 @@ this repository describes the way to self-host bluesky with
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, working with code asof 2024-01-06 of bluesky-social.<br>
+at current, working with code asof <strong>2024-01-06</strong> of bluesky-social.<br>
 it may not work with latest codes.
 
 ## current status regarding self-hosting:
