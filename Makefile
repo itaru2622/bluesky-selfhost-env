@@ -135,9 +135,12 @@ include ops/patch.mk
 include ops/api-bsky.mk
 
 # execute the command under folders (one or multiple).
-# HINT: make exec under=./repos/* cmd='git status|cat' => execute git status for all repos.
-# HINT: make exec under=./repos/* cmd='git checkout main' => checkout to main for all repos.
-# HINT: make exec under=./repos/* cmd='git log --decorate=full | head -3 | cat '
+# HINT: make exec under=./repos/* cmd='git status                        | cat'  => show        git status for all repos.
+# HINT: make exec under=./repos/* cmd='git branch --show-current         | cat'  => show        current branch for all repos
+# HINT: make exec under=./repos/* cmd='git log --decorate=full | head -3 | cat ' => show        last commit log for all repos
+# HINT: make exec under=./repos/* cmd='git remote update fork            | cat'  => update      remote named fork for all repos
+# HINT: make exec under=./repos/* cmd='git checkout work                 | cat'  => checkout to work branch for all repos.
+# HINT: make exec under=./repos/* cmd='git push fork --tags              | cat'  => push        tags to remote named fork
 exec: ${under}
 	for d in ${under}; do \
 		echo "############ exec cmd @ $${d} ########################################" ;\
