@@ -7,12 +7,14 @@ this repository describes the way to self-host bluesky with
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, working with code asof <strong>2024-01-06</strong> of bluesky-social.<br>
+at current, working with code asof <strong>2024-03-06</strong> of bluesky-social.<br>
 it may not work with latest codes.
 
 ## current status regarding self-hosting:
 
-on Mar.06 2024, as below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
+with 'asof-2024-03-10' branch, just get started. work in progress with atproto/dev-env + social-app.<p>
+
+with 'asof-2024-01-06' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
 
    -  ok: create user on pds via social-app, and bluesky API.
    -  ok: sign-in via social-app (with multiple accounts)
@@ -35,6 +37,10 @@ It seems: indexer and feed-generator are not working by unknown reason even thos
 special thanks to prior works on self-hosting.
    - https://github.com/ikuradon/atproto-starter-kit/tree/main
    - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
+
+hacks in bluesky:
+   - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
+   - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
 
 ## sources in use.
 
@@ -66,7 +72,7 @@ you can overwrite the domain name by environment variable as below:
 export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof daytime, for bluesky-social codes (current testing with 2024-01-06)
-export asof=2024-01-06
+export asof=2024-03-10
 
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
