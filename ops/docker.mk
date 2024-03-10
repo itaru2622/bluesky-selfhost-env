@@ -45,32 +45,14 @@ _docker_up:
 	    PASS=${PASS} \
         docker-compose -f ${f} up -d ${services}
 
-docker-check-run:
-	@echo "run docker-compose as below:"
-	echo DOMAIN=${DOMAIN} asof=${asof} EMAIL4CERTS=${EMAIL4CERTS} LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
-	    dDir=${dDir} \
-	    PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL} \
-	    FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID} \
-	    FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE} \
-	    FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD} \
-	    ADMIN_PASSWORD=${ADMIN_PASSWORD} \
-	    BGS_ADMIN_KEY=${BGS_ADMIN_KEY} \
-	    IMG_URI_KEY=${IMG_URI_KEY} \
-	    IMG_URI_SALT=${IMG_URI_SALT} \
-	    MODERATOR_PASSWORD=${MODERATOR_PASSWORD} \
-	    OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD} \
-	    OZONE_MODERATOR_PASSWORD=${OZONE_MODERATOR_PASSWORD} \
-	    OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX} \
-	    OZONE_TRIAGE_PASSWORD=${OZONE_TRIAGE_PASSWORD} \
-	    PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD} \
-	    PDS_JWT_SECRET=${PDS_JWT_SECRET} \
-	    PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX} \
-	    PDS_REPO_SIGNING_KEY_K256_PRIVATE_KEY_HEX=${PDS_REPO_SIGNING_KEY_K256_PRIVATE_KEY_HEX} \
-	    SERVICE_SIGNING_KEY=${SERVICE_SIGNING_KEY} \
-	    TRIAGE_PASSWORD=${TRIAGE_PASSWORD} \
-	    POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-	    PASS=${PASS} \
-        docker-compose -f ${f} up -d ${services}
+docker-check-status:
+	docker ps -a
+	docker volume ls
+
+docker-rm-all:
+	-docker ps -a -q | xargs docker rm -f
+	-docker volume ls | tail -n +2 | awk '{print $$2}' | xargs docker volume rm -f
+	-docker system prune -f
 
 # target to configure variable
 _applySdep:
