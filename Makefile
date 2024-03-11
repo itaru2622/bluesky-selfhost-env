@@ -92,22 +92,22 @@ clone_one:  ${rDir}/${d}
 
 ${rDir}/atproto:
 	git clone ${gh}bluesky-social/atproto.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-atproto.git)
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-atproto.git; git remote update fork)
 ${rDir}/indigo:
 	git clone ${gh}bluesky-social/indigo.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-indigo.git)
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-indigo.git; git remote update fork)
 ${rDir}/social-app:
 	git clone ${gh}bluesky-social/social-app.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-social-app.git)
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-social-app.git; git remote update fork)
 ${rDir}/feed-generator:
 	git clone ${gh}bluesky-social/feed-generator.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-feed-generator.git)
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-feed-generator.git; git remote update fork)
 ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-pds.git)
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-pds.git; git remote update fork)
 ${rDir}/did-method-plc:
 	git clone ${gh}did-method-plc/did-method-plc.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-did-method-plc.git)
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-did-method-plc.git; git remote update fork)
 # delete all repos.
 delRepoDirAll:
 	rm -rf ${rDir}/*
