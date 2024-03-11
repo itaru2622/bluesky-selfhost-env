@@ -598,6 +598,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - HTTP_ADDRESS=:8100
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
