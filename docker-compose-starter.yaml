@@ -214,6 +214,7 @@ services:
     expose:
       - 2583
     environment:
+      - PDS_ENABLE_DID_DOC_WITH_SESSION=true
       - PDS_PORT=2583
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
