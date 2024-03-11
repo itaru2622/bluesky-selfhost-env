@@ -1,6 +1,9 @@
+diff --git a/.dockerbuild b/.dockerbuild
+new file mode 100644
+index 0000000..e69de29
 diff --git a/Dockerfile b/Dockerfile
 new file mode 100644
-index 0000000..fe74124
+index 0000000..d82fe70
 --- /dev/null
 +++ b/Dockerfile
 @@ -0,0 +1,13 @@
@@ -10,9 +13,9 @@ index 0000000..fe74124
 +COPY . .
 +RUN yarn install
 +
-+EXPOSE 3000
-+ENV PORT=3000
 +ENV NODE_ENV=production
++ENV FEEDGEN_PORT=3000
++EXPOSE 3000
 +
 +CMD yarn start
 +
