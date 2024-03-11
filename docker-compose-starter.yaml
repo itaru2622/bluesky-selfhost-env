@@ -176,12 +176,13 @@ services:
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
-      - 2582:3000
+      - 2582:2582
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - PORT=2582
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -209,8 +210,11 @@ services:
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
-      - 2583:3000
+      - 2583:2583
+    expose:
+      - 2583
     environment:
+      - PDS_PORT=2583
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -302,9 +306,12 @@ services:
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
-      - 2584:3000
+      - 2584:2584
+    expose:
+      - 2584
     command: node --enable-source-maps api.js
     environment:
+      - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -360,6 +367,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps daemon.js
     environment:
+      - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -415,6 +423,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps indexer.js
     environment:
+      - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -470,6 +479,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps ingester.js
     environment:
+      - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -525,6 +535,7 @@ services:
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     environment:
+      - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -642,12 +653,13 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps api.js
     ports:
-      - 2585:3000
+      - 3000:3000
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - OZONE_PORT=3000
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -689,6 +701,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - OZONE_PORT=3000
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1

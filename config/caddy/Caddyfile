@@ -83,7 +83,7 @@ plc.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://plc:3000
+	reverse_proxy http://plc:2582
 }
 
 bgs.{$DOMAIN} {
@@ -97,7 +97,7 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://bsky:3000
+	reverse_proxy http://bsky:2584
 }
 
 pds.{$DOMAIN} {
@@ -110,8 +110,8 @@ pds.{$DOMAIN} {
           header Upgrade websocket
         }
 
-        reverse_proxy @ws http://pds:3000
-        reverse_proxy     http://pds:3000
+        reverse_proxy @ws http://pds:2583
+        reverse_proxy     http://pds:2583
 
 }
 
@@ -156,10 +156,10 @@ feed-generator.{$DOMAIN} {
           header Upgrade websocket
         }
 
-        reverse_proxy @ws                 http://pds:3000
-        reverse_proxy /xrpc*              http://pds:3000
-        reverse_proxy /.well-known*       http://pds:3000
-        reverse_proxy /robots.txt*        http://pds:3000
+        reverse_proxy @ws                 http://pds:2583
+        reverse_proxy /xrpc*              http://pds:2583
+        reverse_proxy /.well-known*       http://pds:2583
+        reverse_proxy /robots.txt*        http://pds:2583
 
 
         # others (default)
@@ -180,34 +180,34 @@ feed-generator.{$DOMAIN} {
 	  path_regexp   path      ^(.*)
         }
         rewrite       @ws           {http.regexp.path.1}
-        reverse_proxy @ws           http://pds:3000
+        reverse_proxy @ws           http://pds:2583
 
 #---------------
-#      *.DOMAIN/xrpc*  => http://pds:3000
+#      *.DOMAIN/xrpc*  => http://pds:2583
         @pds1 {
             header_regexp host Host ^(.*)\.{$DOMAIN}$
             path_regexp   path      ^(/xrpc.*)
         }
         rewrite        @pds1        {http.regexp.path.1}
-        reverse_proxy  @pds1        http://pds:3000
+        reverse_proxy  @pds1        http://pds:2583
 
 #---------------
-#      *.DOMAIN/.well-known* => http://pds:3000
+#      *.DOMAIN/.well-known* => http://pds:2583
         @pds2 {
             header_regexp host Host ^(.*)\.{$DOMAIN}$
             path_regexp   path      ^(/\.well-known.*)
         }
         rewrite        @pds2        {http.regexp.path.1}
-        reverse_proxy  @pds2        http://pds:3000
+        reverse_proxy  @pds2        http://pds:2583
 
 #---------------
-#      *.DOMAIN/robot.txt* => http://pds:3000
+#      *.DOMAIN/robot.txt* => http://pds:2583
         @pds3 {
             header_regexp host Host ^(.*)\.{$DOMAIN}$
             path_regexp   path      ^(/robots\.txt*)
         }
         rewrite        @pds3        {http.regexp.path.1}
-        reverse_proxy  @pds3        http://pds:3000
+        reverse_proxy  @pds3        http://pds:2583
 
 #---------------
 #     (.*).DOMAIN/(.*) => http://social-app:8100/profile/$$1/$$2
@@ -228,6 +228,6 @@ public.api.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://bsky:3000
+	reverse_proxy http://bsky:2584
 }
 # ends: additional (long FQDN)   <<<<<<<<<
