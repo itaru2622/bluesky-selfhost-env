@@ -66,7 +66,7 @@ LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
-Sbsky ?=plc pds bgs bsky bsky-daemon bsky-indexer bsky-ingester bsky-cdn social-app search mod mod-daemon test-indigo
+Sbsky ?=plc pds bgs bsky social-app search mod mod-daemon test-indigo
 Sfeed ?=feed-generator
 
 
@@ -114,7 +114,7 @@ delRepoDirAll:
 
 # generate passwords for test env
 genPass: ${passfile}
-${passfile}:
+${passfile}: ./config/pass-gen/gen.sh
 	./config/pass-gen/gen.sh > $@
 	cat $@
 	@echo "passwords generated and stored in $@"
