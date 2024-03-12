@@ -214,6 +214,10 @@ services:
     expose:
       - 2583
     environment:
+      - PDS_DEV_MODE=true
+      - PDS_REPORT_SERVICE_URL=https://mod.${DOMAIN}
+      - PDS_REPORT_SERVICE_DID=did:web:mod.${DOMAIN}
+      - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
       - PDS_ENABLE_DID_DOC_WITH_SESSION=true
       - PDS_PORT=2583
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
@@ -312,6 +316,16 @@ services:
       - 2584
     command: node --enable-source-maps api.js
     environment:
+      - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
+      - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
+      - BSKY_BSYNC_HTTP_VERSION=1.1
+      - BSKY_DATAPLANE_HTTP_VERSION=1.1
+      - BSKY_DATAPLANE_URLS=http://fake-dataplane.example.invalid/
+      - BSKY_BSYNC_URL=http://fake-bsync.example.invalid/
+      - BSKY_COURIER_URL=http://fake-courier.example.invalid/
+      - BSKY_LABELS_FROM_ISSUER_DIDS
+      - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
+      - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -368,6 +382,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps daemon.js
     environment:
+      - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -424,6 +439,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps indexer.js
     environment:
+      - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -480,6 +496,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: node --enable-source-maps ingester.js
     environment:
+      - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -536,6 +553,7 @@ services:
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     environment:
+      - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - PORT=2584
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -661,6 +679,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - OZONE_DEV_MODE=true
       - OZONE_PORT=3000
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -703,6 +722,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - OZONE_DEV_MODE=true
       - OZONE_PORT=3000
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
