@@ -334,7 +334,7 @@ services:
       - SERVER_DID=did:web:api.${DOMAIN}
       - PUBLIC_URL=https://api.${DOMAIN}
       - DID_PLC_URL=https://plc.${DOMAIN}
-      - SEARCH_ENDPOINT=http://search.${DOMAIN}
+      - SEARCH_ENDPOINT=https://search.${DOMAIN}
       - PUSH_NOTIFICATION_ENDPOINT=https://push.${DOMAIN}/api/push
       - REPO_PROVIDER=wss://${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
@@ -390,7 +390,7 @@ services:
       - SERVER_DID=did:web:api.${DOMAIN}
       - PUBLIC_URL=https://api.${DOMAIN}
       - DID_PLC_URL=https://plc.${DOMAIN}
-      - SEARCH_ENDPOINT=http://search.${DOMAIN}
+      - SEARCH_ENDPOINT=https://search.${DOMAIN}
       - PUSH_NOTIFICATION_ENDPOINT=https://push.${DOMAIN}/api/push
       - REPO_PROVIDER=wss://${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
@@ -446,7 +446,7 @@ services:
       - SERVER_DID=did:web:api.${DOMAIN}
       - PUBLIC_URL=https://api.${DOMAIN}
       - DID_PLC_URL=https://plc.${DOMAIN}
-      - SEARCH_ENDPOINT=http://search.${DOMAIN}
+      - SEARCH_ENDPOINT=https://search.${DOMAIN}
       - PUSH_NOTIFICATION_ENDPOINT=https://push.${DOMAIN}/api/push
       - REPO_PROVIDER=wss://${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
@@ -502,7 +502,7 @@ services:
       - SERVER_DID=did:web:api.${DOMAIN}
       - PUBLIC_URL=https://api.${DOMAIN}
       - DID_PLC_URL=https://plc.${DOMAIN}
-      - SEARCH_ENDPOINT=http://search.${DOMAIN}
+      - SEARCH_ENDPOINT=https://search.${DOMAIN}
       - PUSH_NOTIFICATION_ENDPOINT=https://push.${DOMAIN}/api/push
       - REPO_PROVIDER=wss://${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
@@ -558,7 +558,7 @@ services:
       - SERVER_DID=did:web:api.${DOMAIN}
       - PUBLIC_URL=https://api.${DOMAIN}
       - DID_PLC_URL=https://plc.${DOMAIN}
-      - SEARCH_ENDPOINT=http://search.${DOMAIN}
+      - SEARCH_ENDPOINT=https://search.${DOMAIN}
       - PUSH_NOTIFICATION_ENDPOINT=https://push.${DOMAIN}/api/push
       - REPO_PROVIDER=wss://${DOMAIN}
       - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
