@@ -4,7 +4,7 @@ echo "DOMAIN: ${DOMAIN}"
 echo "rDir:   ${rDir}"
 echo "pDir:   ${pDir}"
 
-d_=${rDir}/feed-generator
+d_=${rDir}/atproto
 p1_=${pDir}/010-atproto-devenv-debug.diff
 p2_=${pDir}/010-atproto-devenv-debug-others.diff
 
