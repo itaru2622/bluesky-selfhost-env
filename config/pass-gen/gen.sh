@@ -3,7 +3,10 @@
 #
 # password generating rule (cf. https://github.com/bluesky-social/pds/blob/main/installer.sh )
 #
+# openssl based signing key generation
 GEN_LONG_PASS="openssl ecparam --name secp256k1 --genkey --noout --outform DER | tail --bytes=+8 | head --bytes=32 | xxd --plain --cols 32"
+# typescript based signing key generator
+#GEN_LONG_PASS="docker run -it --rm -v ${wDir}/ops-progs:/app -w /app  itaru2622/typescript:18-bookworm  ts-node ./genSigningKey.ts | nkf -w -Lu -d"
 GEN_SHORT_PASS="openssl rand --hex 16"
 #GEN_SHORT_PASS="echo 'short-pass'"
 
@@ -19,8 +22,8 @@ OZONE_MODERATOR_PASSWORD=$(eval "${GEN_LONG_PASS}")
 OZONE_SIGNING_KEY_HEX=$(eval "${GEN_LONG_PASS}")
 OZONE_TRIAGE_PASSWORD=$(eval "${GEN_LONG_PASS}")
 
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
+POSTGRES_USER=pg
+POSTGRES_PASSWORD=password
 PDS_ADMIN_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 PDS_JWT_SECRET=$(eval "${GEN_SHORT_PASS}")
 
@@ -31,6 +34,7 @@ TRIAGE_PASSWORD=$(eval "${GEN_LONG_PASS}")
 
 FEEDGEN_PUBLISHER_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 BSKY_SERVICE_SIGNING_KEY=$(eval "${GEN_LONG_PASS}")
+BSKY_ADMIN_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 PASS=$(eval "${GEN_LONG_PASS}")
 
 # the same as atproto/packages/dev-env/src/const.ts
@@ -43,6 +47,7 @@ PDS_JWT_SECRET=jwt-secret
 # the same passwords for all admins, atproto/packages/dev-env/src/*.ts
 OZONE_ADMIN_PASSWORD=${ADMIN_PASSWORD}
 PDS_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+BSKY_ADMIN_PASSWORDS=${ADMIN_PASSWORD}
 
 ########### dump secrets   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -66,5 +71,6 @@ echo "TRIAGE_PASSWORD=${TRIAGE_PASSWORD}"
 
 echo "FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD}"
 echo "BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}"
+echo "BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}"
 
 echo "PASS=${PASS}"

@@ -1,0 +1,183 @@
+diff --git a/services/bsky/sidecar.js b/services/bsky/sidecar.js
+new file mode 100644
+index 000000000..7f3242b57
+--- /dev/null
++++ b/services/bsky/sidecar.js
+@@ -0,0 +1,146 @@
++'use strict' /* eslint-disable */
++
++/*
++const dd = require('dd-trace')
++
++dd.tracer
++  .init()
++  .use('http2', {
++    client: true, // calls into dataplane
++    server: false,
++  })
++  .use('express', {
++    hooks: {
++      request: (span, req) => {
++        maintainXrpcResource(span, req)
++      },
++    },
++  })
++
++// modify tracer in order to track calls to dataplane as a service with proper resource names
++const DATAPLANE_PREFIX = '/bsky.Service/'
++const origStartSpan = dd.tracer._tracer.startSpan
++dd.tracer._tracer.startSpan = function (name, options) {
++  if (
++    name !== 'http.request' ||
++    options?.tags?.component !== 'http2' ||
++    !options?.tags?.['http.url']
++  ) {
++    return origStartSpan.call(this, name, options)
++  }
++  const uri = new URL(options.tags['http.url'])
++  if (!uri.pathname.startsWith(DATAPLANE_PREFIX)) {
++    return origStartSpan.call(this, name, options)
++  }
++  options.tags['service.name'] = 'dataplane-bsky'
++  options.tags['resource.name'] = uri.pathname.slice(DATAPLANE_PREFIX.length)
++  return origStartSpan.call(this, name, options)
++}
++*/
++
++// Tracer code above must come before anything else
++const path = require('node:path')
++const assert = require('node:assert')
++const cluster = require('cluster')
++const { Secp256k1Keypair } = require('@atproto/crypto')
++const { ServerConfig, Database, DataPlaneServer} = require('@atproto/bsky')
++
++const main = async () => {
++  const env = getEnv()
++  const config = ServerConfig.readEnv(env)
++
++// starts: emulate packages/dev-env/src/bsky.ts  otherwise get errors saying no relation >>>>>>>>>
++//Separate migration db in case migration changes some connection state that we need in the tests, e.g. "alter database ... set ..."
++  const migrationDb = new Database({
++      url: env.dbPostgresUrl,
++      schema: env.dbPostgresSchema,
++    })
++  if (env.migration) {
++      await migrationDb.migrateToOrThrow(env.migration)
++  } else {
++      await migrationDb.migrateToLatestOrThrow()
++  }
++  await migrationDb.close()
++// ends: emulate packages/dev-env/src/bsky.ts  otherwise get errors saying no relation >>>>>>>>>
++
++
++  const db = new Database({
++      url: env.dbPostgresUrl,
++      schema: env.dbPostgresSchema,
++      poolSize: 10,
++    })
++
++  const dataplane =  await DataPlaneServer.create(
++      db,
++      env.dataplanePort,
++      config.didPlcUrl
++  )
++
++  //await dataplane.start()
++  // Graceful shutdown (see also https://aws.amazon.com/blogs/containers/graceful-shutdowns-with-ecs/)
++  const shutdown = async () => {
++    await dataplane.destroy()
++  }
++  process.on('SIGTERM', shutdown)
++  process.on('disconnect', shutdown) // when clustering
++}
++
++const getEnv = () => ({
++  dbPostgresUrl:    process.env.BSKY_DB_POSTGRES_URL    || undefined,
++  dbPostgresSchema: process.env.BSKY_DB_POSTGRES_SCHEMA || undefined,
++  dataplanePort :   maybeParseInt(process.env.BSKY_DATAPLANE_PORT)     || undefined,
++  migration:        process.env.ENABLE_MIGRATIONS === 'true'           || undefined,
++})
++
++const maybeParseInt = (str) => {
++  if (!str) return
++  const int = parseInt(str, 10)
++  if (isNaN(int)) return
++  return int
++}
++
++/*
++const maintainXrpcResource = (span, req) => {
++  // Show actual xrpc method as resource rather than the route pattern
++  if (span && req.originalUrl?.startsWith('/xrpc/')) {
++    span.setTag(
++      'resource.name',
++      [
++        req.method,
++        path.posix.join(req.baseUrl || '', req.path || '', '/').slice(0, -1), // Ensures no trailing slash
++      ]
++        .filter(Boolean)
++        .join(' '),
++    )
++  }
++}
++*/
++
++const workerCount = maybeParseInt(process.env.CLUSTER_WORKER_COUNT)
++
++if (workerCount) {
++  if (cluster.isPrimary) {
++    console.log(`primary ${process.pid} is running`)
++    const workers = new Set()
++    for (let i = 0; i < workerCount; ++i) {
++      workers.add(cluster.fork())
++    }
++    let teardown = false
++    cluster.on('exit', (worker) => {
++      workers.delete(worker)
++      if (!teardown) {
++        workers.add(cluster.fork()) // restart on crash
++      }
++    })
++    process.on('SIGTERM', () => {
++      teardown = true
++      console.log('disconnecting workers')
++      workers.forEach((w) => w.disconnect())
++    })
++  } else {
++    console.log(`worker ${process.pid} is running`)
++    main()
++  }
++} else {
++  main() // non-clustering
++}
+diff --git a/services/ozone/api.js b/services/ozone/api.js
+index a58e8e53c..e061c9a6c 100644
+--- a/services/ozone/api.js
++++ b/services/ozone/api.js
+@@ -23,12 +23,26 @@ const {
+   envToSecrets,
+   readEnv,
+   httpLogger,
++  Database
+ } = require('@atproto/ozone')
+ 
+ const main = async () => {
+   const env = readEnv()
+   const cfg = envToCfg(env)
+   const secrets = envToSecrets(env)
++  // starts: emulate packages/dev-env/src/ozone.ts  otherwise get errors saying no relation >>>>>>>>>
++  // Separate migration db in case migration changes some connection state that we need in the tests, e.g. "alter database ... set ..."
++    const migrationDb = new Database({
++      schema: env.dbPostgresSchema,
++      url: env.dbPostgresUrl,
++    })
++    if (env.migration) {
++      await migrationDb.migrateToOrThrow(env.migration)
++    } else {
++      await migrationDb.migrateToLatestOrThrow()
++    }
++    await migrationDb.close()
++  // ends: emulate packages/dev-env/src/ozone.ts  otherwise get errors saying no relation <<<<<<<<<
+ 
+   // configure zero, one, or more image invalidators
+   const imgUriEndpoint = process.env.OZONE_IMG_URI_ENDPOINT
