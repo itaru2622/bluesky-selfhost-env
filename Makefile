@@ -66,7 +66,7 @@ LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
-Sbsky ?=plc pds bgs bsky social-app search mod mod-daemon bsky-dataplane test-indigo
+Sbsky ?=plc pds bgs bsky social-app search mod mod-daemon test-indigo
 Sfeed ?=feed-generator
 
 

@@ -328,18 +328,20 @@ services:
       - 2584
     command: node --enable-source-maps api.js
     environment:
+      - BSKY_REPO_PROVIDER=ws://pds:2583
+      - BSKY_BSYNC_HTTP_VERSION=1.1
+      - BSKY_BSYNC_URL=http://bsky:3002
+      - BSKY_BSYNC_PORT=3002
       - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
       - BSKY_DB_POSTGRES_SCHEMA=bsky
+      - BSKY_DATAPLANE_HTTP_VERSION=1.1
+      - BSKY_DATAPLANE_URLS=http://bsky:3001
       - BSKY_DATAPLANE_PORT=3001
       - BSKY_SERVER_DID=did:web:api.${DOMAIN}
       - BSKY_SEARCH_URL=http://opensearch:9200
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
       - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
-      - BSKY_BSYNC_HTTP_VERSION=1.1
-      - BSKY_DATAPLANE_HTTP_VERSION=1.1
-      - BSKY_DATAPLANE_URLS=http://bsky-dataplane:3001
-      - BSKY_BSYNC_URL=http://fake-bsync.example.invalid/
       - BSKY_COURIER_URL=http://fake-courier.example.invalid/
 #                   same as dev-env  ----vvvvvv
       - BSKY_LABELS_FROM_ISSUER_DIDS=did:example:labeler
@@ -382,85 +384,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ${dDir}/appview/cache/:/cache/
-    restart: always
-    depends_on:
-      - database
-      - redis
-      - caddy
-
-  bsky-dataplane:
-    # appview-api (api.${DOMAIN})
-    image: itaru2622/bluesky-atproto-bsky:${asof}
-    build:
-      context: ./repos/atproto/
-      dockerfile: services/bsky/Dockerfile
-      args:
-       - http_proxy=${http_proxy}
-       - https_proxy=${https_proxy}
-       - no_proxy=${no_proxy}
-       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
-    ports:
-      - 3001:3001
-    expose:
-      - 3001
-    command: node --enable-source-maps sidecar.js
-    environment:
-      - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
-      - BSKY_DB_POSTGRES_SCHEMA=bsky
-      - BSKY_DATAPLANE_PORT=3001
-      - BSKY_SERVER_DID=did:web:api.${DOMAIN}
-      - BSKY_SEARCH_URL=http://opensearch:9200
-      - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
-      - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
-      - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
-      - BSKY_BSYNC_HTTP_VERSION=1.1
-      - BSKY_DATAPLANE_HTTP_VERSION=1.1
-      - BSKY_DATAPLANE_URLS=http://bsky-dataplane:3001
-      - BSKY_BSYNC_URL=http://fake-bsync.example.invalid/
-      - BSKY_COURIER_URL=http://fake-courier.example.invalid/
-#                   same as dev-env  ----vvvvvv
-      - BSKY_LABELS_FROM_ISSUER_DIDS=did:example:labeler
-      - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
-      - BSKY_PUBLIC_URL=https://api.${DOMAIN}
-      - PORT=2584
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-      - DEBUG_MODE=1
-      - LOG_ENABLED=true
-      - LOG_LEVEL=debug
-      - LOG_DESTINATION=1
-      # this requires setting up a local postgresql user and database
-      - ENABLE_MIGRATIONS=false
-      - DB_PRIMARY_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
-      - DB_REPLICA_POSTGRES_URLS=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
-      - DB_REPLICA_TAGS_ANY=0
-      - MODERATION_SERVICE_DID=did:web:mod.${DOMAIN}
-      - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - MODERATOR_PASSWORD=${MODERATOR_PASSWORD}
-      - TRIAGE_PASSWORD=${TRIAGE_PASSWORD}
-      - SERVICE_SIGNING_KEY=${SERVICE_SIGNING_KEY}
-      - IMG_URI_SALT=${IMG_URI_SALT}
-      - IMG_URI_KEY=${IMG_URI_KEY}
-      - SERVER_DID=did:web:api.${DOMAIN}
-      - PUBLIC_URL=https://api.${DOMAIN}
-      - DID_PLC_URL=https://plc.${DOMAIN}
-      - SEARCH_ENDPOINT=https://search.${DOMAIN}
-      - PUSH_NOTIFICATION_ENDPOINT=https://push.${DOMAIN}/api/push
-      - REPO_PROVIDER=wss://${DOMAIN}
-      - MODERATION_PUSH_URL=https://admin:${OZONE_ADMIN_PASSWORD}@mod.${DOMAIN}
-###   - IMG_URI_ENDPOINT=https://cdn.${DOMAIN}
-      - REDIS_HOST=redis
-      - BLOB_CACHE_LOC=/cache/
-      - INDEXER_PARTITION_IDS=0
-      - INGESTER_PARTITION_COUNT=1
-##    - CF_DISTRIBUTION_ID=<<REDACTED>>
-    volumes:
-      # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
-      # supporting self-signed certificates, easiest way <<<<
-      - ./repos/atproto/services/bsky/sidecar.js:/app/services/bsky/sidecar.js:ro
+      - ./repos/atproto/services/bsky/api.js:/app/services/bsky/api.js:ro
       - ${dDir}/appview/cache/:/cache/
     restart: always
     depends_on:
