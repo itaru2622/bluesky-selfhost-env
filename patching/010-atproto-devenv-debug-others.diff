@@ -1,5 +1,5 @@
 diff --git a/packages/dev-env/src/bsky.ts b/packages/dev-env/src/bsky.ts
-index 81d2caf67..6718c6af7 100644
+index 81d2caf67..01545f05c 100644
 --- a/packages/dev-env/src/bsky.ts
 +++ b/packages/dev-env/src/bsky.ts
 @@ -7,6 +7,7 @@ import { Client as PlcClient } from '@did-plc/lib'
@@ -25,11 +25,13 @@ index 81d2caf67..6718c6af7 100644
      const serviceKeypair = await Secp256k1Keypair.create()
      const plcClient = new PlcClient(cfg.plcUrl)
  
-@@ -33,12 +38,26 @@ export class TestBsky {
+@@ -33,12 +38,28 @@ export class TestBsky {
        signer: serviceKeypair,
      })
  
-+    Debugdump.dump("### bsky.ts @ serverDid created for 'bsky.test' with ### ", {
++    Debugdump.dump("### bsky.ts @ serverDid: "+ serverDid +"  <= create() ### ")
++
++    Debugdump.dump("### bsky.ts @ serverDid:"+ serverDid +" created for 'bsky.test' with ### ", {
 +      signingKey: serviceKeypair.did(),
 +      rotationKeys: [serviceKeypair.did()],
 +      handle: 'bsky.test',
@@ -52,7 +54,7 @@ index 81d2caf67..6718c6af7 100644
  
      const dataplanePort = await getPort()
      const dataplane = await bsky.DataPlaneServer.create(
-@@ -46,9 +65,13 @@ export class TestBsky {
+@@ -46,9 +67,13 @@ export class TestBsky {
        dataplanePort,
        cfg.plcUrl,
      )
@@ -66,7 +68,7 @@ index 81d2caf67..6718c6af7 100644
  
      const config = new bsky.ServerConfig({
        version: 'unknown',
-@@ -66,6 +89,7 @@ export class TestBsky {
+@@ -66,6 +91,7 @@ export class TestBsky {
        ...cfg,
        adminPasswords: [ADMIN_PASSWORD],
      })
@@ -74,7 +76,7 @@ index 81d2caf67..6718c6af7 100644
  
      // Separate migration db in case migration changes some connection state that we need in the tests, e.g. "alter database ... set ..."
      const migrationDb = new bsky.Database({
-@@ -84,6 +108,8 @@ export class TestBsky {
+@@ -84,6 +110,8 @@ export class TestBsky {
        config,
        signingKey: serviceKeypair,
      })
@@ -83,7 +85,7 @@ index 81d2caf67..6718c6af7 100644
  
      const sub = new bsky.RepoSubscription({
        service: cfg.repoProvider,
-@@ -92,8 +118,18 @@ export class TestBsky {
+@@ -92,8 +120,18 @@ export class TestBsky {
        background: new BackgroundQueue(db),
      })
  
@@ -103,7 +105,7 @@ index 81d2caf67..6718c6af7 100644
      return new TestBsky(url, port, db, server, dataplane, bsync, sub)
    }
 diff --git a/packages/dev-env/src/network.ts b/packages/dev-env/src/network.ts
-index fc1ed67c1..94db92dc7 100644
+index fc1ed67c1..34b0c95e3 100644
 --- a/packages/dev-env/src/network.ts
 +++ b/packages/dev-env/src/network.ts
 @@ -11,6 +11,7 @@ import { TestOzone, createOzoneDid } from './ozone'
@@ -123,17 +125,20 @@ index fc1ed67c1..94db92dc7 100644
      const redisHost = process.env.REDIS_HOST
      const dbPostgresUrl = params.dbPostgresUrl || process.env.DB_POSTGRES_URL
      assert(dbPostgresUrl, 'Missing postgres url for tests')
-@@ -44,6 +47,9 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -44,6 +47,12 @@ export class TestNetwork extends TestNetworkNoAppView {
      const ozoneKey = await Secp256k1Keypair.create({ exportable: true })
      const ozoneDid = await createOzoneDid(plc.url, ozoneKey)
  
-+    Debugdump.dump("### network.ts @ ozoneDid <- createOzoneDid(plcUrl, ozoneKey) ### ")
++    Debugdump.dump("### network.ts @ ozoneDid <- createOzoneDid(plcUrl, ozoneKey) ### ",
++    {'ozoneDid': ozoneDid,
++     'ozoneKey(hex)': uint8arrays.toString(await ozoneKey.export(), 'hex')
++    })
 +
 +
      const bsky = await TestBsky.create({
        port: bskyPort,
        plcUrl: plc.url,
-@@ -55,6 +61,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -55,6 +64,8 @@ export class TestNetwork extends TestNetworkNoAppView {
        modServiceDid: ozoneDid,
        ...params.bsky,
      })
@@ -142,7 +147,7 @@ index fc1ed67c1..94db92dc7 100644
  
      const pds = await TestPds.create({
        port: pdsPort,
-@@ -66,6 +74,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -66,6 +77,8 @@ export class TestNetwork extends TestNetworkNoAppView {
        ...params.pds,
      })
  
@@ -151,7 +156,7 @@ index fc1ed67c1..94db92dc7 100644
      const ozone = await TestOzone.create({
        port: ozonePort,
        plcUrl: plc.url,
-@@ -81,6 +91,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -81,6 +94,8 @@ export class TestNetwork extends TestNetworkNoAppView {
        ...params.ozone,
      })
  
@@ -161,7 +166,7 @@ index fc1ed67c1..94db92dc7 100644
  
      return new TestNetwork(plc, pds, bsky, ozone)
 diff --git a/packages/dev-env/src/ozone.ts b/packages/dev-env/src/ozone.ts
-index 90733932e..4ce3a77d3 100644
+index 90733932e..36d13079c 100644
 --- a/packages/dev-env/src/ozone.ts
 +++ b/packages/dev-env/src/ozone.ts
 @@ -9,6 +9,7 @@ import { DidAndKey, OzoneConfig } from './types'
@@ -172,7 +177,7 @@ index 90733932e..4ce3a77d3 100644
  
  export class TestOzone {
    constructor(
-@@ -22,12 +23,17 @@ export class TestOzone {
+@@ -22,26 +23,34 @@ export class TestOzone {
    ) {}
  
    static async create(config: OzoneConfig): Promise<TestOzone> {
@@ -181,38 +186,33 @@ index 90733932e..4ce3a77d3 100644
      const serviceKeypair =
        config.signingKey ?? (await Secp256k1Keypair.create({ exportable: true }))
      const signingKeyHex = ui8.toString(await serviceKeypair.export(), 'hex')
-+    Debugdump.dump("### ozone.ts @ genKeys [ serviceKeypairy, signingKeyHex ]  ### ")
++    Debugdump.dump("### ozone.ts @  [ serviceKeypair, signingKeyHex ] <= [ create(), export() ]  ### ")
 +
      let serverDid = config.serverDid
      if (!serverDid) {
        serverDid = await createOzoneDid(config.plcUrl, serviceKeypair)
-+      Debugdump.dump("### ozone.ts @ serverDid <= createOzoneDid()   ### ")
++      Debugdump.dump("### ozone.ts @ got serverDid <= createOzoneDid(plcurl, serviceKeypair)  ### ", serverDid)
      }
  
++    Debugdump.dump("### ozone.ts @ get admin <= createDidAndKey(plcUrl, handle, pds)  ### ")
      const admin = await createDidAndKey({
-@@ -36,6 +42,12 @@ export class TestOzone {
+       plcUrl: config.plcUrl,
+       handle: 'admin.ozone',
        pds: 'https://pds.invalid',
      })
  
-+    Debugdump.dump("### ozone.ts @ admin <= createDidAndKey(plcUrl, handle, pds)  ### ",
-+    { plcUrl: config.plcUrl,
-+      handle: 'admin.ozone',
-+      pds: 'https://pds.invalid',
-+    })
-+
++    Debugdump.dump("### ozone.ts @ get moderator <= createDidAndKey(plcUrl, handle, pds)  ### ")
      const moderator = await createDidAndKey({
        plcUrl: config.plcUrl,
        handle: 'moderator.ozone',
-@@ -48,6 +60,8 @@ export class TestOzone {
        pds: 'https://pds.invalid',
      })
  
-+    Debugdump.dump("### ozone.ts @ moderator, and triage <= createDidAndKey(plcUrl, handle, pds)  ### ")
-+
-     const port = config.port || (await getPort())
-     const url = `http://localhost:${port}`
- 
-@@ -69,6 +83,8 @@ export class TestOzone {
++    Debugdump.dump("### ozone.ts @ get triage <= createDidAndKey(plcUrl, handle, pds)  ### ")
+     const triage = await createDidAndKey({
+       plcUrl: config.plcUrl,
+       handle: 'triage.ozone',
+@@ -69,6 +78,8 @@ export class TestOzone {
        ],
        triageDids: [...(config.triageDids ?? []), triage.did],
      }
@@ -221,7 +221,7 @@ index 90733932e..4ce3a77d3 100644
  
      // Separate migration db in case migration changes some connection state that we need in the tests, e.g. "alter database ... set ..."
      const migrationDb = new ozone.Database({
-@@ -83,6 +99,8 @@ export class TestOzone {
+@@ -83,6 +94,8 @@ export class TestOzone {
      await migrationDb.close()
  
      const cfg = ozone.envToCfg(env)
@@ -230,7 +230,7 @@ index 90733932e..4ce3a77d3 100644
      const secrets = ozone.envToSecrets(env)
  
      // api server
-@@ -90,9 +108,17 @@ export class TestOzone {
+@@ -90,9 +103,17 @@ export class TestOzone {
        imgInvalidator: config.imgInvalidator,
      })
      await server.start()
@@ -243,11 +243,36 @@ index 90733932e..4ce3a77d3 100644
 +
 +    Debugdump.dump("### ozone.ts @ daemon <= ozone.OzoneService.create(cfg, secrets) and starts ### ")
 +
-+    Debugdump.dump("### ozone.ts @ disable daemon.ctx.eventReverser by destory() ### ")
++    Debugdump.dump("### ozone.ts @ disable;  daemon.ctx.eventReverser.destory() ### ")
 +
      // don't do event reversal in dev-env
      await daemon.ctx.eventReverser.destroy()
  
+@@ -172,6 +193,24 @@ export const createOzoneDid = async (
+     },
+     keypair,
+   )
++  Debugdump.dump("### ozone.ts @ createOzoneDid() => plc.didForCreateOp(below, keypair) ### ",
++  {
++      type: 'plc_operation',
++      alsoKnownAs: [],
++      rotationKeys: [keypair.did()],
++      verificationMethods: {
++        atproto_label: keypair.did(),
++      },
++      services: {
++        atproto_labeler: {
++          type: 'AtprotoLabeler',
++          endpoint: 'https://ozone.public.url',
++        },
++      },
++      prev: null,
++  })
++
++
+   const did = await plc.didForCreateOp(plcOp)
+   await plcClient.sendOperation(did, plcOp)
+   return did
 diff --git a/packages/dev-env/src/pds.ts b/packages/dev-env/src/pds.ts
 index d1b3cbbc3..85e058526 100644
 --- a/packages/dev-env/src/pds.ts
@@ -293,3 +318,48 @@ index d1b3cbbc3..85e058526 100644
  
      await server.start()
  
+diff --git a/packages/dev-env/src/util.ts b/packages/dev-env/src/util.ts
+index 3c7276ef3..1b0eec481 100644
+--- a/packages/dev-env/src/util.ts
++++ b/packages/dev-env/src/util.ts
+@@ -5,6 +5,9 @@ import { Secp256k1Keypair } from '@atproto/crypto'
+ import { TestPds } from './pds'
+ import { TestBsky } from './bsky'
+ import { DidAndKey } from './types'
++import { Debugdump } from './debug'
++import * as ui8 from 'uint8arrays'
++
+ 
+ export const mockNetworkUtilities = (pds: TestPds, bsky?: TestBsky) => {
+   mockResolvers(pds.ctx.idResolver, pds)
+@@ -77,7 +80,13 @@ export const createDidAndKey = async (opts: {
+   pds: string
+ }): Promise<DidAndKey> => {
+   const { plcUrl, handle, pds } = opts
++  Debugdump.dump("### util.ts @ createDidAndKey called ###",{'handle': handle, 'pds': pds})
+   const key = await Secp256k1Keypair.create({ exportable: true })
++
++  const _debugKeyHex = ui8.toString(await key.export(), 'hex')
++  Debugdump.dump("### util.ts @ got key for "+ handle +"    ###",{ 'key': _debugKeyHex, 'key.did()': key.did()})
++
++
+   const did = await new plc.Client(plcUrl).createDid({
+     signingKey: key.did(),
+     rotationKeys: [key.did()],
+@@ -85,6 +94,16 @@ export const createDidAndKey = async (opts: {
+     pds,
+     signer: key,
+   })
++
++  Debugdump.dump("### util.ts @ call plc.createDid( "+ handle +" , "+ pds +" ,plcUrl)  ###",
++  {
++    signingKey: key.did(),
++    rotationKeys: [key.did()],
++    handle,
++    pds,
++    signer: _debugKeyHex + " in binnary",
++  })
++
+   return {
+     key,
+     did,
