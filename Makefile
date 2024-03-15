@@ -66,7 +66,7 @@ LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
-Sbsky ?=plc pds bgs bsky social-app search mod mod-daemon test-indigo
+Sbsky ?=plc pds bgs bsky social-app search mod mod-daemon bsky-dataplane test-indigo
 Sfeed ?=feed-generator
 
 
@@ -114,8 +114,9 @@ delRepoDirAll:
 
 # generate passwords for test env
 genPass: ${passfile}
-${passfile}: ./config/pass-gen/gen.sh
-	./config/pass-gen/gen.sh > $@
+${passfile}:
+	@echo "its takes some time; please wait..."
+	wDir=${wDir} ./config/pass-gen/gen.sh > $@
 	cat $@
 	@echo "passwords generated and stored in $@"
 
@@ -124,7 +125,7 @@ certs/ca-certificates.crt:
 	cp -p /etc/ssl/certs/ca-certificates.crt $@
 
 setupdir:
-	mkdir -p ${dDir}/pds ${dDir}/appview/cache ${dDir}/image/static ${dDir}/image/tmp ${dDir}/feed-generator ${aDir}
+	mkdir -p ${dDir}/pds/blobs ${dDir}/appview/cache ${dDir}/feed-generator ${aDir}
 
 ################################
 # include other ops.
