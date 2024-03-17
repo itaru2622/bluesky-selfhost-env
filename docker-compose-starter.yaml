@@ -190,6 +190,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - NODE_ENV=development
       - PORT=2582
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -222,6 +223,7 @@ services:
     expose:
       - 2583
     environment:
+      - NODE_ENV=development
       - PDS_SERVICE_DID=did:web:${DOMAIN}
       - PDS_BSKY_APP_VIEW_DID=did:web:api.${DOMAIN}
       - PDS_DEV_MODE=true
@@ -286,6 +288,7 @@ services:
       - 2470:2470
     command: /bigsky
     environment:
+      - NODE_ENV=development
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
@@ -328,6 +331,7 @@ services:
       - 2584
     command: node --enable-source-maps api.js
     environment:
+      - NODE_ENV=development
       - BSKY_REPO_PROVIDER=ws://pds:2583
       - BSKY_BSYNC_HTTP_VERSION=1.1
       - BSKY_BSYNC_URL=http://bsky:3002
@@ -640,6 +644,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - NODE_ENV=development
       - HTTP_ADDRESS=:8100
       - GOINSECURE=${DOMAIN},*.${DOMAIN}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -704,6 +709,7 @@ services:
       - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - NODE_ENV=development
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_APPVIEW_PUSH_EVENTS=true
 # vvvv admin.ozone, triage.ozone,   <= pds: https://pds.invalid
@@ -755,6 +761,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
+      - NODE_ENV=development
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_APPVIEW_PUSH_EVENTS=true
 # vvvv admin.ozone, triage.ozone,   <= pds: https://pds.invalid
