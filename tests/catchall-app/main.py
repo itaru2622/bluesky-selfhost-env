@@ -1,10 +1,22 @@
 # cf. https://stackoverflow.com/questions/63069190/how-to-capture-arbitrary-paths-at-one-route-in-fastapi
 
 from fastapi import FastAPI, Request
+import json
 
 app = FastAPI()
 
-@app.get("/{full_path:path}")
-def catch_all(req: Request, full_path: str):
-    return {"host" : req._headers.get('host'), "path": full_path}
-    #return {"path" : full_path, "query": req._query_params, "headers": req._headers}
+@app.get    ("/{full_path:path}")
+@app.put    ("/{full_path:path}")
+@app.post   ("/{full_path:path}")
+@app.delete ("/{full_path:path}")
+@app.options("/{full_path:path}")
+@app.patch  ("/{full_path:path}")
+@app.trace  ("/{full_path:path}")
+async def catch_all(req: Request, full_path: str):
+    body = await req.body() or '{}'
+    body = json.loads(body)
+
+#   print( {"path" : full_path, "headers": req._headers, "query": req._query_params.items(),  "reqScope": dict(req.scope) })
+    rtn ={ "method": req.scope.get("method"), "url": req.url._url, "query": dict(req._query_params),  "body": body, "Authorization": req._headers.get('Authorization'), "host" : req._headers.get('host') }
+    print(rtn)
+    return rtn
