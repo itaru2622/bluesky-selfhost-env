@@ -12,7 +12,7 @@ it may not work with latest codes.
 
 ## current status regarding self-hosting:
 
-with 'asof-2024-03-10' branch, just get started. work in progress with atproto/dev-env + social-app.<p>
+with 'asof-2024-03-16' branch, just get started. work in progress with atproto/dev-env + social-app.<p>
 
 with 'asof-2024-01-06' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
 
