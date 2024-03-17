@@ -16,6 +16,7 @@ services:
     environment:
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
+      - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates, required to add OS by update-ca-certificates
@@ -92,6 +93,16 @@ services:
     environment:
       - app=main:app
       - opts=--host 0.0.0.0 --port 2583 --reload --reload-include "*.py" --reload-include "*.conf"
+    volumes:
+      - ./tests/catchall-app:/app
+
+  bsky:
+    image: itaru2622/fastapi:bookworm
+    ports:
+      - 2584:2584
+    environment:
+      - app=main:app
+      - opts=--host 0.0.0.0 --port 2584 --reload --reload-include "*.py" --reload-include "*.conf"
     volumes:
       - ./tests/catchall-app:/app
 

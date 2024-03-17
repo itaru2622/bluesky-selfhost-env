@@ -224,10 +224,12 @@ feed-generator.{$DOMAIN} {
 # starts: additional (long FQDN) >>>>>>>>>
 
 # for ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env
+# for https://github.com/bluesky-social/bsky-docs/issues/63
 public.api.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://bsky:2584
+#       temporal support of no-auth API call, fill secrets.
+	reverse_proxy http://admin:{$BSKY_ADMIN_PASSWORDS}@bsky:2584
 }
 # ends: additional (long FQDN)   <<<<<<<<<
