@@ -12,21 +12,34 @@ it may not work with latest codes.
 
 ## current status regarding self-hosting:
 
-with 'asof-2024-03-16' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
+with 'asof-2024-03-16' branch, as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
+some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334
+current tasks are:
+
+   A) tests features one by one and when it is not test-ok, then<BR>
+   B) determining the matter is not caused by customized code for self-hosting through debugging<BR>
+   C) finding gap one by one, and filling the gaps with coding<BR>
+   D) get back to re-test.<BR>
+
+finally, this self-hosting env got below capabilities now:
 
    -  ok: create user on pds (via bluesky API).
-   -  NG: create user on pds via bluesky API (stacked after submitting 'continue')
+   -  NG: create user on pds on social-app (get stuck after submitting 'continue'. <=> in dev-env, we have 'clear' in upper right corner on social-app to get out from stuck.)
    -  ok: sign-in via social-app (with multiple accounts)
    -  ok: post articles on social-app
-   -  ok: vote 'like' to  article on social-app
+   -  ok: vote 'like' to article on social-app
    -  ok: reply to article on social-app
    -  ok: start following in others profile page on social-app
    -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
    -  ok: find posts in 'search' on social-app
-   -  NG: find users in 'search' on social-app  <- reason unknown yet.
-   -  NG: find feeds in 'search' on social-app  <- investigation not started
+   -  ??: find users in 'search' on social-app
+         - ok: find users with 'display-name' after user configures it in his/her profile page.
+         - none(without any error): find users with full qualified handle name before display-name configured in his/her profile page.
+   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
+   -  not yet: post an article in feed (and crawered/notifying by/to bgs).
+   -  not yet: view post in feed (channel) on social-app.
    -  not tested: regarding moderation
-   -  ok: websocket working; tested with wss://test-wss.${DOMAIN}/ and ws://test-ws.${DOMAIN}/
+   -  ok: websocket subscribing; tested with feed-generator, and websocat to pds/bgs.
 
 
 with 'asof-2024-01-06' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
