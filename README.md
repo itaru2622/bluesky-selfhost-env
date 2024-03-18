@@ -1,6 +1,17 @@
-# self-hosting bluesky 
+# <a id="top"/>self-hosting bluesky 
 
-this repository describes the way to self-host bluesky with
+## Contents:
+  - [Motivation](#motivation)
+  - [Current Status](#status)
+  - [References](#refs)
+  - [Sourses in Use](#sources)
+  - [Operations to get and run self-hosting bluesky](#ops)
+  - [Hacks](#hack)
+  - [Sample DNS Server Config(bind9)](#sample-dns-config)
+
+## <a id="motivation" />Motivation
+
+this repository aims to get self-hosted bluesky env in easy with:
 
  - configurable hosting domain:  easy to tunable by environment variable (DOMAIN)
  - reproducibility: disclosure all configs and operations, including reverse proxy rules.
@@ -10,18 +21,12 @@ this repository describes the way to self-host bluesky with
 at current, working with code asof <strong>2024-03-16</strong> of bluesky-social.<br>
 it may not work with latest codes.
 
-## current status regarding self-hosting:
+## <a id="status"/>Current status regarding self-hosting
 
 with 'asof-2024-03-16' branch, as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
-some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334
-current tasks are:
+some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
 
-   A) tests features one by one and when it is not test-ok, then<BR>
-   B) determining the matter is not caused by customized code for self-hosting through debugging<BR>
-   C) finding gap one by one, and filling the gaps with coding<BR>
-   D) get back to re-test.<BR>
-
-finally, this self-hosting env got below capabilities now:
+at current, this self-hosting env provides below capabilities:
 
    -  ok: create user on pds (via bluesky API).
    -  NG: create user on pds on social-app (get stuck after submitting 'continue'. <=> in dev-env, we have 'clear' in upper right corner on social-app to get out from stuck.)
@@ -36,8 +41,8 @@ finally, this self-hosting env got below capabilities now:
          - ok: find users with 'display-name' after user configures it in his/her profile page.
          - none(without any error): find users with full qualified handle name before display-name configured in his/her profile page.
    -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
-   -  not yet: post an article in feed (and crawered/notifying by/to bgs).
-   -  not yet: view post in feed (channel) on social-app.
+   -  not tested: post an article in feed.
+   -  not tested: view post in feed (channel) on social-app.
    -  not tested: regarding moderation
    -  ok: websocket subscribing; tested with feed-generator, and websocat to pds/bgs.
 
@@ -59,8 +64,9 @@ with 'asof-2024-01-06' branch, as described below, basic feature started working
 
 It seems: indexer and feed-generator are not working by unknown reason even those are staying 'up' status.
 
+[back to top](#top)
 
-## references
+## <a id="refs"/>References
 
 special thanks to prior works on self-hosting.
    - https://github.com/ikuradon/atproto-starter-kit/tree/main
@@ -70,7 +76,8 @@ hacks in bluesky:
    - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
    - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
 
-## sources in use.
+[back to top](#top)
+## <a id="sources"/>sources in use
 
 | components     | url (origin)                                           |
 |----------------|:-------------------------------------------------------|
@@ -87,20 +94,20 @@ other dependencies:
 | recverse proxy | https://github.com/caddyserver/caddy (official docker image of caddy:2) |
 | DNS server     | bind9 or others, such as https://github.com/itaru2622/docker-bind9.git  |
 
-
-## operations (powered by Makefile)
+[back to top](#top)
+## <a id="ops"/>operations (powered by Makefile)
 
 below, it assumes self-hosting domain is mybluesky.local.com (defined in Makefile).<br>
 you can overwrite the domain name by environment variable as below:
 
-0) configure params for ops
+### <a id="ops0-configparamss"/>0) configure params for ops
 
 ```bash
 # 1) set domain name for self-hosting bluesky
 export DOMAIN=whatever.yourdomain.com
 
-# 2) set asof daytime, for bluesky-social codes (current testing with 2024-01-06)
-export asof=2024-03-10
+# 2) set asof daytime, for bluesky-social codes (current testing with 2024-03-16)
+export asof=2024-03-16
 
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
@@ -115,8 +122,7 @@ make echo
 make genPass
 ```
 
-
-1) get sources and checkout by DayTime(2024-01-06)
+### <a id="ops1-clone"/>1) get sources and checkout
 
 ```bash
 # get sources from all repositories
@@ -126,20 +132,19 @@ make    cloneAll
 make   mkBranch_asof branch=work
 ```
 
-
-2) prepare on your network
+### <a id="ops2-prepare"/>2) prepare on your network
 
 ```
-2.1) make DNS A-Records for your self-hosting domain, at least:
+1) make DNS A-Records for your self-hosting domain, at least:
      -    ${DOMAIN}
      -  *.${DOMAIN}
 
-2.2) generate and install CA certificate (for self-signed certificate)
+2) generate and install CA certificate (for self-signed certificate)
      -  after generation, copy crt and key as ./certs/root.{crt,key}
      -  note: don't forget to install root.crt to your host machine and browser.
 ```
 
-3) check if it's ready to self-host bluesky.
+### <a id="ops3-check"/>3) check if it's ready to self-host bluesky
 
 ```bash
 # check DNS server responses for your self-host domain
@@ -169,61 +174,63 @@ make    docker-stop f=./docker-compose-debug-caddy.yaml
 => if testOK then go ahead, otherwise check your environment.
 
 
-4) build docker images, to prepare self-hosting...
+### <a id="ops4-build"/>4) build docker images, to prepare self-hosting...
 
 ```bash
-# 4.0) apply mimimum patch for self-docker-image-build, regardless self-hosting.
+# 0) apply mimimum patch for self-docker-image-build, regardless self-hosting.
 #      as described in https://github.com/bluesky-social/atproto/discussions/2026 for feed-generator/Dockerfile etc.
 # NOTE: this ops checkout new branch before applying patch, and keep staying new branch
 make patch-dockerbuild
 
-# 4.1) build images with original
+# 1) build images with original
 make build DOMAIN=
 
-# 4.2) apply patch for self-hosting
+# 2) apply patch for self-hosting
 #      as described in https://syui.ai/blog/post/2024/01/08/bluesky/
 # NOTE: this ops checkout new branch before applying patch, and keep staying new branch
 make patch-selfhost
 
-# 4.3) build social-app for self-hosting...
+# 3) build social-app for self-hosting...
 make build services="social-app feed-generator"
 ```
 
-5) run bluesky with selfhosting
+### <a id="ops5-run"/>5) run bluesky with selfhosting
 
 ```bash
-# 5.1) start required containers (database, caddy etc).
+# 1) start required containers (database, caddy etc).
 make docker-start
 
 # wait until log message becomes silent.
 
-# 5.2) start bluesky containers, finally...
+# 2) start bluesky containers, finally...
 make docker-start-bsky
 ```
 
-6) run bluesky feed-generator
+### <a id="ops6-run-fg"/>6) run bluesky feed-generator
+
 ```bash
-# 6.1) check if social-app is ready to serve.
+# 1) check if social-app is ready to serve.
 curl -L https://social-app.${DOMAIN}/
 
-# 6.2) create account for feed-generator
+# 2) create account for feed-generator
 make api_CreateAccount_feedgen
 
-# 6.3) start boosky feed-generator
+# 3) start boosky feed-generator
 make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
 ```
 
-## play with self-hosted blusky.
+### <a id="ops7-play"/>7) play with self-hosted blusky.
 
 on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```
 
-## stop all containters
+### <a id="ops8-stop"/>8) stop all containters
 
 ```bash
 make docker-stop
 ```
 
-## Hack
+[back to top](#top)
+## <a id="hack">Hack
 
 1) create accounts in easy
 
@@ -257,7 +264,8 @@ cat config/caddy/Caddyfile
 find repos/* -type f | grep -v /.git/  | grep -v /.github/ | grep -v __ | xargs grep -n -A2 -B2 -f atproto-starter-kit/envs.txt  | grep -A2 -B2 -f /tmp/url-or-did.txt > /tmp/res.txt
 ```
 
-## DNS server configuration sample (bind9)
+[back to top](#top)
+## <a id="sample-dns-config"/>DNS server configuration sample (bind9)
 
 description of test network:
 
@@ -326,3 +334,4 @@ add it in /etc/resolv.conf as below on all testing machines
 ```
 nameserver 192.168.1.27
 ```
+[back to top](#top)
