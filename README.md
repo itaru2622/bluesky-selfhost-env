@@ -7,12 +7,27 @@ this repository describes the way to self-host bluesky with
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, working with code asof <strong>2024-03-06</strong> of bluesky-social.<br>
+at current, working with code asof <strong>2024-03-16</strong> of bluesky-social.<br>
 it may not work with latest codes.
 
 ## current status regarding self-hosting:
 
-with 'asof-2024-03-16' branch, just get started. work in progress with atproto/dev-env + social-app.<p>
+with 'asof-2024-03-16' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
+
+   -  ok: create user on pds (via bluesky API).
+   -  NG: create user on pds via bluesky API (stacked after submitting 'continue')
+   -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: post articles on social-app
+   -  ok: vote 'like' to  article on social-app
+   -  ok: reply to article on social-app
+   -  ok: start following in others profile page on social-app
+   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
+   -  ok: find posts in 'search' on social-app
+   -  NG: find users in 'search' on social-app  <- reason unknown yet.
+   -  NG: find feeds in 'search' on social-app  <- investigation not started
+   -  not tested: regarding moderation
+   -  ok: websocket working; tested with wss://test-wss.${DOMAIN}/ and ws://test-ws.${DOMAIN}/
+
 
 with 'asof-2024-01-06' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
 
@@ -158,7 +173,7 @@ make build DOMAIN=
 make patch-selfhost
 
 # 4.3) build social-app for self-hosting...
-make build services=social-app
+make build services="social-app feed-generator"
 ```
 
 5) run bluesky with selfhosting
