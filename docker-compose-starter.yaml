@@ -197,7 +197,7 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
       - LOG_ENABLED=true
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - LOG_DESTINATION=1
       - ENABLE_MIGRATIONS=true
       # this requires setting up a local postgresql user and database
@@ -237,7 +237,7 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
       - LOG_ENABLED=true
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - LOG_DESTINATION=1
       - PDS_HOSTNAME=${DOMAIN}
 # DONOT SET PDS_SERVICE_HANDLE_DOMAINS >>>>>
@@ -294,8 +294,9 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
       - LOG_ENABLED=true
-      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - GODEBUG=netdns=go+4
+      - LOG_LEVEL=debug
+      - GOLOG_LOG_LEVEL=debug
+      #- GODEBUG=netdns=go+4
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
@@ -357,7 +358,7 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
       - LOG_ENABLED=true
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
       - ENABLE_MIGRATIONS=false
