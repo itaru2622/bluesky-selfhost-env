@@ -1,9 +1,6 @@
-diff --git a/.dockerbuild b/.dockerbuild
-new file mode 100644
-index 0000000..e69de29
 diff --git a/Dockerfile b/Dockerfile
 new file mode 100644
-index 0000000..d82fe70
+index 0000000..b6307bc
 --- /dev/null
 +++ b/Dockerfile
 @@ -0,0 +1,13 @@
@@ -11,7 +8,7 @@ index 0000000..d82fe70
 +
 +WORKDIR /app
 +COPY . .
-+RUN yarn install
++RUN yarn install; npm install -g ts-node
 +
 +ENV NODE_ENV=production
 +ENV FEEDGEN_PORT=3000
