@@ -1,6 +1,6 @@
 # cf. https://stackoverflow.com/questions/63069190/how-to-capture-arbitrary-paths-at-one-route-in-fastapi
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 import json
 
 app = FastAPI()
@@ -20,3 +20,11 @@ async def catch_all(req: Request, full_path: str):
     rtn ={ "method": req.scope.get("method"), "url": req.url._url, "query": dict(req._query_params),  "body": body, "Authorization": req._headers.get('Authorization'), "host" : req._headers.get('host') }
     print(rtn)
     return rtn
+
+@app.websocket("/{full_path:path}")
+async def catch_websocket(ws:WebSocket, full_path: str):
+    await ws.accept()
+    await ws.send_text(f'recieve connection at: {full_path}')
+    while True:
+        msg = await ws.receive_text()
+        await ws.send_text(f'got: {msg}')
