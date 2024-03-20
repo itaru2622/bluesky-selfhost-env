@@ -230,9 +230,9 @@ make docker-stop
 ```
 
 [back to top](#top)
-## <a id="hack">Hack
+## <a id="hack"/>Hack
 
-1) create accounts in easy
+### <a id="hack1-ops-CreateAccount"/>1) create accounts in easy
 
 ```bash
 export u=foo
@@ -246,22 +246,111 @@ export u=baz
 !make
 ```
 
+[back to top](#top)
+### <a id="hack1-EnvVars2"/>2) check Env Vars in docker-compose
 
-2) get mapping rules in docker-compose
+1) get all env vars in docker-compose
 
 ```bash
-cat ./docker-compose-starter.yaml | grep {DOMAIN} | sed 's/^ .*- //' | grep -v \# | grep -v image: | sort -u
+# names and those values
+_yqpath='.services[].environment'
+_yqpath='.services[].environment, .services[].build.args'
+
+cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
+  | grep -v '^---' | sed 's/^- //' | sort -u -f
+
+# names
+cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
+  | grep -v '^---' | sed 's/^- //' | sort -u -f \
+  | awk -F= '{print $1}' | sort -u -f
 ```
 
-3) get mapping rule in reverse proxy (caddy )
+2) env vars regarding {URL | DID | DOMAIN} == mapping rules in docker-compose
+
+```bash
+# get {name=value} of env vars regarding { URL | DID | DOMAIN }
+cat ./docker-compose-starter.yaml | yq -y .services[].environment \
+ | grep -v '^---' | sed 's/^- //' | sort -u -f \
+ | grep -e :// -e did: -e {DOMAIN}
+
+# get names of env vars regarding { URL | DID | DOMAIN }
+cat ./docker-compose-starter.yaml | yq -y .services[].environment \
+ | grep -v '^---' | sed 's/^- //' | sort -u -f \
+ | grep -e :// -e did: -e {DOMAIN} \
+ | awk -F= '{print $1}' | sort -u -f \
+ | tee /tmp/url-or-did.txt
+```
+
+3) get mapping rules in reverse proxy (caddy )
+
 ```bash
 # dump rules, no idea to convert into  easy reading format...
 cat config/caddy/Caddyfile
 ```
 
-4) check mapping of original
+[back to top](#top)
+### <a id="hack1-EnvVars1"/>2) check Env Vars in sources
+
+1) files related env vars in sources
+
 ```bash
-find repos/* -type f | grep -v /.git/  | grep -v /.github/ | grep -v __ | xargs grep -n -A2 -B2 -f atproto-starter-kit/envs.txt  | grep -A2 -B2 -f /tmp/url-or-did.txt > /tmp/res.txt
+# files named *env*
+find repos -type f | grep -v -e /.git/  | grep -i env \
+  | grep -v -e .jpg$ -e .ts$  -e .json$ -e .png$ -e .js$
+
+# files containing 'export'
+find repos -type f | grep -v /.git/  | xargs grep -l export \
+  | grep -v -e .js$ -e .jsx$  -e .ts$ -e .tsx$ -e .go$ -e go.sum$ -e go.mod$ -e .po$ -e .json$ -e .patch$ -e .lock$ -e .snap$
+```
+
+2) get all env vars from source code
+
+```bash
+#in easy
+_files=repos
+#ensure files to search  envs
+_files=`find repos -type f | grep -v -e '/.git' -e /__  -e /tests/ -e _test.go -e /interop-test-files  -e /testdata/ -e /testing/ -e /jest/ | sort -u -f`
+
+# for javascripts families from process.env.ENVNAME
+grep -R process.env ${_files} \
+  | cut -d : -f 2- | sed 's/.*process\.//' | grep '^env\.' | sed 's/^env\.//' \
+  | sed -r 's/(^[A-Za-z_0-9\-]+).*/\1/' | sort -u -f \
+  | tee /tmp/vars-js1.txt
+
+# for javascripts families from envXXX('MORE_ENVNAME'), refer atproto/packages/common/src/env.ts for envXXX
+grep -R -e envStr -e envInt -e envBool -e envList ${_files} \
+  | cut -d : -f 2- \
+  | grep -v -e ^import -e ^export -e ^function  \
+  | sed "s/\"/'/g" \
+  | grep \' | awk -F\' '{print $2}' | sort -u -f \
+  | tee /tmp/vars-js2.txt
+
+# for golang  from EnvVar(s): []string{"ENVNAME", "MORE_ENVNAME"}
+grep -R EnvVar ${_files} \
+  | cut -d : -f 3- | sed -e 's/.*string//' -e 's/[,"{}]//g' \
+  | tr ' ' '\n' | grep -v ^$ | sort -u -f \
+  | tee /tmp/vars-go.txt
+
+# get unique lists
+cat /tmp/vars-js1.txt /tmp/vars-js2.txt /tmp/vars-go.txt | sort -u -f > /tmp/envs.txt
+
+# pick env vars related to mapping {URL, ENDPOINT, DID, HOST, PORT, ADDRESS}
+cat /tmp/envs.txt  | grep -e URL -e ENDPOINT -e DID -e HOST -e PORT -e ADDRESS
+```
+
+3) find {URL | DID | bsky } near env names
+
+```bash
+find repos -type f | grep -v -e /.git  -e __ -e .json$ \
+  | xargs grep -R -n -A3 -B3 -f /tmp/envs.txt \
+  | grep -A2 -B2 -e :// -e did: -e bsky
+```
+
+4) find bsky.{social,app,network} in sources ( to check hard-coded domain/FQDN )
+
+```bash
+find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e .md$  -e .sh$ -e .json$ -e .txt$ -e _test.go$ \
+  | xargs grep -n -e bsky.social -e bsky.app -e bsky.network  -e bsky.dev
 ```
 
 [back to top](#top)
