@@ -128,8 +128,8 @@ services:
     ports:
       - 54321:80
     environment:
-      PGADMIN_DEFAULT_EMAIL:    example@example.com
-      PGADMIN_DEFAULT_PASSWORD: password
+      - PGADMIN_DEFAULT_EMAIL=example@example.com
+      - PGADMIN_DEFAULT_PASSWORD=password
 #   volumes:
 #      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
     depends_on:
