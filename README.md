@@ -309,7 +309,7 @@ find repos -type f | grep -v /.git/  | xargs grep -l export \
 #in easy
 _files=repos
 #ensure files to search  envs
-_files=`find repos -type f | grep -v -e '/.git' -e /__  -e /tests/ -e _test.go -e /interop-test-files  -e /testdata/ -e /testing/ -e /jest/ | sort -u -f`
+_files=`find repos -type f | grep -v -e '/.git' -e /__  -e /tests/ -e _test.go -e /interop-test-files  -e /testdata/ -e /testing/ -e /jest/ -e /node_modules/ -e /dist/ | sort -u -f`
 
 # for javascripts families from process.env.ENVNAME
 grep -R process.env ${_files} \
