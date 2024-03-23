@@ -331,8 +331,18 @@ grep -R EnvVar ${_files} \
   | tr ' ' '\n' | grep -v ^$ | sort -u -f \
   | tee /tmp/vars-go.txt
 
+# for docker-compose from services[].environemnt
+echo {$_files} \
+  | tr ' ' '\n' | grep -v ^$ | grep -e .yaml$ -e .yml$ | grep compose \
+  | xargs yq -y .services[].environment | grep -v ^--- | sed 's/^- //' \
+  | sed 's/: /=/' | sed "s/'//g" \
+  | sort -u -f \
+  | awk -F= '{print $1}' | sort -u -f \
+  | tee /tmp/vars-compse.txt
+
+
 # get unique lists
-cat /tmp/vars-js1.txt /tmp/vars-js2.txt /tmp/vars-go.txt | sort -u -f > /tmp/envs.txt
+cat /tmp/vars-js1.txt /tmp/vars-js2.txt /tmp/vars-go.txt /tmp/vars-compose.txt | sort -u -f > /tmp/envs.txt
 
 # pick env vars related to mapping {URL, ENDPOINT, DID, HOST, PORT, ADDRESS}
 cat /tmp/envs.txt  | grep -e URL -e ENDPOINT -e DID -e HOST -e PORT -e ADDRESS
