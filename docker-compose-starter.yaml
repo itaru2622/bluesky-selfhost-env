@@ -97,7 +97,7 @@ services:
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - ATP_PDS_HOST=https://pds.${DOMAIN}
       - ATP_BGS_HOST=https://bgs.${DOMAIN}
-      - ATP_AUTH_HANDLE=admin.test
+      - ATP_AUTH_HANDLE=admin.${DOMAIN}
 #     - ATP_AUTH_PASSWORD=admin
 #     - ATP_AUTH_ADMIN_PASSWORD=admin
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -824,8 +824,8 @@ services:
       - FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}
       - FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD}
       - FEEDGEN_RECORD_NAME=whats-hot
-      - FEEDGEN_RECORD_DISPLAY_NAME=whats-hot
-      - FEEDGEN_RECORD_DESCRIPTION=whats-hot
+      - FEEDGEN_DISPLAY_NAME=whats-hot
+      - FEEDGEN_DESCRIPTION=whats-hot
     restart: always
     volumes:
       # supporting self-signed certificates, easiest way >>>>
