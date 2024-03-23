@@ -16,7 +16,7 @@ FEEDGEN_EMAIL ?=feedgen@example.com
 
 
 # datetime for resolving git commit hash to work with
-asof ?=2024-01-06
+asof ?=2024-03-16
 
 
 
