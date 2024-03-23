@@ -339,14 +339,14 @@ grep -R EnvVar ${_files} \
   | tr ' ' '\n' | grep -v ^$ | sort -u -f \
   | tee /tmp/vars-go.txt
 
-# for docker-compose from services[].environemnt
+# for docker-compose from services[].environment
 echo {$_files} \
   | tr ' ' '\n' | grep -v ^$ | grep -e .yaml$ -e .yml$ | grep compose \
   | xargs yq -y .services[].environment | grep -v ^--- | sed 's/^- //' \
   | sed 's/: /=/' | sed "s/'//g" \
   | sort -u -f \
   | awk -F= '{print $1}' | sort -u -f \
-  | tee /tmp/vars-compse.txt
+  | tee /tmp/vars-compose.txt
 
 
 # get unique lists
