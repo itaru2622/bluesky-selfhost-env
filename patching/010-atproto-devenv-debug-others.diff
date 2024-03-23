@@ -1,10 +1,10 @@
 diff --git a/packages/dev-env/src/bsky.ts b/packages/dev-env/src/bsky.ts
-index 81d2caf67..01545f05c 100644
+index d0019865e..492afe038 100644
 --- a/packages/dev-env/src/bsky.ts
 +++ b/packages/dev-env/src/bsky.ts
 @@ -7,6 +7,7 @@ import { Client as PlcClient } from '@did-plc/lib'
  import { BskyConfig } from './types'
- import { ADMIN_PASSWORD } from './const'
+ import { ADMIN_PASSWORD, EXAMPLE_LABELER } from './const'
  import { BackgroundQueue } from '@atproto/bsky/src/data-plane/server/background'
 +import { Debugdump } from './debug'
  
@@ -105,18 +105,18 @@ index 81d2caf67..01545f05c 100644
      return new TestBsky(url, port, db, server, dataplane, bsync, sub)
    }
 diff --git a/packages/dev-env/src/network.ts b/packages/dev-env/src/network.ts
-index fc1ed67c1..34b0c95e3 100644
+index 11d18e242..79c30621b 100644
 --- a/packages/dev-env/src/network.ts
 +++ b/packages/dev-env/src/network.ts
-@@ -11,6 +11,7 @@ import { TestOzone, createOzoneDid } from './ozone'
- import { mockNetworkUtilities } from './util'
+@@ -12,6 +12,7 @@ import { mockNetworkUtilities } from './util'
  import { TestNetworkNoAppView } from './network-no-appview'
  import { Secp256k1Keypair } from '@atproto/crypto'
+ import { EXAMPLE_LABELER } from './const'
 +import { Debugdump } from './debug'
  
  const ADMIN_USERNAME = 'admin'
  const ADMIN_PASSWORD = 'admin-pass'
-@@ -28,6 +29,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -29,6 +30,8 @@ export class TestNetwork extends TestNetworkNoAppView {
    static async create(
      params: Partial<TestServerParams> = {},
    ): Promise<TestNetwork> {
@@ -125,7 +125,7 @@ index fc1ed67c1..34b0c95e3 100644
      const redisHost = process.env.REDIS_HOST
      const dbPostgresUrl = params.dbPostgresUrl || process.env.DB_POSTGRES_URL
      assert(dbPostgresUrl, 'Missing postgres url for tests')
-@@ -44,6 +47,12 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -45,6 +48,12 @@ export class TestNetwork extends TestNetworkNoAppView {
      const ozoneKey = await Secp256k1Keypair.create({ exportable: true })
      const ozoneDid = await createOzoneDid(plc.url, ozoneKey)
  
@@ -138,8 +138,8 @@ index fc1ed67c1..34b0c95e3 100644
      const bsky = await TestBsky.create({
        port: bskyPort,
        plcUrl: plc.url,
-@@ -55,6 +64,8 @@ export class TestNetwork extends TestNetworkNoAppView {
-       modServiceDid: ozoneDid,
+@@ -57,6 +66,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+       labelsFromIssuerDids: [ozoneDid, EXAMPLE_LABELER],
        ...params.bsky,
      })
 +    Debugdump.dump("### network.ts @ bsky created ### ")
@@ -147,7 +147,7 @@ index fc1ed67c1..34b0c95e3 100644
  
      const pds = await TestPds.create({
        port: pdsPort,
-@@ -66,6 +77,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -68,6 +79,8 @@ export class TestNetwork extends TestNetworkNoAppView {
        ...params.pds,
      })
  
@@ -156,7 +156,7 @@ index fc1ed67c1..34b0c95e3 100644
      const ozone = await TestOzone.create({
        port: ozonePort,
        plcUrl: plc.url,
-@@ -81,6 +94,8 @@ export class TestNetwork extends TestNetworkNoAppView {
+@@ -83,6 +96,8 @@ export class TestNetwork extends TestNetworkNoAppView {
        ...params.ozone,
      })
  
@@ -274,19 +274,18 @@ index 90733932e..36d13079c 100644
    await plcClient.sendOperation(did, plcOp)
    return did
 diff --git a/packages/dev-env/src/pds.ts b/packages/dev-env/src/pds.ts
-index d1b3cbbc3..85e058526 100644
+index 0eb47c3f6..d047bc4d4 100644
 --- a/packages/dev-env/src/pds.ts
 +++ b/packages/dev-env/src/pds.ts
-@@ -9,6 +9,8 @@ import { Secp256k1Keypair, randomStr } from '@atproto/crypto'
+@@ -9,6 +9,7 @@ import { Secp256k1Keypair, randomStr } from '@atproto/crypto'
  import { AtpAgent } from '@atproto/api'
  import { PdsConfig } from './types'
- import { ADMIN_PASSWORD, JWT_SECRET } from './const'
+ import { ADMIN_PASSWORD, EXAMPLE_LABELER, JWT_SECRET } from './const'
 +import { Debugdump } from './debug'
-+
  
  export class TestPds {
    constructor(
-@@ -18,10 +20,14 @@ export class TestPds {
+@@ -18,10 +19,14 @@ export class TestPds {
    ) {}
  
    static async create(config: PdsConfig): Promise<TestPds> {
@@ -301,7 +300,7 @@ index d1b3cbbc3..85e058526 100644
      const port = config.port || (await getPort())
      const url = `http://localhost:${port}`
  
-@@ -47,10 +53,16 @@ export class TestPds {
+@@ -47,10 +52,16 @@ export class TestPds {
        inviteRequired: false,
        ...config,
      }
