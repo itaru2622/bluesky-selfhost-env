@@ -253,13 +253,21 @@ export u=baz
 
 ```bash
 # names and those values
-_yqpath='.services[].environment'
 _yqpath='.services[].environment, .services[].build.args'
+_yqpath='.services[].environment'
 
+# lists of var=val
 cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f
 
-# names
+# output in yaml
+cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
+  | grep -v '^---' | sed 's/^- //' | sort -u -f  \
+  | awk -F= -v col=":" -v q="'" -v sp="  " -v list="-" '{print   sp list sp q $1 q col sp q $2 q}' \
+  | sed '1i defs:' | yq -y
+
+
+# list of names
 cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f \
   | awk -F= '{print $1}' | sort -u -f
