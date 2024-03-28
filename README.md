@@ -297,7 +297,7 @@ cat config/caddy/Caddyfile
 ```
 
 [back to top](#top)
-### <a id="hack1-EnvVars1"/>2) check Env Vars in sources
+### <a id="hack1-EnvVars1"/>3) check Env Vars in sources
 
 1) files related env vars in sources
 
@@ -356,7 +356,7 @@ cat /tmp/vars-js1.txt /tmp/vars-js2.txt /tmp/vars-go.txt /tmp/vars-compose.txt |
 cat /tmp/envs.txt  | grep -e URL -e ENDPOINT -e DID -e HOST -e PORT -e ADDRESS
 ```
 
-3) find {URL | DID | bsky } near env names
+3) find {URL | DID | bsky } near env names in sources
 
 ```bash
 find repos -type f | grep -v -e /.git  -e __ -e .json$ \
@@ -369,6 +369,14 @@ find repos -type f | grep -v -e /.git  -e __ -e .json$ \
 ```bash
 find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e .md$  -e .sh$ -e .json$ -e .txt$ -e _test.go$ \
   | xargs grep -n -e bsky.social -e bsky.app -e bsky.network  -e bsky.dev
+```
+
+[back to top](#top)
+### <a id="hack1-EnvVars2"/>4) make table describes {env x container => value} from souce and docker-compose.
+
+```bash
+# make table describes { env x container => envvalue } with ops-helper script.
+cat ./docker-compose-starter.yaml | ./ops-helper/compose2envtable.py -o ./docs/env-container-val.xlsx  -l /tmp/envs.txt
 ```
 
 [back to top](#top)
