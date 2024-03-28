@@ -324,6 +324,8 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output',   type=str,   default='-',         help='output file path (*.xlsx, *.json, *.csv etc), to output result (default: stdout)')
     parser.add_argument('-w', '--writer',   type=str,   default=None,        help='enforce writer for output dataframe into file(default: None)')
     parser.add_argument('--no-statistics',  action='store_true',             help='flag to output statistic values on env into table or not( default:False, i.e: include statistics)')
+    parser.add_argument('-t', '--transpose',   action='store_true',          help='transpose table(swap rows<=>cols) just before output(default: False)')
+
 
     opts = parser.parse_args()
 
@@ -345,4 +347,7 @@ if __name__ == '__main__':
 
     cols = extraFields + cols                                       # update cols for table schema, according to specified option.
     df = mkTable(rows, cols, celldata,  extraFields=extraFields)    # make table { rows: envs, cols: [extrafields + containers], cell: corresponding value}
+    print(f'########### {opts.transpose}')
+    if opts.transpose:
+         df = df.T
     writeDF(df, opts.output, writer=opts.writer)                    # save table into file.
