@@ -31,6 +31,7 @@ at current, this self-hosting env provides below capabilities:
    -  ok: create user on pds (via bluesky API).
    -  NG: create user on pds on social-app (get stuck after submitting 'continue'. <=> in dev-env, we have 'clear' in upper right corner on social-app to get out from stuck.)
    -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: edit profilie (display name) on social-app
    -  ok: post articles on social-app
    -  ok: vote 'like' to article on social-app
    -  ok: reply to article on social-app
@@ -41,6 +42,7 @@ at current, this self-hosting env provides below capabilities:
          - ok: find users with 'display-name' after user configures it in his/her profile page.
          - none(without any error): find users with full qualified handle name before display-name configured in his/her profile page.
    -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
+   -  ok: pin/unpin feeds to home after discovering
    -  not tested: post an article in feed.
    -  not tested: view post in feed (channel) on social-app.
    -  not tested: regarding moderation
@@ -376,7 +378,7 @@ find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e
 
 ```bash
 # make table describes { env x container => envvalue } with ops-helper script.
-cat ./docker-compose-starter.yaml | ./ops-helper/compose2envtable.py -o ./docs/env-container-val.xlsx  -l /tmp/envs.txt
+cat ./docker-compose-starter.yaml | ./ops-helper/compose2envtable.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
 ```
 
 [back to top](#top)
