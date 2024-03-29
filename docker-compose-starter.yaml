@@ -547,9 +547,9 @@ services:
       - FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID}
       - FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}
       - FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD}
-      - FEEDGEN_RECORD_NAME=whats-hot
-      - FEEDGEN_DISPLAY_NAME=whats-hot
-      - FEEDGEN_DESCRIPTION=whats-hot
+      - FEEDGEN_FEED_RECORD_NAME=whats-hot
+      - FEEDGEN_FEED_DISPLAY_NAME=whats-hot
+      - FEEDGEN_FEED_DESCRIPTION=whats-hot
     restart: always
     volumes:
       # supporting self-signed certificates, easiest way >>>>

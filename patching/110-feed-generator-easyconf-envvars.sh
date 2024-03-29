@@ -19,16 +19,16 @@ if [ -f $f ] && [ -n "`grep -R 'const password =' $f`" ];then
 	echo "password  <empty> => process.env.FEEDGEN_PUBLISHER_PASSWORD  for $f"
 fi
 if [ -f $f ] && [ -n "`grep -R 'const recordName =' $f`" ];then
-	sed -i "s#const recordName = ''#const recordName = process.env.FEEDGEN_RECORD_NAME ?? ''#g" $f
-	echo "recordName  <empty> => process.env.FEEDGEN_RECORD_NAME  for $f"
+	sed -i "s#const recordName = ''#const recordName = process.env.FEEDGEN_FEED_RECORD_NAME ?? ''#g" $f
+	echo "recordName  <empty> => process.env.FEEDGEN_FEED_RECORD_NAME  for $f"
 fi
 if [ -f $f ] && [ -n "`grep -R 'const displayName =' $f`" ];then
-	sed -i "s#const displayName = ''#const displayName = process.env.FEEDGEN_DISPLAY_NAME ?? ''#g" $f
-	echo "displayName  <empty> => process.env.FEEDGEN_DISPLAY_NAME  for $f"
+	sed -i "s#const displayName = ''#const displayName = process.env.FEEDGEN_FEED_DISPLAY_NAME ?? ''#g" $f
+	echo "displayName  <empty> => process.env.FEEDGEN_FEED_DISPLAY_NAME  for $f"
 fi
 if [ -f $f ] && [ -n "`grep -R 'const description =' $f`" ];then
-	sed -i "s#const description = ''#const description = process.env.FEEDGEN_DESCRIPTION ?? ''#g" $f
-	echo "description  <empty> => process.env.FEEDGEN_DESCRIPTION  for $f"
+	sed -i "s#const description = ''#const description = process.env.FEEDGEN_FEED_DESCRIPTION ?? ''#g" $f
+	echo "description  <empty> => process.env.FEEDGEN_FEED_DESCRIPTION  for $f"
 fi
 
 # ends: easy config by env vars <<<
