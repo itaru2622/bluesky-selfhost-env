@@ -347,7 +347,6 @@ if __name__ == '__main__':
 
     cols = extraFields + cols                                       # update cols for table schema, according to specified option.
     df = mkTable(rows, cols, celldata,  extraFields=extraFields)    # make table { rows: envs, cols: [extrafields + containers], cell: corresponding value}
-    print(f'########### {opts.transpose}')
     if opts.transpose:
          df = df.T
     writeDF(df, opts.output, writer=opts.writer)                    # save table into file.
