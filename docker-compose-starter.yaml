@@ -283,8 +283,8 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - DEBUG_MODE=1
       - LOG_ENABLED=true
-      - LOG_LEVEL=debug
-      - GOLOG_LOG_LEVEL=debug
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       #- GODEBUG=netdns=go+4
       - LOG_DESTINATION=1
       # this requires setting up a local postgresql user and database
