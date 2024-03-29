@@ -4,8 +4,9 @@
 make table of envs x containers x its value from docker-composer.yaml
 
 required 3rd party packages
-pydantic v2.x
+pydantic v2
 pandas
+openpyxl (optional, output to excel)
 '''
 
 from   pydantic import BaseModel, ConfigDict, computed_field
