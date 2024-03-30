@@ -193,7 +193,7 @@ make build DOMAIN=
 make patch-selfhost
 
 # 3) build social-app for self-hosting...
-make build services="social-app feed-generator"
+make build services=social-app
 ```
 
 ### <a id="ops5-run"/>5) run bluesky with selfhosting

@@ -528,7 +528,7 @@ services:
       - caddy
 
   feed-generator:
-    image: itaru2622/bluesky-feed-generator:${asof}${DOMAIN}
+    image: itaru2622/bluesky-feed-generator:${asof}
     build:
       context: ./repos/feed-generator/
     ports:
@@ -550,6 +550,8 @@ services:
       - FEEDGEN_FEED_RECORD_NAME=whats-hot
       - FEEDGEN_FEED_DISPLAY_NAME=whats-hot
       - FEEDGEN_FEED_DESCRIPTION=whats-hot
+      - FEEDGEN_BSKY_SERVICE=https://${DOMAIN}
+      - FEEDGEN_PLC_URL=https://plc.${DOMAIN}
     restart: always
     volumes:
       # supporting self-signed certificates, easiest way >>>>
