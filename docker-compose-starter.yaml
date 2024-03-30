@@ -366,7 +366,8 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
+    image: itaru2622/bluesky-social-app:${asof}
+    #image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
     build:
       context: ./repos/social-app/
       dockerfile: Dockerfile

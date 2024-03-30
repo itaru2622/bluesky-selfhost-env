@@ -187,13 +187,12 @@ make patch-dockerbuild
 # 1) build images with original
 make build DOMAIN=
 
-# 2) apply patch for self-hosting
-#      as described in https://syui.ai/blog/post/2024/01/08/bluesky/
+# 2) apply optional patch for self-hosting, and re-build image
+#   'optional' means, applying this patch is not mandatory to get self-hosting environment.
 # NOTE: this ops checkout new branch before applying patch, and keep staying new branch
-make patch-selfhost
-
-# 3) build social-app for self-hosting...
-make build services=social-app
+#
+# make _patch-selfhost-optional-even-not-mandatory
+# make build services=social-app
 ```
 
 ### <a id="ops5-run"/>5) run bluesky with selfhosting
