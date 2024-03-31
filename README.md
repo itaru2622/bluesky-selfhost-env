@@ -94,7 +94,8 @@ you can overwrite the domain name by environment variable as below:
 # 1) set domain name for self-hosting bluesky
 export DOMAIN=whatever.yourdomain.com
 
-# 2) set asof daytime, for bluesky-social codes (current testing with 2024-03-16)
+# 2) set asof daytime, for bluesky-social codes (current testing asof 2024-03-31)
+#    NOTE: this ops is optional but recommended for development (default: today's daytime if ommited).
 export asof=2024-03-31
 
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
@@ -116,8 +117,8 @@ make genPass
 # get sources from all repositories
 make    cloneAll
 
-# checkout codes according to asof param, for all sources.
-make   mkBranch_asof branch=work
+# create work branches and keep staying on them for all repositories (repos/*; optional but recommended for safe.)
+make    createWorkBranch
 ```
 
 ### <a id="ops2-prepare"/>2) prepare on your network
