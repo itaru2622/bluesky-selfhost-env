@@ -51,7 +51,7 @@ passfile ?=${wDir}/config/secrets-passwords.env
 f ?=${wDir}/docker-compose-starter.yaml
 
 # folders of repos
-_nrepo   :=atproto indigo social-app feed-generator did-method-plc pds
+_nrepo   :=atproto indigo social-app feed-generator did-method-plc pds ozone
 repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -105,6 +105,9 @@ ${rDir}/feed-generator:
 ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
 	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-pds.git; git remote update fork)
+${rDir}/ozone:
+	git clone ${gh}bluesky-social/ozone.git $@
+	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-ozone.git; git remote update fork)
 ${rDir}/did-method-plc:
 	git clone ${gh}did-method-plc/did-method-plc.git $@
 	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-did-method-plc.git; git remote update fork)
