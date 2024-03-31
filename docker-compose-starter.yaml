@@ -15,16 +15,16 @@ services:
       - 443:443/udp
       - 9000:9000
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates to use, if self-signed, it needs update-ca-certificates
-      - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt
-      - ./certs/root.key:/data/caddy/pki/authorities/local/root.key
+      - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt:ro
+      - ./certs/root.key:/data/caddy/pki/authorities/local/root.key:ro
       - caddy-data:/data
       - caddy-config:/config
     healthcheck:
@@ -37,8 +37,8 @@ services:
   caddy-sidecar:
     image: httpd:2
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     volumes:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 # to generate HTTPS certifications on-demand <<<<<
@@ -55,8 +55,8 @@ services:
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - ENABLE_WSS=true
       - SCRIPT=*.go
     working_dir: /opt/gorilla-websocket/examples/chat
@@ -88,8 +88,8 @@ services:
        dockerfile: Dockerfile
     command: tail -f /dev/null
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - ATP_PDS_HOST=https://pds.${DOMAIN}
       - ATP_BGS_HOST=https://bgs.${DOMAIN}
@@ -108,8 +108,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -152,8 +152,8 @@ services:
     ports:
       - 9200:9200
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - cluster.name=docker-cluster
       - node.name=os-node
       - discovery.type=single-node
@@ -171,7 +171,7 @@ services:
     restart: always
 
   plc:
-    image: itaru2622/did-method-plc:${asof}
+    image: itaru2622/bluesky-did-method-plc:${asof}
     build:
       context: ./repos/did-method-plc/
       dockerfile: packages/server/Dockerfile
@@ -189,14 +189,13 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=2582
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - LOG_DESTINATION=1
       - ENABLE_MIGRATIONS=true
-      # this requires setting up a local postgresql user and database
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/plc
       - DB_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
       - DB_MIGRATE_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
@@ -229,8 +228,8 @@ services:
       - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
       - PDS_ENABLE_DID_DOC_WITH_SESSION=true
       - PDS_PORT=2583
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -279,22 +278,19 @@ services:
     command: /bigsky
     environment:
       - NODE_ENV=development
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       #- GODEBUG=netdns=go+4
       - LOG_DESTINATION=1
-      # this requires setting up a local postgresql user and database
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
       - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
       - DATA_DIR=/data/bigsky
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
-# NG  - HANDLE_RESOLVER_HOSTS=api.${DOMAIN},pds.${DOMAIN},${DOMAIN}
-# NG  - HANDLE_RESOLVER_HOSTS=pds.${DOMAIN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
@@ -342,8 +338,8 @@ services:
       - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
       - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - PORT=2584
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -386,8 +382,8 @@ services:
     environment:
       - NODE_ENV=development
       - HTTP_ADDRESS=:8100
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
 # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
@@ -413,8 +409,8 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - ES_INSECURE_SSL=true
 #       refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
       - ATP_BGS_HOST=wss://bgs.${DOMAIN}
@@ -459,8 +455,8 @@ services:
       - OZONE_MODERATOR_DIDS=did:web:api.${DOMAIN}
       - OZONE_DEV_MODE=true
       - OZONE_PORT=3000
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -505,8 +501,8 @@ services:
       - OZONE_MODERATOR_DIDS=did:web:api.${DOMAIN}
       - OZONE_DEV_MODE=true
       - OZONE_PORT=3000
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -535,8 +531,8 @@ services:
     ports:
       - 2586:3000
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - NODE_ENV=development
       - FEEDGEN_PORT=3000
       - FEEDGEN_LISTENHOST=0.0.0.0

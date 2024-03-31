@@ -14,20 +14,22 @@ PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 FEEDGEN_PUBLISHER_HANDLE ?=feedgen.${DOMAIN}
 FEEDGEN_EMAIL ?=feedgen@example.com
 
-
-# datetime for resolving git commit hash to work with
+# datetime to distinguish sources and docker images (default: today in %Y-%m-%d)
 asof ?=$(shell date +'%Y-%m-%d')
 
 
+ifeq ($(EMAIL4CERTS), internal)
+GOINSECURE :=${DOMAIN},*.${DOMAIN}
+NODE_TLS_REJECT_UNAUTHORIZED :=0
+else
+GOINSECURE ?=
+NODE_TLS_REJECT_UNAUTHORIZED ?=1
+endif
 
 # ends: definitions, need to care in especial.
 ##########################################################################################
 ##########################################################################################
 # other definitions
-
-# alternative of 'asof' to resolve by current daytime.
-#asof          ?=$(shell date '+%Y-%m-%dT%H%M%S')
-getHashByDate  :=git log --pretty='format:%h' -1 --before=${asof}
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # paths for folders and files
@@ -59,7 +61,10 @@ repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
 
 # prefix of github (https://github.com/ | git@github.com:)
 gh  ?=$(addsuffix /, https://github.com)
-ghe ?=$(addsuffix :, git@github.com)
+gh_git ?=$(addsuffix :, git@github.com)
+
+fork_repo_prefix ?=
+#fork_repo_prefix =${gh_git}itaru2622/bluesky-
 
 # default log level.
 LOG_LEVEL_DEFAULT ?=debug
@@ -75,9 +80,6 @@ ifeq ($(shell test -e ${passfile} && echo -n exists),exists)
    include ${passfile}
 endif
 
-# load URL and DIDs from file regarding self-hosting bluesky (under testing)
-#include ops/env-url-did.mk
-
 ##########################################################################################
 ##########################################################################################
 # starts:  targets for  operations
@@ -86,34 +88,58 @@ endif
 # get all sources from github
 cloneAll:   ${repoDirs}
 
-# get source in indivisual
-# HINT: make clone_one social-app
-clone_one:  ${rDir}/${d}
-
 ${rDir}/atproto:
 	git clone ${gh}bluesky-social/atproto.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-atproto.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}atproto.git; git remote update fork)
+endif
+
+
 ${rDir}/indigo:
 	git clone ${gh}bluesky-social/indigo.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-indigo.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}indigo.git; git remote update fork)
+endif
+
+
 ${rDir}/social-app:
 	git clone ${gh}bluesky-social/social-app.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-social-app.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}social-app.git; git remote update fork)
+endif
+
+
 ${rDir}/feed-generator:
 	git clone ${gh}bluesky-social/feed-generator.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-feed-generator.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}feed-generator.git; git remote update fork)
+endif
+
+
 ${rDir}/pds:
 	git clone ${gh}bluesky-social/pds.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-pds.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}pds.git; git remote update fork)
+endif
+
+
 ${rDir}/ozone:
 	git clone ${gh}bluesky-social/ozone.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-ozone.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}ozone.git; git remote update fork)
+endif
+
+
 ${rDir}/did-method-plc:
 	git clone ${gh}did-method-plc/did-method-plc.git $@
-	(cd $@; git remote add fork ${ghe}itaru2622/bluesky-did-method-plc.git; git remote update fork)
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}did-method-plc.git; git remote update fork)
+endif
+
+
 # delete all repos.
 delRepoDirAll:
-	rm -rf ${rDir}/*
+	rm -rf ${rDir}/[a-z]*
 
 # generate passwords for test env
 genPass: ${passfile}
@@ -173,7 +199,7 @@ echo:
 	@echo "repoDirs: ${repoDirs}"
 	@echo "f:        ${f}"
 	@echo "gh:       ${gh}"
+	@echo "fork_repo_prefix: ${fork_repo_prefix}"
 	@echo ""
-	@echo "OZONE_PUBLIC_URL=${OZONE_PUBLIC_URL}"
 	@echo "LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT}"
 	@echo "########## <<<<<<<<<<<<<<"

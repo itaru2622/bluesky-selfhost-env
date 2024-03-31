@@ -35,8 +35,8 @@ services:
   caddy-sidecar:
     image: httpd:2
     environment:
-      - GOINSECURE=${DOMAIN},*.${DOMAIN}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     volumes:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 # to generate HTTPS certifications on-demand <<<<<

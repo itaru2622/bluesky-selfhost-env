@@ -61,6 +61,8 @@ special thanks to prior works on self-hosting.
 hacks in bluesky:
    - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
    - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
+   - https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
+   - https://github.com/bluesky-social/pds/blob/main/installer.sh
 
 [back to top](#top)
 ## <a id="sources"/>sources in use
@@ -79,7 +81,7 @@ other dependencies:
 
 | components     | url (origin)                                                            |
 |----------------|:------------------------------------------------------------------------|
-| recverse proxy | https://github.com/caddyserver/caddy (official docker image of caddy:2) |
+| reverse proxy  | https://github.com/caddyserver/caddy (official docker image of caddy:2) |
 | DNS server     | bind9 or others, such as https://github.com/itaru2622/docker-bind9.git  |
 
 [back to top](#top)
@@ -220,7 +222,7 @@ make docker-stop
 [back to top](#top)
 ## <a id="hack"/>Hack
 
-### <a id="hack1-ops-CreateAccount"/>1) create accounts in easy
+### <a id="hack-ops-CreateAccount"/>1) create accounts in easy
 
 ```bash
 export u=foo
@@ -235,7 +237,29 @@ export u=baz
 ```
 
 [back to top](#top)
-### <a id="hack1-EnvVars2"/>2) check Env Vars in docker-compose
+### <a id="hack-ops-development"/>2) ops on development with your fork repo.
+
+when you set fork_repo_prefix variable before cloneAll,
+this ops registers your remote fork repository with ```git remote add fork ....```
+then you have additional easy ops against multiple repositores, as below.
+
+```bash
+export fork_repo_prefix=git@github.com:YOUR_GITHUB_ACCOUNT/
+
+make cloneAll
+
+# upload main branches and tags from all repos to your remote fork repositories.
+make exec under=./repos/* cmd='git push fork main'
+make exec under=./repos/* cmd='git push fork --tags'
+
+# push something on justOneRepo to your fork repository.
+make exec under=./repos/justOneRepo cmd='git push fork something'
+
+# refer Makefile for details and samples.
+```
+
+[back to top](#top)
+### <a id="hack-EnvVars-Compose"/>3) check Env Vars in docker-compose
 
 1) get all env vars in docker-compose
 
@@ -285,7 +309,7 @@ cat config/caddy/Caddyfile
 ```
 
 [back to top](#top)
-### <a id="hack1-EnvVars1"/>3) check Env Vars in sources
+### <a id="hack-EnvVars-Sources"/>4) check Env Vars in sources
 
 1) files related env vars in sources
 
@@ -360,10 +384,12 @@ find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e
 ```
 
 [back to top](#top)
-### <a id="hack1-EnvVars2"/>4) make table describes {env x container => value} from souce and docker-compose.
+### <a id="hack-EnvVars-Table"/>5) create a table showing {env x container => value} from source and docker-compose.
+
+this hask uses the result(/tmp/envs.txt) of the above [4-2](#hack-EnvVars-Sources) as input.
 
 ```bash
-# make table describes { env x container => envvalue } with ops-helper script.
+# create table showing { env x container => value } with ops-helper script.
 cat ./docker-compose-starter.yaml | ./ops-helper/compose2envtable.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
 ```
 
