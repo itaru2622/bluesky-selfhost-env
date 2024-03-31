@@ -1,20 +1,8 @@
-diff --git a/packages/bsky/src/data-plane/server/index.ts b/packages/bsky/src/data-plane/server/index.ts
-index f925de83c..8040e9a65 100644
---- a/packages/bsky/src/data-plane/server/index.ts
-+++ b/packages/bsky/src/data-plane/server/index.ts
-@@ -7,6 +7,7 @@ import { Database } from './db'
- import { IdResolver, MemoryCache } from '@atproto/identity'
- 
- export { RepoSubscription } from './subscription'
-+export { BackgroundQueue } from './background'
- 
- export class DataPlaneServer {
-   constructor(public server: http.Server, public idResolver: IdResolver) {}
 diff --git a/services/bsky/api.js b/services/bsky/api.js
-index 44d8f96b3..4e03a6869 100644
+index e14b43f2d..528d588bd 100644
 --- a/services/bsky/api.js
 +++ b/services/bsky/api.js
-@@ -41,18 +41,61 @@ const path = require('node:path')
+@@ -43,18 +43,61 @@ const path = require('node:path')
  const assert = require('node:assert')
  const cluster = require('cluster')
  const { Secp256k1Keypair } = require('@atproto/crypto')
@@ -73,15 +61,15 @@ index 44d8f96b3..4e03a6869 100644
    // Graceful shutdown (see also https://aws.amazon.com/blogs/containers/graceful-shutdowns-with-ecs/)
    const shutdown = async () => {
 -    await bsky.destroy()
-+      await server.destroy()
-+      await bsync.destroy()
-+      await dataplane.destroy()
-+      await sub.destroy()
-+      await db.close()
++    await server.destroy()
++    await bsync.destroy()
++    await dataplane.destroy()
++    await sub.destroy()
++    await db.close()
    }
    process.on('SIGTERM', shutdown)
    process.on('disconnect', shutdown) // when clustering
-@@ -60,6 +103,12 @@ const main = async () => {
+@@ -62,6 +105,12 @@ const main = async () => {
  
  const getEnv = () => ({
    serviceSigningKey: process.env.BSKY_SERVICE_SIGNING_KEY || undefined,
@@ -95,10 +83,10 @@ index 44d8f96b3..4e03a6869 100644
  
  const maybeParseInt = (str) => {
 diff --git a/services/ozone/api.js b/services/ozone/api.js
-index a58e8e53c..e061c9a6c 100644
+index 08d2ad02a..4a00bd7b7 100644
 --- a/services/ozone/api.js
 +++ b/services/ozone/api.js
-@@ -23,12 +23,26 @@ const {
+@@ -25,12 +25,26 @@ const {
    envToSecrets,
    readEnv,
    httpLogger,

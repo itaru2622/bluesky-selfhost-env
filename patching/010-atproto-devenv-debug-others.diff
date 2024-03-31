@@ -1,16 +1,16 @@
 diff --git a/packages/dev-env/src/bsky.ts b/packages/dev-env/src/bsky.ts
-index d0019865e..492afe038 100644
+index 2425d9b1e..13c0ae996 100644
 --- a/packages/dev-env/src/bsky.ts
 +++ b/packages/dev-env/src/bsky.ts
-@@ -7,6 +7,7 @@ import { Client as PlcClient } from '@did-plc/lib'
+@@ -7,6 +7,7 @@ import { BackgroundQueue } from '@atproto/bsky'
+ import { Client as PlcClient } from '@did-plc/lib'
  import { BskyConfig } from './types'
  import { ADMIN_PASSWORD, EXAMPLE_LABELER } from './const'
- import { BackgroundQueue } from '@atproto/bsky/src/data-plane/server/background'
 +import { Debugdump } from './debug'
  
- export class TestBsky {
-   constructor(
-@@ -17,9 +18,13 @@ export class TestBsky {
+ export * from '@atproto/bsky'
+ 
+@@ -19,9 +20,13 @@ export class TestBsky {
      public dataplane: bsky.DataPlaneServer,
      public bsync: bsky.MockBsync,
      public sub: bsky.RepoSubscription,
@@ -25,7 +25,7 @@ index d0019865e..492afe038 100644
      const serviceKeypair = await Secp256k1Keypair.create()
      const plcClient = new PlcClient(cfg.plcUrl)
  
-@@ -33,12 +38,28 @@ export class TestBsky {
+@@ -35,12 +40,28 @@ export class TestBsky {
        signer: serviceKeypair,
      })
  
@@ -54,7 +54,7 @@ index d0019865e..492afe038 100644
  
      const dataplanePort = await getPort()
      const dataplane = await bsky.DataPlaneServer.create(
-@@ -46,9 +67,13 @@ export class TestBsky {
+@@ -48,9 +69,13 @@ export class TestBsky {
        dataplanePort,
        cfg.plcUrl,
      )
@@ -68,7 +68,7 @@ index d0019865e..492afe038 100644
  
      const config = new bsky.ServerConfig({
        version: 'unknown',
-@@ -66,6 +91,7 @@ export class TestBsky {
+@@ -68,6 +93,7 @@ export class TestBsky {
        ...cfg,
        adminPasswords: [ADMIN_PASSWORD],
      })
@@ -76,7 +76,7 @@ index d0019865e..492afe038 100644
  
      // Separate migration db in case migration changes some connection state that we need in the tests, e.g. "alter database ... set ..."
      const migrationDb = new bsky.Database({
-@@ -84,6 +110,8 @@ export class TestBsky {
+@@ -86,6 +112,8 @@ export class TestBsky {
        config,
        signingKey: serviceKeypair,
      })
@@ -85,7 +85,7 @@ index d0019865e..492afe038 100644
  
      const sub = new bsky.RepoSubscription({
        service: cfg.repoProvider,
-@@ -92,8 +120,18 @@ export class TestBsky {
+@@ -94,8 +122,18 @@ export class TestBsky {
        background: new BackgroundQueue(db),
      })
  
@@ -274,7 +274,7 @@ index 90733932e..36d13079c 100644
    await plcClient.sendOperation(did, plcOp)
    return did
 diff --git a/packages/dev-env/src/pds.ts b/packages/dev-env/src/pds.ts
-index 0eb47c3f6..d047bc4d4 100644
+index 0828f2f3f..c49bfadf2 100644
 --- a/packages/dev-env/src/pds.ts
 +++ b/packages/dev-env/src/pds.ts
 @@ -9,6 +9,7 @@ import { Secp256k1Keypair, randomStr } from '@atproto/crypto'

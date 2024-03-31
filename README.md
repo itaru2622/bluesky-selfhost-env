@@ -8,6 +8,7 @@
   - [Operations to get and run self-hosting bluesky](#ops)
   - [Hacks](#hack)
   - [Sample DNS Server Config(bind9)](#sample-dns-config)
+  - [Historical Status](#old_status)
 
 ## <a id="motivation" />Motivation
 
@@ -18,18 +19,18 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, working with code asof <strong>2024-03-16</strong> of bluesky-social.<br>
+at current, working with code asof <strong>2024-03-31</strong> of bluesky-social.<br>
 it may not work with latest codes.
 
 ## <a id="status"/>Current status regarding self-hosting
 
-with 'asof-2024-03-16' branch, as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
+as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
 some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
 
-at current, this self-hosting env provides below capabilities:
+test results with 'asof-2024-03-31':<BR>
 
    -  ok: create user on pds (via bluesky API).
-   -  NG: create user on pds on social-app (get stuck after submitting 'continue'. <=> in dev-env, we have 'clear' in upper right corner on social-app to get out from stuck.)
+   -  ok: create user on pds on social-app
    -  ok: sign-in via social-app (with multiple accounts)
    -  ok: edit profilie (display name) on social-app
    -  ok: post articles on social-app
@@ -38,33 +39,16 @@ at current, this self-hosting env provides below capabilities:
    -  ok: start following in others profile page on social-app
    -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
    -  ok: find posts in 'search' on social-app
-   -  ??: find users in 'search' on social-app
+   -  ok: find users in 'search' on social-app
          - ok: find users with 'display-name' after user configures it in his/her profile page.
-         - none(without any error): find users with full qualified handle name before display-name configured in his/her profile page.
+         - ok: find users with full qualified handle name before display-name configured in his/her profile page.
    -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
    -  ok: pin/unpin feeds to home after discovering
    -  not tested: post an article in feed.
    -  not tested: view post in feed (channel) on social-app.
    -  not tested: regarding moderation
-   -  ok: websocket subscribing; tested with feed-generator, and websocat to pds/bgs.
+   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
 
-
-with 'asof-2024-01-06' branch, as described below, basic feature started working on self-hosting environment, but still needs some work for full capabilities.
-
-   -  ok: create user on pds via social-app, and bluesky API.
-   -  ok: sign-in via social-app (with multiple accounts)
-   -  ok: post articles on social-app
-   -  ok: vote 'like' to  article on social-app
-   -  ok: reply to article on social-app
-   -  ok: start following in others profile page on social-app
-   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
-   -  ok: find posts in 'search' on social-app
-   -  NG: find users in 'search' on social-app  <- reason unknown yet.
-   -  NG: find feeds in 'search' on social-app  <- investigation not started
-   -  not tested: regarding moderation
-   -  ok: websocket working; tested with wss://test-wss.${DOMAIN}/ and ws://test-ws.${DOMAIN}/
-
-It seems: indexer and feed-generator are not working by unknown reason even those are staying 'up' status.
 
 [back to top](#top)
 
@@ -87,6 +71,8 @@ hacks in bluesky:
 | indigo         | https://github.com/bluesky-social/indigo.git           |
 | social-app     | https://github.com/bluesky-social/social-app.git       |
 | feed-generator | https://github.com/bluesky-social/feed-generator.git   |
+| pds            | https://github.com/bluesky-social/pds.git              |
+| ozone          | https://github.com/bluesky-social/ozone.git            |
 | did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
 
 other dependencies:
@@ -109,7 +95,7 @@ you can overwrite the domain name by environment variable as below:
 export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof daytime, for bluesky-social codes (current testing with 2024-03-16)
-export asof=2024-03-16
+export asof=2024-03-31
 
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
@@ -450,4 +436,48 @@ add it in /etc/resolv.conf as below on all testing machines
 ```
 nameserver 192.168.1.27
 ```
+[back to top](#top)
+
+## <a id="old_status"/>Historical status regarding self-hosting
+
+test results with 'asof-2024-03-16' (now archiving status):<BR>
+
+   -  ok: create user on pds (via bluesky API).
+   -  NG: create user on pds on social-app (get stuck after submitting 'continue'. <=> in dev-env, we have 'clear' in upper right corner on social-app to get out from stuck.)
+   -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: edit profilie (display name) on social-app
+   -  ok: post articles on social-app
+   -  ok: vote 'like' to article on social-app
+   -  ok: reply to article on social-app
+   -  ok: start following in others profile page on social-app
+   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
+   -  ok: find posts in 'search' on social-app
+   -  ??: find users in 'search' on social-app
+         - ok: find users with 'display-name' after user configures it in his/her profile page.
+         - none(without any error): find users with full qualified handle name before display-name configured in his/her profile page.
+   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
+   -  ok: pin/unpin feeds to home after discovering
+   -  not tested: post an article in feed.
+   -  not tested: view post in feed (channel) on social-app.
+   -  not tested: regarding moderation
+   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
+
+
+test results with 'asof-2024-01-06' (now archiving status):<BR>
+
+   -  ok: create user on pds via social-app, and bluesky API.
+   -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: post articles on social-app
+   -  ok: vote 'like' to  article on social-app
+   -  ok: reply to article on social-app
+   -  ok: start following in others profile page on social-app
+   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
+   -  ok: find posts in 'search' on social-app
+   -  NG: find users in 'search' on social-app  <- reason unknown yet.
+   -  NG: find feeds in 'search' on social-app  <- investigation not started
+   -  not tested: regarding moderation
+   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
+
+It seems: indexer and feed-generator are not working by unknown reason even those are staying 'up' status.
+
 [back to top](#top)
