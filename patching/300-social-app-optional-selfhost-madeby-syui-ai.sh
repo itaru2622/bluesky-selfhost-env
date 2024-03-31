@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # cf. https://syui.ai/blog/post/2024/01/08/bluesky/
 

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 echo "DOMAIN: ${DOMAIN}"
 echo "rDir:   ${rDir}"

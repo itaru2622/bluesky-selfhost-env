@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 #
 # password generating rule (cf. https://github.com/bluesky-social/pds/blob/main/installer.sh )
