@@ -216,7 +216,11 @@ on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://s
 ### <a id="ops8-stop"/>8) stop all containters
 
 ```bash
+# shutdown container but keep volumes alive.
 make docker-stop
+
+# shutdown container and clean those data
+make docker-stop-with-clean
 ```
 
 [back to top](#top)

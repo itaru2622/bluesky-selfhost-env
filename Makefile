@@ -74,7 +74,6 @@ Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
 Sbsky ?=plc pds bgs bsky social-app search mod mod-daemon test-indigo
 Sfeed ?=feed-generator
 
-
 # load passfile content as Makefile variables if exists
 ifeq ($(shell test -e ${passfile} && echo -n exists),exists)
    include ${passfile}
@@ -154,7 +153,7 @@ certs/ca-certificates.crt:
 	cp -p /etc/ssl/certs/ca-certificates.crt $@
 
 setupdir:
-	mkdir -p ${dDir}/pds/blobs ${dDir}/appview/cache ${dDir}/feed-generator ${aDir}
+	mkdir -p ${aDir}
 
 ################################
 # include other ops.

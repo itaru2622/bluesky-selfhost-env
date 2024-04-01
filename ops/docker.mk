@@ -28,9 +28,11 @@ docker-start-bsky:: docker-watchlog
 docker-start-bsky-feedgen:: _applySfeed _dockerUp
 docker-start-bsky-feedgen:: docker-watchlog
 docker-stop:
+	docker-compose -f ${f} down ${services}
+docker-stop-with-clean:
 	docker-compose -f ${f} down -v ${services}
-	docker system  prune -f
 	docker volume  prune -f
+	docker system  prune -f
 	docker network prune -f
 	sudo rm -rf ${dDir}
 

@@ -1,8 +1,35 @@
-version: "3.8"
+version: "3.9"
 
 volumes:
   caddy-data:
+    name: caddy-data
+#   driver: local
+#   driver_opts:
+#     o: bind
+#     device: ${dDir}/caddy
+#     type: none
   caddy-config:
+    name: caddy-config
+  database:
+    name: database
+  opensearch:
+    name: opensearch
+  bgs:
+    name: bgs
+  bsky:
+    name: bsky
+  feed-generator:
+    name: feed-generator
+  pds:
+    name: pds
+  redis:
+    name: redis
+# mod:
+# mod-daemon:
+# plc:
+# search:
+# social-app:
+
  
 services:
   caddy:
@@ -22,9 +49,10 @@ services:
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
-      # CA certificates to use, if self-signed, it needs update-ca-certificates
+      # CA certificates for self-signed. >>>
       - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt:ro
       - ./certs/root.key:/data/caddy/pki/authorities/local/root.key:ro
+      # CA certificates for self-signed. <<<
       - caddy-data:/data
       - caddy-config:/config
     healthcheck:
@@ -116,7 +144,7 @@ services:
       - POSTGRES_DB=healthcheck
     volumes:
       - ./config/init-postgres:/docker-entrypoint-initdb.d/
-#     - ${dDir}/database/:/var/lib/postgresql/data/
+      - database:/var/lib/postgresql/data/
     restart: always
 
   pgadmin:
@@ -133,8 +161,8 @@ services:
 
   redis:
     image: redis:7-bookworm
-#   volumes:
-#     - ${dDir}/redis/:/data/
+    volumes:
+      - redis:/data/
     restart: always
 
   opensearch:
@@ -166,8 +194,8 @@ services:
       memlock:
         soft: -1
         hard: -1
-#   volumes:
-#     - ${dDir}/opensearch/:/usr/share/opensearch/data/
+    volumes:
+      - opensearch:/usr/share/opensearch/data/
     restart: always
 
   plc:
@@ -218,6 +246,9 @@ services:
       - 2583:2583
     expose:
       - 2583
+    # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. >>>>
+    user: root
+    # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
     environment:
       - NODE_ENV=development
       - PDS_SERVICE_DID=did:web:${DOMAIN}
@@ -257,7 +288,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ${dDir}/pds/:/pds/
+      - pds:/pds
     restart: always
     depends_on:
       - database
@@ -295,7 +326,7 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-#      - ${dDir}/bgs/:/data/bigsky
+      - bgs:/data/bigsky
     restart: always
     depends_on:
       - database
@@ -354,7 +385,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
       - ./repos/atproto/services/bsky/api.js:/app/services/bsky/api.js:ro
-      - ${dDir}/appview/cache/:/cache/
+      - bsky:/cache/
     restart: always
     depends_on:
       - database
@@ -554,4 +585,4 @@ services:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ${dDir}/feed-generator/:/data/
+      - feed-generator:/data/
