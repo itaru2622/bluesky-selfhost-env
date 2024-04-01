@@ -4,7 +4,7 @@
   - [Motivation](#motivation)
   - [Current Status](#status)
   - [Sourses in Use](#sources)
-  - [Operations to get and run self-hosting bluesky](#ops)
+  - [Operations for self-hosting bluesky](#ops)
   - [Hacks](#hack)
   - [Sample DNS Server Config(bind9)](#sample-dns-config)
   - [References](#refs)
@@ -71,12 +71,12 @@ other dependencies:
 | DNS server     | bind9 or others, such as https://github.com/itaru2622/docker-bind9.git  |
 
 [back to top](#top)
-## <a id="ops"/>operations (powered by Makefile)
+## <a id="ops"/>operations for self-hosting bluesky (powered by Makefile)
 
-below, it assumes self-hosting domain is mybluesky.local.com (defined in Makefile).<br>
-you can overwrite the domain name by environment variable as below:
+below, it assumes self-hosting domain is <strong>mybluesky.local.com</strong> (defined in Makefile).<br>
+you can change the domain name by environment variable as below:
 
-### <a id="ops0-configparamss"/>0) configure params for ops
+### <a id="ops0-configparams"/>0) configure params for ops
 
 ```bash
 # 1) set domain name for self-hosting bluesky
@@ -97,19 +97,12 @@ make echo
 
 # 5) generate passwords for bluesky containers, and check those value:
 make genPass
+
+## install make command as below, if you don't have yet.
+apt install -y make
 ```
 
-### <a id="ops1-clone"/>1) get sources and checkout
-
-```bash
-# get sources from all repositories
-make    cloneAll
-
-# create work branches and keep staying on them for all repositories (repos/*; optional but recommended for safe.)
-make    createWorkBranch
-```
-
-### <a id="ops2-prepare"/>2) prepare on your network
+### <a id="ops1-prepare"/>1) prepare on your network
 
 ```
 1) make DNS A-Records for your self-hosting domain, at least:
@@ -121,7 +114,7 @@ make    createWorkBranch
      -  note: don't forget to install root.crt to your host machine and browser.
 ```
 
-### <a id="ops3-check"/>3) check if it's ready to self-host bluesky
+### <a id="ops2-check"/>2) check if it's ready to self-host bluesky
 
 ```bash
 # check DNS server responses for your self-host domain
@@ -151,10 +144,83 @@ make    docker-stop f=./docker-compose-debug-caddy.yaml
 => if testOK then go ahead, otherwise check your environment.
 
 
-### <a id="ops4-build"/>4) build docker images, to prepare self-hosting...
+### <a id="ops3-run"/>3) deploy bluesky on your env.
+
+first, describes deploying bluesky with prebuild images.
+[later](#hacks-clone-and-build), describes how to build images from sources by yourself.
 
 ```bash
-# 0) apply mimimum patch for self-docker-image-build, regardless self-hosting.
+# 1) deploy required containers (database, caddy etc).
+make docker-start
+
+# wait until log message becomes silent.
+
+# 2) deploy bluesky containers(plc, bgs, appview, pds, ozone, ...)
+make docker-start-bsky
+```
+
+### <a id="ops4-run-fg"/>4) deploy feed-generator on your env.
+
+```bash
+# 1) check if social-app is ready to serve.
+curl -L https://social-app.${DOMAIN}/
+
+# 2) create account for feed-generator
+make api_CreateAccount_feedgen
+
+# 3) start bluesky feed-generator
+make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
+```
+
+### <a id="ops5-play"/>5) play with self-hosted blusky.
+
+on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```
+
+### <a id="ops6-stop"/>6) stop all containters
+
+```bash
+# choice1) shutdown containers but keep data alive.
+make docker-stop
+
+# choice2) shutdown containers and clean those data
+make docker-stop-with-clean
+```
+
+[back to top](#top)
+## <a id="hack"/>Hack
+
+### <a id="hack-ops-CreateAccount"/>create accounts on your bluesky in easy
+
+```bash
+export u=foo
+make api_CreateAccount handle=${u}.${DOMAIN} password=${u} email=${u}@example.com resp=./data/accounts/${u}.secrets
+
+#then, to make another accounts, just re-assign $u and call the above ops, like below.
+export u=bar
+!make
+
+export u=baz
+!make
+```
+
+[back to top](#top)
+### <a id="hacks-clone-and-build"/>build docker images from sources by yourself
+
+after configuring [params](#ops0-configparams) and [optional env](#hack-ops-development),
+operate as below:
+
+```bash
+# get sources from all repositories
+make    cloneAll
+
+# create work branches and keep staying on them for all repositories (repos/*; optional but recommended for safe.)
+make    createWorkBranch
+```
+
+then build docker images as below:
+
+```bash
+# 0) apply mimimum patch to build images, regardless self-hosting.
 #      as described in https://github.com/bluesky-social/atproto/discussions/2026 for feed-generator/Dockerfile etc.
 # NOTE: this ops checkout new branch before applying patch, and keep staying new branch
 make patch-dockerbuild
@@ -170,64 +236,8 @@ make build DOMAIN=
 # make build services=social-app
 ```
 
-### <a id="ops5-run"/>5) run bluesky with selfhosting
-
-```bash
-# 1) start required containers (database, caddy etc).
-make docker-start
-
-# wait until log message becomes silent.
-
-# 2) start bluesky containers, finally...
-make docker-start-bsky
-```
-
-### <a id="ops6-run-fg"/>6) run bluesky feed-generator
-
-```bash
-# 1) check if social-app is ready to serve.
-curl -L https://social-app.${DOMAIN}/
-
-# 2) create account for feed-generator
-make api_CreateAccount_feedgen
-
-# 3) start boosky feed-generator
-make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
-```
-
-### <a id="ops7-play"/>7) play with self-hosted blusky.
-
-on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```
-
-### <a id="ops8-stop"/>8) stop all containters
-
-```bash
-# shutdown container but keep volumes alive.
-make docker-stop
-
-# shutdown container and clean those data
-make docker-stop-with-clean
-```
-
 [back to top](#top)
-## <a id="hack"/>Hack
-
-### <a id="hack-ops-CreateAccount"/>1) create accounts in easy
-
-```bash
-export u=foo
-make api_CreateAccount handle=${u}.${DOMAIN} password=${u} email=${u}@example.com resp=${aDir}/${u}.secrets
-
-#then, to make other account, just re-assign $u and call the above ops, like below.
-export u=bar
-!make
-
-export u=baz
-!make
-```
-
-[back to top](#top)
-### <a id="hack-ops-development"/>2) ops on development with your fork repo.
+### <a id="hack-ops-development"/>ops on development with your fork repo.
 
 when you set fork_repo_prefix variable before cloneAll,
 this ops registers your remote fork repository with ```git remote add fork ....```
@@ -238,8 +248,9 @@ export fork_repo_prefix=git@github.com:YOUR_GITHUB_ACCOUNT/
 
 make cloneAll
 
-# upload main branches and tags from all repos to your remote fork repositories.
-make exec under=./repos/* cmd='git push fork main'
+# manage(push and pull) branches and tags for all repos by single operation against your remote fork repositories.
+make exec under=./repos/* cmd='git push fork branch'
+make exec under=./repos/* cmd='git tag -a "asof-XXXX-XX-XX" '
 make exec under=./repos/* cmd='git push fork --tags'
 
 # push something on justOneRepo to your fork repository.
@@ -249,7 +260,7 @@ make exec under=./repos/justOneRepo cmd='git push fork something'
 ```
 
 [back to top](#top)
-### <a id="hack-EnvVars-Compose"/>3) check Env Vars in docker-compose
+### <a id="hack-EnvVars-Compose"/>check Env Vars in docker-compose
 
 1) get all env vars in docker-compose
 
@@ -294,12 +305,12 @@ cat ./docker-compose-starter.yaml | yq -y .services[].environment \
 3) get mapping rules in reverse proxy (caddy )
 
 ```bash
-# dump rules, no idea to convert into  easy reading format...
+# dump rules, no idea to convert into  easy readable format...
 cat config/caddy/Caddyfile
 ```
 
 [back to top](#top)
-### <a id="hack-EnvVars-Sources"/>4) check Env Vars in sources
+### <a id="hack-EnvVars-Sources"/>check Env Vars in sources
 
 1) files related env vars in sources
 
@@ -374,9 +385,9 @@ find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e
 ```
 
 [back to top](#top)
-### <a id="hack-EnvVars-Table"/>5) create a table showing {env x container => value} from source and docker-compose.
+### <a id="hack-EnvVars-Table"/>create a table showing {env x container => value} from source and docker-compose.
 
-this hask uses the result(/tmp/envs.txt) of the above [4-2](#hack-EnvVars-Sources) as input.
+this hask uses the result(/tmp/envs.txt) of [the above](#hack-EnvVars-Sources) as input.
 
 ```bash
 # create table showing { env x container => value } with ops-helper script.
