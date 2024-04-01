@@ -3,11 +3,11 @@
 ## Contents:
   - [Motivation](#motivation)
   - [Current Status](#status)
-  - [References](#refs)
   - [Sourses in Use](#sources)
   - [Operations to get and run self-hosting bluesky](#ops)
   - [Hacks](#hack)
   - [Sample DNS Server Config(bind9)](#sample-dns-config)
+  - [References](#refs)
   - [Historical Status](#old_status)
 
 ## <a id="motivation" />Motivation
@@ -49,20 +49,6 @@ test results with 'asof-2024-03-31':<BR>
    -  not tested: regarding moderation
    -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
 
-
-[back to top](#top)
-
-## <a id="refs"/>References
-
-special thanks to prior works on self-hosting.
-   - https://github.com/ikuradon/atproto-starter-kit/tree/main
-   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
-
-hacks in bluesky:
-   - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
-   - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
-   - https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
-   - https://github.com/bluesky-social/pds/blob/main/installer.sh
 
 [back to top](#top)
 ## <a id="sources"/>sources in use
@@ -467,8 +453,21 @@ add it in /etc/resolv.conf as below on all testing machines
 ```
 nameserver 192.168.1.27
 ```
-[back to top](#top)
 
+[back to top](#top)
+## <a id="refs"/>References
+
+special thanks to prior works on self-hosting.
+   - https://github.com/ikuradon/atproto-starter-kit/tree/main
+   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
+
+hacks in bluesky:
+   - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
+   - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
+   - https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
+   - https://github.com/bluesky-social/pds/blob/main/installer.sh
+
+[back to top](#top)
 ## <a id="old_status"/>Historical status regarding self-hosting
 
 test results with 'asof-2024-03-16' (now archiving status):<BR>
