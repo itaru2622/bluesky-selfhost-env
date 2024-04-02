@@ -24,7 +24,7 @@ ${rDir}/atproto/.dockerbuild:
 	touch $@
 	(cd ${rDir}/atproto; git add . ; git commit -m "update: dockerbuild"; )
 
-_patch-selfhost-optional-even-not-mandatory: ${rDir}/social-app/.selfhost-${DOMAIN}
+_patch-selfhost-even-not-mandatory: ${rDir}/social-app/.selfhost-${DOMAIN}
 ${rDir}/social-app/.selfhost-${DOMAIN}::
 	@echo "make branch and applying patch..."
 	(cd ${rDir}/social-app; git status; git checkout ${branch2patch} -b selfhost-${asof}${DOMAIN} )

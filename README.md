@@ -250,7 +250,7 @@ make build DOMAIN=
 #   'optional' means, applying this patch is not mandatory to get self-hosting environment.
 # NOTE: this ops checkout new branch before applying patch, and keep staying new branch
 #
-# make _patch-selfhost-optional-even-not-mandatory
+# make _patch-selfhost-even-not-mandatory
 # make build services=social-app
 ```
 
