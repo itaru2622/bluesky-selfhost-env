@@ -6,9 +6,10 @@
   - [Sourses in Use](#sources)
   - [Operations for self-hosting bluesky](#ops)
   - [Hacks](#hack)
+  - [Appendix](#appendix)
   - [Sample DNS Server Config(bind9)](#sample-dns-config)
-  - [References](#refs)
   - [Historical Status](#old_status)
+  - [References](#refs)
 
 ## <a id="motivation" />Motivation
 
@@ -104,14 +105,28 @@ apt install -y make
 
 ### <a id="ops1-prepare"/>1) prepare on your network
 
+1) make DNS A-Records in your self-hosting network.<BR>
+
+at least, following two A-Records are required.<BR>
+refer [appendix](#sample-dns-config) for sample DNS server(bind9) configuration.
+
 ```
-1) make DNS A-Records for your self-hosting domain, at least:
      -    ${DOMAIN}
      -  *.${DOMAIN}
+```
 
-2) generate and install CA certificate (for self-signed certificate)
-     -  after generation, copy crt and key as ./certs/root.{crt,key}
-     -  note: don't forget to install root.crt to your host machine and browser.
+2) generate and install CA certificate (usecases for private/closed network, and others using self-signed certificates).
+    -  after generation, copy crt and key as ./certs/root.{crt,key}
+    -  note: don't forget to install root.crt to your host machine and browser.
+
+the easiest way to get self-signed CA certificates is below.
+```
+# get and store self-signed CA certificate into ./certs/root.{crt,key}, by using caddy.
+make getCAcert
+# install CA cert on host machine.
+make installCAcert
+
+# don't forget to install certificate to browser.
 ```
 
 ### <a id="ops2-check"/>2) check if it's ready to self-host bluesky
@@ -138,18 +153,21 @@ curl -L https://some-hostname.${DOMAIN}/xrpc/any-request | jq
 curl -L https://${DOMAIN}/others | jq
 curl -L https://some-hostname.${DOMAIN}/others | jq
 
-# stop test containers.
-make    docker-stop f=./docker-compose-debug-caddy.yaml
+# stop test containers, without persisting data
+make    docker-stop-with-clean f=./docker-compose-debug-caddy.yaml
 ```
 => if testOK then go ahead, otherwise check your environment.
 
 
 ### <a id="ops3-run"/>3) deploy bluesky on your env.
 
-first, describes deploying bluesky with prebuild images.
-[later](#hacks-clone-and-build), describes how to build images from sources by yourself.
+first, describes deploying bluesky with prebuild images.<BR>
+[later](#hacks-clone-and-build) describes how to build images from sources by yourself.
 
 ```bash
+# 0) pull prebuild docker images from docker.io, to enforce skip building images.
+make docker-pull
+
 # 1) deploy required containers (database, caddy etc).
 make docker-start
 
@@ -395,7 +413,9 @@ cat ./docker-compose-starter.yaml | ./ops-helper/compose2envtable.py -l /tmp/env
 ```
 
 [back to top](#top)
-## <a id="sample-dns-config"/>DNS server configuration sample (bind9)
+## <a id="appendix"/>Appendix
+
+### <a id="sample-dns-config"/>DNS server configuration sample (bind9)
 
 description of test network:
 
@@ -466,20 +486,7 @@ nameserver 192.168.1.27
 ```
 
 [back to top](#top)
-## <a id="refs"/>References
-
-special thanks to prior works on self-hosting.
-   - https://github.com/ikuradon/atproto-starter-kit/tree/main
-   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
-
-hacks in bluesky:
-   - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
-   - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
-   - https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
-   - https://github.com/bluesky-social/pds/blob/main/installer.sh
-
-[back to top](#top)
-## <a id="old_status"/>Historical status regarding self-hosting
+### <a id="old_status"/>Historical status regarding self-hosting
 
 test results with 'asof-2024-03-16' (now archiving status):<BR>
 
@@ -522,3 +529,14 @@ test results with 'asof-2024-01-06' (now archiving status):<BR>
 It seems: indexer and feed-generator are not working by unknown reason even those are staying 'up' status.
 
 [back to top](#top)
+## <a id="refs"/>References
+
+special thanks to prior works on self-hosting.
+   - https://github.com/ikuradon/atproto-starter-kit/tree/main
+   - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
+
+hacks in bluesky:
+   - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
+   - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
+   - https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
+   - https://github.com/bluesky-social/pds/blob/main/installer.sh
