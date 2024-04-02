@@ -18,10 +18,12 @@ FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}' \
 	| cat))
 	@echo ${_envs} | sed 's/ /\n/g' | awk -F= '{print $$1,"=",$$2}' | sed 's/ //g'
 
+docker-pull:
+	DOMAIN= asof=${asof} docker-compose -f ${f} pull
 build:
 	DOMAIN=${DOMAIN} asof=${asof} docker-compose -f ${f} build ${services}
 
-docker-start::      setupdir config/caddy/Caddyfile certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
+docker-start::      setupdir ${wDir}/config/caddy/Caddyfile ${wDir}/certs/root.crt ${wDir}/certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
 docker-start::      docker-watchlog
 docker-start-bsky:: _applySbsky _dockerUp
 docker-start-bsky:: docker-watchlog

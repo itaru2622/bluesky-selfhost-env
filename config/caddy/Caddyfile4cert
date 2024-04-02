@@ -1,0 +1,38 @@
+#
+# Caddy Configuration file, to use caddy as self-signed CA certificate generator.
+# ----
+#
+# ops to get self-signed CA certificate:
+#
+# 1) start caddy
+# mkdir -p /tmp/certs ; docker run -it --rm -d --name caddy -v ./Caddyfile4cert:/etc/caddy/Caddyfile caddy:2
+#
+# 2) copy self-signed CA certificate (root.crt, root.key) from container to host.
+# docker cp caddy:/data/caddy/pki/authorities/local/root.crt ./
+# docker cp caddy:/data/caddy/pki/authorities/local/root.key ./
+#
+# 3) shutdown caddy container
+# docker rm -f caddy
+#
+# 4) install root.crt as trusted root CA into machines
+# sudo cp -p /tmp/root.crt /usr/local/share/ca-certificates/testCA-caddy.crt
+# sudo update-ca-certificates
+#
+# 4-2) install root.crt as trusted root CA into browser, by operate your browser.
+# ops are depeding on your browser.
+#
+
+# cf. https://caddyserver.com/docs/caddyfile
+# starts: caddy configuration >>>>>>>>>>>
+# starts:   global options
+{
+#	debug
+}
+# ends:     global options
+
+# starts:   server block
+* {
+	tls internal
+        reverse_proxy https://google.com
+}
+# ends:   server block

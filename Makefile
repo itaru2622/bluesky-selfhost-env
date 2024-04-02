@@ -148,10 +148,6 @@ ${passfile}:
 	cat $@
 	@echo "passwords generated and stored in $@"
 
-# copy CA certificates locally to use all containers(for self-signed certificates.)
-certs/ca-certificates.crt:
-	cp -p /etc/ssl/certs/ca-certificates.crt $@
-
 setupdir:
 	mkdir -p ${aDir}
 
@@ -159,6 +155,7 @@ setupdir:
 # include other ops.
 ################################
 include ops/git.mk
+include ops/certs.mk
 include ops/docker.mk
 include ops/patch.mk
 include ops/api-bsky.mk
