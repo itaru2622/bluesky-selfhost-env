@@ -116,18 +116,21 @@ services:
        dockerfile: Dockerfile
     command: tail -f /dev/null
     environment:
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
-      - ATP_PDS_HOST=https://pds.${DOMAIN}
-      - ATP_BGS_HOST=https://bgs.${DOMAIN}
-      - ATP_AUTH_HANDLE=admin.${DOMAIN}
-#     - ATP_AUTH_PASSWORD=admin
-#     - ATP_AUTH_ADMIN_PASSWORD=admin
+      - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
+      - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
+      - DATA_DIR=/data/bigsky
+      - DEBUG_MODE=1
+      - GOINSECURE=${GOINSECURE}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - LOG_DESTINATION=1
+      - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     volumes:
-       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 
 # debug for bluesky with indigo subcmds <<<
 
@@ -182,14 +185,14 @@ services:
     environment:
       - GOINSECURE=${GOINSECURE}
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - cluster.name=docker-cluster
-      - node.name=os-node
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - http.host=0.0.0.0
-      - transport.host=127.0.0.1
-      - plugins.security.disabled=true
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - bootstrap.memory_lock=true
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - http.host=0.0.0.0
+      - node.name=os-node
+      - plugins.security.disabled=true
+      - transport.host=127.0.0.1
     ulimits:
       memlock:
         soft: -1
@@ -215,18 +218,18 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - NODE_ENV=development
-      - PORT=2582
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - DEBUG_MODE=1
-      - LOG_ENABLED=true
-      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - LOG_DESTINATION=1
-      - ENABLE_MIGRATIONS=true
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/plc
       - DB_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
       - DB_MIGRATE_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
+      - DEBUG_MODE=1
+      - ENABLE_MIGRATIONS=true
+      - GOINSECURE=${GOINSECURE}
+      - LOG_DESTINATION=1
+      - LOG_ENABLED=true
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - PORT=2582
     restart: always
     depends_on:
       - database
@@ -250,38 +253,36 @@ services:
     user: root
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
     environment:
-      - NODE_ENV=development
-      - PDS_SERVICE_DID=did:web:${DOMAIN}
-      - PDS_DEV_MODE=true
-      - PDS_REPORT_SERVICE_URL=https://mod.${DOMAIN}
-      - PDS_REPORT_SERVICE_DID=did:web:mod.${DOMAIN}
-      - PDS_ENABLE_DID_DOC_WITH_SESSION=true
-      - PDS_PORT=2583
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
+      - GOINSECURE=${GOINSECURE}
+      - LOG_DESTINATION=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - LOG_DESTINATION=1
-      - PDS_HOSTNAME=${DOMAIN}
-      # atproto/packages/pds/example.env >>>>
-      - PDS_JWT_SECRET=${PDS_JWT_SECRET}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD}
-      - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}
-      # atproto/packages/pds/example.env <<<<
-      - PDS_DATA_DIRECTORY=/pds
       - PDS_BLOBSTORE_DISK_LOCATION=/pds/blobs
+      - PDS_BSKY_APP_VIEW_DID=did:web:api.${DOMAIN}
+      - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
+      - PDS_CRAWLERS=https://bgs.${DOMAIN}
+      - PDS_DATA_DIRECTORY=/pds
+      - PDS_DEV_MODE=true
 #     - PDS_BLOBSTORE_DISK_TMP_LOCATION=/pds/image/tmp
       - PDS_DID_PLC_URL=https://plc.${DOMAIN}
-      - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
-      - PDS_BSKY_APP_VIEW_DID=did:web:api.${DOMAIN}
-      - PDS_MOD_SERVICE_URL=https://mod.${DOMAIN}
-      - PDS_MOD_SERVICE_DID=did:web:mod.${DOMAIN}
-      - PDS_CRAWLERS=https://bgs.${DOMAIN}
-      - PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL}
       - PDS_EMAIL_FROM_ADDRESS=no-reply@gmail.com
-      - PDS_INVITE_REQUIRED=false
+      - PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL}
+      - PDS_ENABLE_DID_DOC_WITH_SESSION=true
+      - PDS_HOSTNAME=${DOMAIN}
       - PDS_INVITE_INTERVAL=604800000
+      - PDS_INVITE_REQUIRED=false
+      - PDS_JWT_SECRET=${PDS_JWT_SECRET}
+      - PDS_MOD_SERVICE_DID=did:web:mod.${DOMAIN}
+      - PDS_MOD_SERVICE_URL=https://mod.${DOMAIN}
+      - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}
+      - PDS_PORT=2583
+      - PDS_REPORT_SERVICE_DID=did:web:mod.${DOMAIN}
+      - PDS_REPORT_SERVICE_URL=https://mod.${DOMAIN}
+      - PDS_SERVICE_DID=did:web:${DOMAIN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
@@ -306,20 +307,20 @@ services:
       - 2470:2470
     command: /bigsky
     environment:
-      - NODE_ENV=development
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - DEBUG_MODE=1
-      - LOG_ENABLED=true
-      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      #- GODEBUG=netdns=go+4
-      - LOG_DESTINATION=1
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
-      - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
-      - DATA_DIR=/data/bigsky
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
+      - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
+      - DATA_DIR=/data/bigsky
+      - DEBUG_MODE=1
+      - GOINSECURE=${GOINSECURE}
+#     - GODEBUG=netdns=go+4
+      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - LOG_DESTINATION=1
+      - LOG_ENABLED=true
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
@@ -347,42 +348,42 @@ services:
       - 2584
     command: node --enable-source-maps api.js
     environment:
-      - NODE_ENV=development
-      - BSKY_REPO_PROVIDER=ws://pds:2583
-      - BSKY_BSYNC_HTTP_VERSION=1.1
-      - BSKY_BSYNC_URL=http://bsky:3002
-      - BSKY_BSYNC_PORT=3002
-      - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
-      - BSKY_DB_POSTGRES_SCHEMA=bsky
-      - BSKY_DATAPLANE_HTTP_VERSION=1.1
-      - BSKY_DATAPLANE_URLS=http://bsky:3001
-      - BSKY_DATAPLANE_PORT=3001
-      - BSKY_SERVER_DID=did:web:api.${DOMAIN}
-      - BSKY_SEARCH_URL=https://search.${DOMAIN}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
-      - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
+      - BSKY_BLOB_CACHE_LOC=/cache/
+      - BSKY_BSYNC_HTTP_VERSION=1.1
+      - BSKY_BSYNC_PORT=3002
+      - BSKY_BSYNC_URL=http://bsky:3002
       - BSKY_COURIER_URL=http://fake-courier.example.invalid/
-      - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
+      - BSKY_DATAPLANE_HTTP_VERSION=1.1
+      - BSKY_DATAPLANE_PORT=3001
+      - BSKY_DATAPLANE_URLS=http://bsky:3001
+      - BSKY_DB_POSTGRES_SCHEMA=bsky
+      - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
       - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
+      - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
       - BSKY_PUBLIC_URL=https://api.${DOMAIN}
-      - PORT=2584
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - BSKY_REPO_PROVIDER=ws://pds:2583
+      - BSKY_SEARCH_URL=https://search.${DOMAIN}
+      - BSKY_SERVER_DID=did:web:api.${DOMAIN}
+      - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
       - DEBUG_MODE=1
+      - DID_PLC_URL=https://plc.${DOMAIN}
+      - ENABLE_MIGRATIONS=false
+      - GOINSECURE=${GOINSECURE}
+      - LOG_DESTINATION=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - LOG_DESTINATION=1
-      - ENABLE_MIGRATIONS=false
       - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
-      - DID_PLC_URL=https://plc.${DOMAIN}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - PORT=2584
       - REDIS_HOST=redis
-      - BSKY_BLOB_CACHE_LOC=/cache/
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
-      - ./repos/atproto/services/bsky/api.js:/app/services/bsky/api.js:ro
       - bsky:/cache/
+#     - ./repos/atproto/services/bsky/api.js:/app/services/bsky/api.js:ro
     restart: always
     depends_on:
       - database
@@ -408,15 +409,15 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - NODE_ENV=development
-      - HTTP_ADDRESS=:8100
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-# cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
+#      cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
       - ATP_APPVIEW_HOST=https://public.api.${DOMAIN}
-# cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
+#      cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
+      - GOINSECURE=${GOINSECURE}
+      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - HTTP_ADDRESS=:8100
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     restart: always
 
 
@@ -437,18 +438,18 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - ES_INSECURE_SSL=true
 #       refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
       - ATP_BGS_HOST=wss://bgs.${DOMAIN}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/search
-      - PALOMAR_BIND=0.0.0.0:3999
-      - ES_USERNAME=
-      - ES_PASSWORD=
 #     - ES_CERT_FILE=
       - ES_HOSTS=http://opensearch:9200
+      - ES_INSECURE_SSL=true
+      - ES_PASSWORD=
+      - ES_USERNAME=
+      - GOINSECURE=${GOINSECURE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - PALOMAR_BIND=0.0.0.0:3999
     restart: always
     depends_on:
       - opensearch
@@ -472,34 +473,34 @@ services:
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
-      - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
       # supporting self-signed certificates, easiest way <<<<
+#     - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
     environment:
-      - NODE_ENV=development
-      - OZONE_DB_POSTGRES_SCHEMA=ozone
-      - OZONE_APPVIEW_PUSH_EVENTS=true
-      - OZONE_ADMIN_DIDS=
-      - OZONE_TRIAGE_DIDS=
-      - OZONE_MODERATOR_DIDS=did:web:api.${DOMAIN}
-      - OZONE_DEV_MODE=true
-      - OZONE_PORT=3000
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
+      - ENABLE_MIGRATIONS=true
+      - GOINSECURE=${GOINSECURE}
+      - LOG_DESTINATION=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - LOG_DESTINATION=1
-      - ENABLE_MIGRATIONS=true
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - OZONE_ADMIN_DIDS=
+      - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
+      - OZONE_APPVIEW_DID=did:web:api.${DOMAIN}
+      - OZONE_APPVIEW_PUSH_EVENTS=true
+      - OZONE_APPVIEW_URL=https://api.${DOMAIN}
+      - OZONE_DB_POSTGRES_SCHEMA=ozone
+      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - OZONE_DEV_MODE=true
+      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
+      - OZONE_MODERATOR_DIDS=did:web:api.${DOMAIN}
+      - OZONE_PDS_DID=did:web:${DOMAIN}
+      - OZONE_PDS_URL=https://${DOMAIN}
+      - OZONE_PORT=3000
       - OZONE_PUBLIC_URL=https://mod.${DOMAIN}
       - OZONE_SERVER_DID=did:web:mod.${DOMAIN}
-      - OZONE_APPVIEW_URL=https://api.${DOMAIN}
-      - OZONE_APPVIEW_DID=did:web:api.${DOMAIN}
-      - OZONE_PDS_URL=https://${DOMAIN}
-      - OZONE_PDS_DID=did:web:${DOMAIN}
-      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
-      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
+      - OZONE_TRIAGE_DIDS=
     restart: always
     depends_on:
       - database
@@ -521,31 +522,31 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - NODE_ENV=development
-      - OZONE_DB_POSTGRES_SCHEMA=ozone
-      - OZONE_APPVIEW_PUSH_EVENTS=true
-      - OZONE_ADMIN_DIDS=
-      - OZONE_TRIAGE_DIDS=
-      - OZONE_MODERATOR_DIDS=did:web:api.${DOMAIN}
-      - OZONE_DEV_MODE=true
-      - OZONE_PORT=3000
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - DEBUG_MODE=1
+      - ENABLE_MIGRATIONS=true
+      - GOINSECURE=${GOINSECURE}
+      - LOG_DESTINATION=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - LOG_DESTINATION=1
-      - ENABLE_MIGRATIONS=true
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - OZONE_ADMIN_DIDS=
+      - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
+      - OZONE_APPVIEW_DID=did:web:api.${DOMAIN}
+      - OZONE_APPVIEW_PUSH_EVENTS=true
+      - OZONE_APPVIEW_URL=https://api.${DOMAIN}
+      - OZONE_DB_POSTGRES_SCHEMA=ozone
+      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - OZONE_DEV_MODE=true
+      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
+      - OZONE_MODERATOR_DIDS=did:web:api.${DOMAIN}
+      - OZONE_PDS_DID=did:web:${DOMAIN}
+      - OZONE_PDS_URL=https://${DOMAIN}
+      - OZONE_PORT=3000
       - OZONE_PUBLIC_URL=https://mod.${DOMAIN}
       - OZONE_SERVER_DID=did:web:mod.${DOMAIN}
-      - OZONE_APPVIEW_URL=https://api.${DOMAIN}
-      - OZONE_APPVIEW_DID=did:web:api.${DOMAIN}
-      - OZONE_PDS_URL=https://${DOMAIN}
-      - OZONE_PDS_DID=did:web:${DOMAIN}
-      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
-      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
+      - OZONE_TRIAGE_DIDS=
     restart: always
     depends_on:
       - mod
@@ -559,24 +560,24 @@ services:
     ports:
       - 2586:3000
     environment:
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - NODE_ENV=development
-      - FEEDGEN_PORT=3000
-      - FEEDGEN_LISTENHOST=0.0.0.0
-      - FEEDGEN_SQLITE_LOCATION=/data/db.sqlite
-      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://bgs.${DOMAIN}
+      - FEEDGEN_BSKY_SERVICE=https://${DOMAIN}
+      - FEEDGEN_FEED_DESCRIPTION=whats-hot
+      - FEEDGEN_FEED_DISPLAY_NAME=whats-hot
+      - FEEDGEN_FEED_RECORD_NAME=whats-hot
       - FEEDGEN_HOSTNAME=feed-generator.${DOMAIN}
-      - FEEDGEN_SERVICE_DID=did:web:feed-generator.${DOMAIN}
-      - FEEDGEN_SUBSCRIPTION_RECONNECT_DELAY=3000
+      - FEEDGEN_LISTENHOST=0.0.0.0
+      - FEEDGEN_PLC_URL=https://plc.${DOMAIN}
+      - FEEDGEN_PORT=3000
       - FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID}
       - FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}
       - FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD}
-      - FEEDGEN_FEED_RECORD_NAME=whats-hot
-      - FEEDGEN_FEED_DISPLAY_NAME=whats-hot
-      - FEEDGEN_FEED_DESCRIPTION=whats-hot
-      - FEEDGEN_BSKY_SERVICE=https://${DOMAIN}
-      - FEEDGEN_PLC_URL=https://plc.${DOMAIN}
+      - FEEDGEN_SERVICE_DID=did:web:feed-generator.${DOMAIN}
+      - FEEDGEN_SQLITE_LOCATION=/data/db.sqlite
+      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://bgs.${DOMAIN}
+      - FEEDGEN_SUBSCRIPTION_RECONNECT_DELAY=3000
+      - GOINSECURE=${GOINSECURE}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     restart: always
     volumes:
       # supporting self-signed certificates, easiest way >>>>
