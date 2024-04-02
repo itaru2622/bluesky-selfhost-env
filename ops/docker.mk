@@ -50,6 +50,9 @@ docker-rm-all:
 	-docker volume ls | tail -n +2 | awk '{print $$2}' | xargs docker volume rm -f
 	-docker system prune -f
 
+_gen_compose_for_binary:
+	cat docker-compose-builder.yaml | yq4 'del(.services[].build)' > docker-compose.yaml
+
 # target to configure variable
 _applySdep:
 	$(eval services=${Sdep})

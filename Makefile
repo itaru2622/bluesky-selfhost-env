@@ -50,7 +50,8 @@ rDir ?=${wDir}/repos
 passfile ?=${wDir}/config/secrets-passwords.env
 
 # docker-compose file
-f ?=${wDir}/docker-compose-starter.yaml
+f ?=${wDir}/docker-compose.yaml
+#f ?=${wDir}/docker-compose-builder.yaml
 
 # folders of repos
 _nrepo   :=atproto indigo social-app feed-generator did-method-plc pds ozone

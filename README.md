@@ -244,14 +244,14 @@ then build docker images as below:
 make patch-dockerbuild
 
 # 1) build images with original
-make build DOMAIN=
+make build DOMAIN= f=./docker-compose-builder.yaml
 
 # 2) apply optional patch for self-hosting, and re-build image
 #   'optional' means, applying this patch is not mandatory to get self-hosting environment.
 # NOTE: this ops checkout new branch before applying patch, and keep staying new branch
 #
 # make _patch-selfhost-even-not-mandatory
-# make build services=social-app
+# make build services=social-app f=./docker-compose-builder.yaml
 ```
 
 [back to top](#top)
@@ -288,18 +288,18 @@ _yqpath='.services[].environment, .services[].build.args'
 _yqpath='.services[].environment'
 
 # lists of var=val
-cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
+cat ./docker-compose-builder.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f
 
 # output in yaml
-cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
+cat ./docker-compose-builder.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f  \
   | awk -F= -v col=":" -v q="'" -v sp="  " -v list="-" '{print   sp list sp q $1 q col sp q $2 q}' \
   | sed '1i defs:' | yq -y
 
 
 # list of names
-cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
+cat ./docker-compose-builder.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f \
   | awk -F= '{print $1}' | sort -u -f
 ```
@@ -308,12 +308,12 @@ cat ./docker-compose-starter.yaml | yq -y "${_yqpath}" \
 
 ```bash
 # get {name=value} of env vars regarding { URL | DID | DOMAIN }
-cat ./docker-compose-starter.yaml | yq -y .services[].environment \
+cat ./docker-compose-builder.yaml | yq -y .services[].environment \
  | grep -v '^---' | sed 's/^- //' | sort -u -f \
  | grep -e :// -e did: -e {DOMAIN}
 
 # get names of env vars regarding { URL | DID | DOMAIN }
-cat ./docker-compose-starter.yaml | yq -y .services[].environment \
+cat ./docker-compose-builder.yaml | yq -y .services[].environment \
  | grep -v '^---' | sed 's/^- //' | sort -u -f \
  | grep -e :// -e did: -e {DOMAIN} \
  | awk -F= '{print $1}' | sort -u -f \
@@ -409,7 +409,7 @@ this hask uses the result(/tmp/envs.txt) of [the above](#hack-EnvVars-Sources) a
 
 ```bash
 # create table showing { env x container => value } with ops-helper script.
-cat ./docker-compose-starter.yaml | ./ops-helper/compose2envtable.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
+cat ./docker-compose-builder.yaml | ./ops-helper/compose2envtable.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
 ```
 
 [back to top](#top)
