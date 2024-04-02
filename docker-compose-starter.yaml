@@ -252,11 +252,9 @@ services:
     environment:
       - NODE_ENV=development
       - PDS_SERVICE_DID=did:web:${DOMAIN}
-      - PDS_BSKY_APP_VIEW_DID=did:web:api.${DOMAIN}
       - PDS_DEV_MODE=true
       - PDS_REPORT_SERVICE_URL=https://mod.${DOMAIN}
       - PDS_REPORT_SERVICE_DID=did:web:mod.${DOMAIN}
-      - PDS_BSKY_APP_VIEW_URL=https://api.${DOMAIN}
       - PDS_ENABLE_DID_DOC_WITH_SESSION=true
       - PDS_PORT=2583
       - GOINSECURE=${GOINSECURE}
@@ -363,7 +361,6 @@ services:
       - BSKY_SEARCH_URL=https://search.${DOMAIN}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
-      - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
       - BSKY_COURIER_URL=http://fake-courier.example.invalid/
       - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
       - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
