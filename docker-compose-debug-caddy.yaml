@@ -19,9 +19,10 @@ services:
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
-      # CA certificates, required to add OS by update-ca-certificates
+      # CA certificates for self-signed. >>>
       - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt
       - ./certs/root.key:/data/caddy/pki/authorities/local/root.key
+      # CA certificates for self-signed. <<<
       - caddy-data:/data
       - caddy-config:/config
     healthcheck:
@@ -75,7 +76,7 @@ services:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 
 
-  # starts: fake to check caddy mapping rule for social-app and pds >>>>>>>>>>
+  # starts: fakes to check caddy mapping rule for social-app, pds, bsky(appview) >>>>>>>>>>
   social-app:
     image: itaru2622/fastapi:bookworm
     ports:
@@ -106,4 +107,4 @@ services:
     volumes:
       - ./tests/catchall-app:/app
 
-  # ends: fake to check caddy mapping rule for social-app and pds <<<<<<<<<<
+  # ends: fakes to check caddy mapping rule for social-app, pds, bsky(appview) <<<<<<<<<<
