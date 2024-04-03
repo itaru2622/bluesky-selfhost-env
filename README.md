@@ -188,6 +188,9 @@ make api_CreateAccount_feedgen
 
 # 3) start bluesky feed-generator
 make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
+
+# 4) execute publishFeed on feed-generator
+make publishFeed
 ```
 
 ### <a id="ops5-play"/>5) play with self-hosted blusky.

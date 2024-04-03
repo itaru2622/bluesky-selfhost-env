@@ -29,6 +29,11 @@ docker-start-bsky:: _applySbsky _dockerUp
 docker-start-bsky:: docker-watchlog
 docker-start-bsky-feedgen:: _applySfeed _dockerUp
 docker-start-bsky-feedgen:: docker-watchlog
+
+# execute publishFeed on feed-generator
+publishFeed:
+	DOMAIN=${DOMAIN} asof=${asof} docker-compose -f ${f} exec feed-generator npm run publishFeed
+
 docker-stop:
 	docker-compose -f ${f} down ${services}
 docker-stop-with-clean:
