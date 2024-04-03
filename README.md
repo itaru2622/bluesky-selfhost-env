@@ -197,6 +197,8 @@ make publishFeed
 
 on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```
 
+refer [screenshots](./docs/screenshots), for UI operations to create/sign-in account on your self-hosting bluesky.
+
 ### <a id="ops6-stop"/>6) stop all containters
 
 ```bash
