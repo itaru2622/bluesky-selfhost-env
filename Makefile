@@ -16,7 +16,7 @@ FEEDGEN_EMAIL ?=feedgen@example.com
 
 # datetime to distinguish docker images and sources (date in %Y-%m-%d or 'latest' in docker image naming manner)
 asof ?=latest
-#asof ?=2024-03-31
+#asof ?=2024-04-03
 #asof ?=$(shell date +'%Y-%m-%d')
 
 
