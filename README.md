@@ -16,7 +16,7 @@
 this repository aims to get self-hosted bluesky env in easy with:
 
  - configurable hosting domain:  easy to tunable by environment variable (DOMAIN)
- - reproducibility: disclosure all configs and operations, including reverse proxy rules.
+ - reproducibility: disclosure all configs and operations, including reverse proxy rules, and patches to sources.
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
