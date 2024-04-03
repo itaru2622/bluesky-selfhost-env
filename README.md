@@ -70,9 +70,9 @@ export asof=2024-04-03
 # 3) set email addresses.
 
 # 3-1) EMAIL4CERTS:  to lets encrypt for requesting HTTPS certificates.
-export EMAIL4CERTS your@mail.address
+export EMAIL4CERTS=your@mail.address
 # for auto generating self-signed certificates, use below(`internal` is reserved keyword)
-export EMAIL4CERTS internal
+export EMAIL4CERTS=internal
 
 # 3-2) PDS_EMAIL_SMTP_URL: for PDS,  like smtps://youraccount:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
