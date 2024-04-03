@@ -14,8 +14,10 @@ PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 FEEDGEN_PUBLISHER_HANDLE ?=feedgen.${DOMAIN}
 FEEDGEN_EMAIL ?=feedgen@example.com
 
-# datetime to distinguish sources and docker images (default: today in %Y-%m-%d)
-asof ?=$(shell date +'%Y-%m-%d')
+# datetime to distinguish docker images and sources (date in %Y-%m-%d or 'latest' in docker image naming manner)
+asof ?=latest
+#asof ?=2024-03-31
+#asof ?=$(shell date +'%Y-%m-%d')
 
 
 ifeq ($(EMAIL4CERTS), internal)

@@ -63,8 +63,8 @@ you can change the domain name by environment variable as below:
 # 1) set domain name for self-hosting bluesky
 export DOMAIN=whatever.yourdomain.com
 
-# 2) set asof daytime, for bluesky-social codes (current testing asof 2024-03-31)
-#    NOTE: this ops is optional but recommended for development (default: today's daytime if ommited).
+# 2) set asof date, to distinguish docker images / its sources.
+#    2024-03-31(for latest prebuild, in %Y-%m-%d) or latest (following docker image naming manner in lazy).
 export asof=2024-03-31
 
 # 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
