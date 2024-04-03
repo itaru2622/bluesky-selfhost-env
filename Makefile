@@ -183,6 +183,7 @@ echo:
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
 	@echo ""
+	@echo "EMAIL4CERTS: ${EMAIL4CERTS}"
 	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
 	@echo "FEEDGEN_EMAIL: ${FEEDGEN_EMAIL}"
 	@echo "FEEDGEN_PUBLISHER_HANDLE: ${FEEDGEN_PUBLISHER_HANDLE}"

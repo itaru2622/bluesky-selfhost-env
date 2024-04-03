@@ -64,14 +64,21 @@ you can change the domain name by environment variable as below:
 export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
-#    2024-03-31(for latest prebuild, in %Y-%m-%d) or latest (following docker image naming manner in lazy).
+#    2024-03-31(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
 export asof=2024-03-31
 
-# 3) set PDS_EMAIL_SMTP_URL like smtps://yourmail:password@smtp.gmail.com
+# 3) set email addresses.
+
+# 3-1) EMAIL4CERTS:  to lets encrypt for requesting HTTPS certificates.
+export EMAIL4CERTS your@mail.address
+# for auto generating self-signed certificates, use below(`internal` is reserved keyword)
+export EMAIL4CERTS internal
+
+# 3-2) PDS_EMAIL_SMTP_URL: for PDS,  like smtps://youraccount:password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
 
-# 4) set FEEDGEN_EMAIL for account in bluesky
-export FEEDGEN_EMAIL=feedgen@your.valid.com
+# 3-3) FEEDGEN_EMAIL: for feed-generator account in bluesky
+export FEEDGEN_EMAIL=feedgen@example.com
 
 # 4) check your configuration, from the point of view of ops.
 make echo
@@ -142,7 +149,7 @@ make    docker-stop-with-clean f=./docker-compose-debug-caddy.yaml
 ### <a id="ops3-run"/>3) deploy bluesky on your env.
 
 first, describes deploying bluesky with prebuild images.<BR>
-[later](#hacks-clone-and-build) describes how to build images from sources by yourself.
+[later](#hack-clone-and-build) describes how to build images from sources by yourself.
 
 ```bash
 # 0) pull prebuild docker images from docker.io, to enforce skip building images.
@@ -206,8 +213,7 @@ export u=baz
 !make
 ```
 
-[back to top](#top)
-### <a id="hacks-clone-and-build"/>build docker images from sources by yourself
+### <a id="hack-clone-and-build"/>build docker images from sources by yourself
 
 after configuring [params](#ops0-configparams) and [optional env](#hack-ops-development),
 operate as below:
@@ -396,6 +402,20 @@ this hask uses the result(/tmp/envs.txt) of [the above](#hack-EnvVars-Sources) a
 # create table showing { env x container => value } with ops-helper script.
 cat ./docker-compose-builder.yaml | ./ops-helper/compose2envtable.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
 ```
+
+[back to top](#top)
+### <a id="hack-self-signed-certs"/>regarding self-signed certificates x HTTPS x containers.
+
+this self-hosting env tried to use self-signed certificates as usual trusted certificate by installing certificates into containers.
+The expected behavior is: by sharing /etc/ssl/certs/ca-certificates.crt amang all containers, containers distinguish those in ca-certificates.crt are trusted.
+
+unfortunately, this approach works just in some containers but not all.
+It seems depending on distribution(debian/alpine/...) and language(java/nodejs/golang). the rule cannot be found in actual behaviors.
+then, all of below methods are involved for safe, when it uses self-signed certificates.
+
+- host deploys /etc/ssl/certs/ca-certificates.crts to containers by volume mount.
+- define env vars for self-signed certificates, such as GOINSECURE, NODE_TLS_REJECT_UNAUTHORIZED for each language.
+
 
 [back to top](#top)
 ## <a id="appendix"/>Appendix
