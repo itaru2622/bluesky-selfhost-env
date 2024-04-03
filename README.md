@@ -3,10 +3,10 @@
 ## Contents:
   - [Motivation](#motivation)
   - [Current Status](#status)
-  - [Sourses in Use](#sources)
   - [Operations for self-hosting bluesky](#ops)
   - [Hacks](#hack)
   - [Appendix](#appendix)
+  - [Sourses in Use](#sources)
   - [Sample DNS Server Config(bind9)](#sample-dns-config)
   - [Historical Status](#old_status)
   - [References](#refs)
@@ -50,26 +50,6 @@ test results with 'asof-2024-03-31':<BR>
    -  not tested: regarding moderation
    -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
 
-
-[back to top](#top)
-## <a id="sources"/>sources in use
-
-| components     | url (origin)                                           |
-|----------------|:-------------------------------------------------------|
-| atproto        | https://github.com/bluesky-social/atproto.git          |
-| indigo         | https://github.com/bluesky-social/indigo.git           |
-| social-app     | https://github.com/bluesky-social/social-app.git       |
-| feed-generator | https://github.com/bluesky-social/feed-generator.git   |
-| pds            | https://github.com/bluesky-social/pds.git              |
-| ozone          | https://github.com/bluesky-social/ozone.git            |
-| did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
-
-other dependencies:
-
-| components     | url (origin)                                                            |
-|----------------|:------------------------------------------------------------------------|
-| reverse proxy  | https://github.com/caddyserver/caddy (official docker image of caddy:2) |
-| DNS server     | bind9 or others, such as https://github.com/itaru2622/docker-bind9.git  |
 
 [back to top](#top)
 ## <a id="ops"/>operations for self-hosting bluesky (powered by Makefile)
@@ -419,6 +399,27 @@ cat ./docker-compose-builder.yaml | ./ops-helper/compose2envtable.py -l /tmp/env
 
 [back to top](#top)
 ## <a id="appendix"/>Appendix
+
+### <a id="sources"/>sources in use:
+
+| components     | url (origin)                                           |
+|----------------|:-------------------------------------------------------|
+| atproto        | https://github.com/bluesky-social/atproto.git          |
+| indigo         | https://github.com/bluesky-social/indigo.git           |
+| social-app     | https://github.com/bluesky-social/social-app.git       |
+| feed-generator | https://github.com/bluesky-social/feed-generator.git   |
+| pds            | https://github.com/bluesky-social/pds.git              |
+| ozone          | https://github.com/bluesky-social/ozone.git            |
+| did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
+
+other dependencies:
+
+| components     | url (origin)                                                            |
+|----------------|:------------------------------------------------------------------------|
+| reverse proxy  | https://github.com/caddyserver/caddy (official docker image of caddy:2) |
+| DNS server     | bind9 or others, such as https://github.com/itaru2622/docker-bind9.git  |
+
+[back to top](#top)
 
 ### <a id="sample-dns-config"/>DNS server configuration sample (bind9)
 
