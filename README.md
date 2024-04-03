@@ -96,8 +96,8 @@ export FEEDGEN_EMAIL=feedgen@your.valid.com
 # 4) check your configuration, from the point of view of ops.
 make echo
 
-# 5) generate passwords for bluesky containers, and check those value:
-make genPass
+# 5) generate secrets for bluesky containers, and check those value:
+make genSecrets
 
 ## install make command as below, if you don't have yet.
 apt install -y make

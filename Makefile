@@ -141,13 +141,12 @@ endif
 delRepoDirAll:
 	rm -rf ${rDir}/[a-z]*
 
-# generate passwords for test env
-genPass: ${passfile}
-${passfile}:
-	@echo "its takes some time; please wait..."
-	wDir=${wDir} ./config/pass-gen/gen.sh > $@
+# generate secrets for test env
+genSecrets: ${passfile}
+${passfile}: ./config/gen-secrets.sh
+	wDir=${wDir} ./config/gen-secrets.sh > $@
 	cat $@
-	@echo "passwords generated and stored in $@"
+	@echo "secrets generated and stored in $@"
 
 setupdir:
 	mkdir -p ${aDir}
