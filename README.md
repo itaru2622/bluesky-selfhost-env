@@ -1,14 +1,26 @@
 # <a id="top"/>self-hosting bluesky 
 
+https://github.com/itaru2622/bluesky-selfhost-env
+
 ## Contents:
   - [Motivation](#motivation)
   - [Current Status](#status)
   - [Operations for self-hosting bluesky](#ops)
+      - [configuration](#ops0-configparams)
+      - [prepare on your network](#ops1-prepare)
+      - [check](#ops2-check)
+      - [deploy](#ops3-run)
+      - [play](ops5-play)
+      - [shutdown](#ops6-stop)   
   - [Hacks](#hack)
+      - [Create accounts on your bluesky in easy](#hack-ops-CreateAccount)
+      - [Build from source by yourself](#hack-clone-and-build)
+      - Check Env Vars [in docker-compose](#hack-EnvVars-Compose) and [in sources](#hack-EnvVars-Sources)
+      - [Create a table showing {env x container => value} from source and docker-compose](#hack-EnvVars-Table)
   - [Appendix](#appendix)
-  - [Sourses in Use](#sources)
-  - [Sample DNS Server Config(bind9)](#sample-dns-config)
-  - [Historical Status](#old_status)
+      - [Sourses in Use](#sources)
+      - [Sample DNS Server Config(bind9)](#sample-dns-config)
+      - [Historical Status](#old_status)
   - [References](#refs)
 
 ## <a id="motivation" />Motivation
@@ -69,9 +81,10 @@ export asof=2024-04-03
 
 # 3) set email addresses.
 
-# 3-1) EMAIL4CERTS:  to lets encrypt for requesting HTTPS certificates.
+# 3-1) EMAIL4CERTS:  to lets encrypt for signing certificates.
 export EMAIL4CERTS=your@mail.address
-# for auto generating self-signed certificates, use below(`internal` is reserved keyword)
+# for self-signed certificates, use below(`internal` is reserved keyword).
+# It is recommended to use `internal` for avoid meeting rate limits, until you are sure it ready to self-hosting.
 export EMAIL4CERTS=internal
 
 # 3-2) PDS_EMAIL_SMTP_URL: for PDS,  like smtps://youraccount:password@smtp.gmail.com
@@ -246,7 +259,7 @@ make build DOMAIN= f=./docker-compose-builder.yaml
 ```
 
 [back to top](#top)
-### <a id="hack-ops-development"/>ops on development with your fork repo.
+### <a id="hack-ops-development"/>ops on development with your remote fork repo.
 
 when you set fork_repo_prefix variable before cloneAll,
 this ops registers your remote fork repository with ```git remote add fork ....```
@@ -566,3 +579,5 @@ hacks in bluesky:
    - https://github.com/bluesky-social/indigo/blob/main/HACKING.md
    - https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
    - https://github.com/bluesky-social/pds/blob/main/installer.sh
+
+[back to top](#top)
