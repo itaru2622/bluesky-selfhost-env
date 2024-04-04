@@ -10,7 +10,7 @@ https://github.com/itaru2622/bluesky-selfhost-env
       - [prepare on your network](#ops1-prepare)
       - [check](#ops2-check)
       - [deploy](#ops3-run)
-      - [play](ops5-play)
+      - [play](#ops5-play)
       - [shutdown](#ops6-stop)   
   - [Hacks](#hack)
       - [Create accounts on your bluesky in easy](#hack-ops-CreateAccount)
@@ -18,6 +18,7 @@ https://github.com/itaru2622/bluesky-selfhost-env
       - Check Env Vars [in docker-compose](#hack-EnvVars-Compose) and [in sources](#hack-EnvVars-Sources)
       - [Create a table showing {env x container => value} from source and docker-compose](#hack-EnvVars-Table)
   - [Appendix](#appendix)
+      - [Screen shots](#screenshots)
       - [Sourses in Use](#sources)
       - [Sample DNS Server Config(bind9)](#sample-dns-config)
       - [Historical Status](#old_status)
@@ -432,6 +433,14 @@ then, all of below methods are involved for safe, when it uses self-signed certi
 
 [back to top](#top)
 ## <a id="appendix"/>Appendix
+
+### <a id="screenshots"/> screen shots:
+
+| create account | sign-in|
+|:---|:---|
+|<img src="./docs/screenshots/1-bluesky-create-account.png" style="height:45%; width:45%">|<img src="./docs/screenshots/1-bluesky-sign-in.png"  style="height:45%; width:45%">|
+|<img src="./docs/screenshots/2-bluesky-choose-server.png"  style="height:45%; width:45%">|<img src="./docs/screenshots/2-bluesky-choose-server.png"  style="height:45%; width:45%">|
+|<img src="./docs/screenshots/3-bluesky-create-account.png"  style="height:45%; width:45%">|<img src="./docs/screenshots/3-bluesky-sign-in.png"  style="height:45%; width:45%">|
 
 ### <a id="sources"/>sources in use:
 
