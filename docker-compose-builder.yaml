@@ -24,8 +24,8 @@ volumes:
     name: pds
   redis:
     name: redis
-# mod:
-# mod-daemon:
+# ozone:
+# ozone-daemon:
 # plc:
 # search:
 # social-app:
@@ -276,12 +276,12 @@ services:
       - PDS_INVITE_INTERVAL=604800000
       - PDS_INVITE_REQUIRED=false
       - PDS_JWT_SECRET=${PDS_JWT_SECRET}
-      - PDS_MOD_SERVICE_DID=did:web:mod.${DOMAIN}
-      - PDS_MOD_SERVICE_URL=https://mod.${DOMAIN}
+      - PDS_MOD_SERVICE_DID=did:web:ozone.${DOMAIN}
+      - PDS_MOD_SERVICE_URL=https://ozone.${DOMAIN}
       - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}
       - PDS_PORT=2583
-      - PDS_REPORT_SERVICE_DID=did:web:mod.${DOMAIN}
-      - PDS_REPORT_SERVICE_URL=https://mod.${DOMAIN}
+      - PDS_REPORT_SERVICE_DID=did:web:ozone.${DOMAIN}
+      - PDS_REPORT_SERVICE_URL=https://ozone.${DOMAIN}
       - PDS_SERVICE_DID=did:web:${DOMAIN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
@@ -373,7 +373,7 @@ services:
       - LOG_DESTINATION=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - MOD_SERVICE_DID=did:web:mod.${DOMAIN}
+      - MOD_SERVICE_DID=did:web:ozone.${DOMAIN}
       - NODE_ENV=development
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - PORT=2584
@@ -456,7 +456,7 @@ services:
       - database
       - caddy
 
-  mod:
+  ozone:
     # moderation-api:
     image: itaru2622/bluesky-atproto-ozone:${asof}
     build:
@@ -497,8 +497,8 @@ services:
       - OZONE_PDS_DID=did:web:${DOMAIN}
       - OZONE_PDS_URL=https://${DOMAIN}
       - OZONE_PORT=3000
-      - OZONE_PUBLIC_URL=https://mod.${DOMAIN}
-      - OZONE_SERVER_DID=did:web:mod.${DOMAIN}
+      - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
+      - OZONE_SERVER_DID=did:web:ozone.${DOMAIN}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
       - OZONE_TRIAGE_DIDS=
     restart: always
@@ -506,7 +506,7 @@ services:
       - database
       - caddy
 
-  mod-daemon:
+  ozone-daemon:
     image: itaru2622/bluesky-atproto-ozone:${asof}
     build:
       context: ./repos/atproto/
@@ -543,13 +543,13 @@ services:
       - OZONE_PDS_DID=did:web:${DOMAIN}
       - OZONE_PDS_URL=https://${DOMAIN}
       - OZONE_PORT=3000
-      - OZONE_PUBLIC_URL=https://mod.${DOMAIN}
-      - OZONE_SERVER_DID=did:web:mod.${DOMAIN}
+      - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
+      - OZONE_SERVER_DID=did:web:ozone.${DOMAIN}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
       - OZONE_TRIAGE_DIDS=
     restart: always
     depends_on:
-      - mod
+      - ozone
       - database
       - caddy
 

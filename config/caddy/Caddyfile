@@ -122,11 +122,11 @@ social-app.{$DOMAIN} {
 	reverse_proxy http://social-app:8100
 }
 
-mod.{$DOMAIN} {
+ozone.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://mod:3000
+	reverse_proxy http://ozone:3000
 }
 
 search.{$DOMAIN} {
