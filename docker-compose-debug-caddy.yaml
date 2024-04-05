@@ -32,7 +32,7 @@ services:
       retries: 20
 
 
-# to generate HTTPS certifications on-demand >>>>>
+# starts: to generate HTTPS certifications on-demand >>>>>
   caddy-sidecar:
     image: httpd:2
     environment:
@@ -40,18 +40,10 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     volumes:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
-# to generate HTTPS certifications on-demand <<<<<
+# ends: to generate HTTPS certifications on-demand <<<<<
 
   test-wss:
     image: itaru2622/gorilla-websocket:bookworm
-    build:
-       context: ./tests/websocket-service
-       dockerfile: Dockerfile
-       args:
-        - http_proxy=${http_proxy}
-        - https_proxy=${https_proxy}
-        - no_proxy=${no_proxy}
-        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     environment:
       - ENABLE_WSS=true
       - SCRIPT=*.go
@@ -61,31 +53,22 @@ services:
 
   test-ws:
     image: itaru2622/gorilla-websocket:bookworm
-    build:
-       context: ./tests/websocket-service
-       dockerfile: Dockerfile
-       args:
-        - http_proxy=${http_proxy}
-        - https_proxy=${https_proxy}
-        - no_proxy=${no_proxy}
-        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     environment:
       - SCRIPT=*.go
     working_dir: /opt/gorilla-websocket/examples/chat
     volumes:
        - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 
-
-  # starts: fakes to check caddy mapping rule for social-app, pds, bsky(appview) >>>>>>>>>>
+# starts: fakes to check caddy mapping rule for social-app, pds, bsky(appview) >>>>>>>>>>
+  # refer https://github.com/itaru2622/docker-fastapi.git for docker image of itaru2622/fastapi
   social-app:
     image: itaru2622/fastapi:bookworm
     ports:
       - 8001:8100
     environment:
       - app=main:app
-      - opts=--host 0.0.0.0 --port 8100 --reload --reload-include "*.py" --reload-include "*.conf"
-    volumes:
-      - ./tests/catchall-app:/app
+      - opts=--host 0.0.0.0 --port 8100
+    working_dir: /opt/fastapi-samples/3catchall
 
   pds:
     image: itaru2622/fastapi:bookworm
@@ -93,9 +76,8 @@ services:
       - 2583:2583
     environment:
       - app=main:app
-      - opts=--host 0.0.0.0 --port 2583 --reload --reload-include "*.py" --reload-include "*.conf"
-    volumes:
-      - ./tests/catchall-app:/app
+      - opts=--host 0.0.0.0 --port 2583
+    working_dir: /opt/fastapi-samples/3catchall
 
   bsky:
     image: itaru2622/fastapi:bookworm
@@ -103,8 +85,7 @@ services:
       - 2584:2584
     environment:
       - app=main:app
-      - opts=--host 0.0.0.0 --port 2584 --reload --reload-include "*.py" --reload-include "*.conf"
-    volumes:
-      - ./tests/catchall-app:/app
+      - opts=--host 0.0.0.0 --port 2584
+    working_dir: /opt/fastapi-samples/3catchall
 
-  # ends: fakes to check caddy mapping rule for social-app, pds, bsky(appview) <<<<<<<<<<
+# ends: fakes to check caddy mapping rule for social-app, pds, bsky(appview) <<<<<<<<<<
