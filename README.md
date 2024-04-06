@@ -251,12 +251,13 @@ make patch-dockerbuild
 # 1) build images with original
 make build DOMAIN= f=./docker-compose-builder.yaml
 
-# 2) apply optional patch for self-hosting, and re-build image
-#   'optional' means, applying this patch is not mandatory to get self-hosting environment.
-# NOTE: this ops checkout new branch before applying patch, and keep staying new branch
+# below ops is now obsoleted and unsupported bacause of fragile(high cost and low return). also below patch has no effect on PDS scaling out(multiple PDS domains).
+# ~~ 2) apply optional patch for self-hosting, and re-build image ~~
+# ~~  'optional' means, applying this patch is not mandatory to get self-hosting environment. ~~
+# ~~ NOTE: this ops checkout new branch before applying patch, and keep staying new branch ~~
 #
-# make _patch-selfhost-even-not-mandatory
-# make build services=social-app f=./docker-compose-builder.yaml
+# ~~ make _patch-selfhost-even-not-mandatory ~~
+# ~~ make build services=social-app f=./docker-compose-builder.yaml ~~
 ```
 
 [back to top](#top)
