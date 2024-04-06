@@ -100,21 +100,6 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 	reverse_proxy http://bsky:2584
 }
 
-pds.{$DOMAIN} {
-	tls {$EMAIL4CERTS} {
-          on_demand
-        }
-
-        @ws {
-          header Connection *Upgrade*
-          header Upgrade websocket
-        }
-
-        reverse_proxy @ws http://pds:2583
-        reverse_proxy     http://pds:2583
-
-}
-
 social-app.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -143,6 +128,20 @@ feed-generator.{$DOMAIN} {
 	reverse_proxy http://feed-generator:3000
 }
 
+pds.{$DOMAIN} {
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+
+        @ws {
+          header Connection *Upgrade*
+          header Upgrade websocket
+        }
+
+        reverse_proxy @ws http://pds:2583
+        reverse_proxy     http://pds:2583
+
+}
 # ends:  simple mapping <<<<<
 
 # starts:  *.pds.DOMAIN >>>>>>>>>>>
