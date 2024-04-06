@@ -145,28 +145,8 @@ feed-generator.{$DOMAIN} {
 
 # ends:  simple mapping <<<<<
 
-# starts:  DOMAIN and *.DOMAIN >>>>>>>>>>>
-{$DOMAIN} {
-        tls {$EMAIL4CERTS} {
-          on_demand
-        }
-
-        @ws {
-          header Connection *Upgrade*
-          header Upgrade websocket
-        }
-
-        reverse_proxy @ws                 http://pds:2583
-        reverse_proxy /xrpc*              http://pds:2583
-        reverse_proxy /.well-known*       http://pds:2583
-        reverse_proxy /robots.txt*        http://pds:2583
-
-
-        # others (default)
-        reverse_proxy                     http://social-app:8100
-}
-
-*.{$DOMAIN} {
+# starts:  *.pds.DOMAIN >>>>>>>>>>>
+*.pds.{$DOMAIN} {
         tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -176,50 +156,50 @@ feed-generator.{$DOMAIN} {
         @ws {
           header Connection *Upgrade*
           header Upgrade websocket
-          header_regexp host Host ^(.*)\.{$DOMAIN}$
+          header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
 	  path_regexp   path      ^(.*)
         }
         rewrite       @ws           {http.regexp.path.1}
         reverse_proxy @ws           http://pds:2583
 
 #---------------
-#      *.DOMAIN/xrpc*  => http://pds:2583
+#      *.pds.DOMAIN/xrpc*  => http://pds:2583
         @xrpc {
-            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
             path_regexp   path      ^(/xrpc.*)
         }
         rewrite        @xrpc        {http.regexp.path.1}
         reverse_proxy  @xrpc        http://pds:2583
 
 #---------------
-#      *.DOMAIN/.well-known* => http://pds:2583
+#      *.pds.DOMAIN/.well-known* => http://pds:2583
         @wellknown {
-            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
             path_regexp   path      ^(/\.well-known.*)
         }
         rewrite        @wellknown   {http.regexp.path.1}
         reverse_proxy  @wellknown   http://pds:2583
 
+
 #---------------
-#      *.DOMAIN/robots.txt* => http://pds:2583
+#      *.pds.DOMAIN/robots.txt* => http://pds:2583
         @robots {
-            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
             path_regexp   path      ^(/robots\.txt*)
         }
         rewrite        @robots      {http.regexp.path.1}
         reverse_proxy  @robots      http://pds:2583
 
 #---------------
-#     (.*).DOMAIN/(.*) => http://social-app:8100/profile/$$1/$$2
+#     (.*).pds.DOMAIN/(.*) => http://social-app:8100/profile/$$1/$$2
         @others {
-            header_regexp host Host ^(.*)\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
             path_regexp   path      ^(.*)
         }
         rewrite        @others      /profile/{http.regexp.host.1}{http.regexp.path.1}
         reverse_proxy  @others      http://social-app:8100
 }
-
-# ends:  just DOMAIN and requiring rewrite ... <<<<<<<<<<<
+# ends: *.pds.DOMAIN <<<<<<<<<<<
 
 # starts: additional (long FQDN) >>>>>>>>>
 

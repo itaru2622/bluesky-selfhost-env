@@ -147,12 +147,12 @@ wscat -c https://test-wss.${DOMAIN}/ws with CUI nodejs wscat package
 
 # test reverse proxy mapping if it works as expected for bluesky
 #  those should be redirect to PDS
-curl -L https://${DOMAIN}/xrpc/any-request | jq
-curl -L https://some-hostname.${DOMAIN}/xrpc/any-request | jq
+curl -L https://pds.${DOMAIN}/xrpc/any-request | jq
+curl -L https://some-hostname.pds.${DOMAIN}/xrpc/any-request | jq
 
 #  those should be redirect to social-app
-curl -L https://${DOMAIN}/others | jq
-curl -L https://some-hostname.${DOMAIN}/others | jq
+curl -L https://pds.${DOMAIN}/others | jq
+curl -L https://some-hostname.pds.${DOMAIN}/others | jq
 
 # stop test containers, without persisting data
 make    docker-stop-with-clean f=./docker-compose-debug-caddy.yaml
@@ -217,7 +217,7 @@ make docker-stop-with-clean
 
 ```bash
 export u=foo
-make api_CreateAccount handle=${u}.${DOMAIN} password=${u} email=${u}@example.com resp=./data/accounts/${u}.secrets
+make api_CreateAccount handle=${u}.pds.${DOMAIN} password=${u} email=${u}@example.com resp=./data/accounts/${u}.secrets
 
 #then, to make another accounts, just re-assign $u and call the above ops, like below.
 export u=bar
