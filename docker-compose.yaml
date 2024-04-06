@@ -26,7 +26,7 @@ volumes:
 # ozone:
 # ozone-daemon:
 # plc:
-# search:
+# palomar:
 # social-app:
 
 services:
@@ -299,7 +299,7 @@ services:
       - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
       - BSKY_PUBLIC_URL=https://api.${DOMAIN}
       - BSKY_REPO_PROVIDER=ws://pds:2583
-      - BSKY_SEARCH_URL=https://search.${DOMAIN}
+      - BSKY_SEARCH_URL=https://palomar.${DOMAIN}
       - BSKY_SERVER_DID=did:web:api.${DOMAIN}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
       - DEBUG_MODE=1
@@ -347,7 +347,7 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     restart: always
 
-  search:
+  palomar:
     image: itaru2622/bluesky-indigo-palomar:${asof}
     ports:
       - 3999:3999
@@ -359,7 +359,7 @@ services:
       # refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
       - ATP_BGS_HOST=wss://bgs.${DOMAIN}
       - ATP_PLC_HOST=https://plc.${DOMAIN}
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/search
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/palomar
 #     - ES_CERT_FILE=
       - ES_HOSTS=http://opensearch:9200
       - ES_INSECURE_SSL=true

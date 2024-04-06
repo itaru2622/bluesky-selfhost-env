@@ -129,11 +129,11 @@ ozone.{$DOMAIN} {
 	reverse_proxy http://ozone:3000
 }
 
-search.{$DOMAIN} {
+palomar.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://search:3999
+	reverse_proxy http://palomar:3999
 }
 
 feed-generator.{$DOMAIN} {

@@ -14,9 +14,9 @@ GRANT ALL PRIVILEGES ON DATABASE carstore TO pg;
 --CREATE DATABASE bsky;
 --GRANT ALL PRIVILEGES ON DATABASE bsky TO pg;
 
--- search(palomar)
-CREATE DATABASE search;
-GRANT ALL PRIVILEGES ON DATABASE search TO pg;
+-- palomar(search)
+CREATE DATABASE palomar;
+GRANT ALL PRIVILEGES ON DATABASE palomar TO pg;
 
 -- pds
 --CREATE DATABASE pds;
