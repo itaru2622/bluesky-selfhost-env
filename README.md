@@ -67,7 +67,7 @@ test results with 'asof-2024-04-03':<BR>
 [back to top](#top)
 ## <a id="ops"/>operations for self-hosting bluesky (powered by Makefile)
 
-below, it assumes self-hosting domain is <strong>mybluesky.local.com</strong> (defined in Makefile).<br>
+below, it assumes self-hosting domain is <strong>mysky.local.com</strong> (defined in Makefile).<br>
 you can change the domain name by environment variable as below:
 
 ### <a id="ops0-configparams"/>0) configure params for ops
@@ -196,7 +196,7 @@ make publishFeed
 
 ### <a id="ops5-play"/>5) play with self-hosted blusky.
 
-on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mybluesky.local.com/```
+on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mysky.local.com/```
 
 refer [screenshots](./docs/screenshots), for UI operations to create/sign-in account on your self-hosting bluesky.
 
@@ -469,7 +469,7 @@ other dependencies:
 description of test network:
 
 ```
-DOMAIN for self-hosting: mybluesky.local.com
+DOMAIN for self-hosting: mysky.local.com
 
 IP:
   - docker host for selfhost: 192.168.1.51
@@ -477,8 +477,8 @@ IP:
   - DNS forwarders:           8.8.8.8 (upper level DNS server;dns.google.)
 
 DNS A-Records:
-  -   mybluesky.local.com  : 192.168.1.51
-  - *.mybluesky.local.com  : 192.168.1.51
+  -   mysky.local.com  : 192.168.1.51
+  - *.mysky.local.com  : 192.168.1.51
 ```
 
 the above would be described in bind9 configuration file as below:
@@ -521,8 +521,8 @@ local.com		IN SOA	local.com. root.local.com. (
 			A	192.168.1.27
 $ORIGIN local.com.
 $TTL 3600	; 1 hour
-mybluesky		A	192.168.1.51
-$ORIGIN mybluesky.local.com.
+mysky		A	192.168.1.51
+$ORIGIN mysky.local.com.
 *			A	192.168.1.51
 ```
 

@@ -1,8 +1,8 @@
 ##########################################################################################
 # starts: definitions, need to care in especial.
 
-# domain of self-hosting bluesky (care TLD, otherwise get failure, ie: NG=>mybluesky.local)
-DOMAIN ?=mybluesky.local.com
+# domain of self-hosting bluesky (care TLD, otherwise get failure, ie: NG=>mysky.local)
+DOMAIN ?=mysky.local.com
 
 # email address to get public-signed certs ("internal" for self-signed certs by caddy)
 EMAIL4CERTS ?=internal
