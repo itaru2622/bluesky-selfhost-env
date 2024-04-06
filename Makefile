@@ -11,7 +11,7 @@ EMAIL4CERTS ?=internal
 PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 
 # feed-generator account in bluesky to send posts ( last part may need to be equal to PDS_HOSTNAME)
-FEEDGEN_PUBLISHER_HANDLE ?=fgen.pds.${DOMAIN}
+FEEDGEN_PUBLISHER_HANDLE ?=feedgen.pds.${DOMAIN}
 FEEDGEN_EMAIL ?=feedgen@example.com
 
 # datetime to distinguish docker images and sources (date in %Y-%m-%d or 'latest' in docker image naming manner)
