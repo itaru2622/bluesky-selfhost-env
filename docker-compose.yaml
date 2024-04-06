@@ -224,7 +224,7 @@ services:
       - PDS_EMAIL_FROM_ADDRESS=no-reply@gmail.com
       - PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL}
       - PDS_ENABLE_DID_DOC_WITH_SESSION=true
-      - PDS_HOSTNAME=${DOMAIN}
+      - PDS_HOSTNAME=pds.${DOMAIN}
       - PDS_INVITE_INTERVAL=604800000
       - PDS_INVITE_REQUIRED=false
       - PDS_JWT_SECRET=${PDS_JWT_SECRET}
@@ -234,7 +234,7 @@ services:
       - PDS_PORT=2583
       - PDS_REPORT_SERVICE_DID=did:web:ozone.${DOMAIN}
       - PDS_REPORT_SERVICE_URL=https://ozone.${DOMAIN}
-      - PDS_SERVICE_DID=did:web:${DOMAIN}
+      - PDS_SERVICE_DID=did:web:pds.${DOMAIN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
@@ -404,8 +404,8 @@ services:
       - OZONE_DEV_MODE=true
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
       - OZONE_MODERATOR_DIDS=did:web:bsky.${DOMAIN}
-      - OZONE_PDS_DID=did:web:${DOMAIN}
-      - OZONE_PDS_URL=https://${DOMAIN}
+      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
+      - OZONE_PDS_URL=https://pds.${DOMAIN}
       - OZONE_PORT=3000
       - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
       - OZONE_SERVER_DID=did:web:ozone.${DOMAIN}
@@ -442,8 +442,8 @@ services:
       - OZONE_DEV_MODE=true
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
       - OZONE_MODERATOR_DIDS=did:web:bsky.${DOMAIN}
-      - OZONE_PDS_DID=did:web:${DOMAIN}
-      - OZONE_PDS_URL=https://${DOMAIN}
+      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
+      - OZONE_PDS_URL=https://pds.${DOMAIN}
       - OZONE_PORT=3000
       - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
       - OZONE_SERVER_DID=did:web:ozone.${DOMAIN}
@@ -460,7 +460,7 @@ services:
     ports:
       - 2586:3000
     environment:
-      - FEEDGEN_BSKY_SERVICE=https://${DOMAIN}
+      - FEEDGEN_BSKY_SERVICE=https://pds.${DOMAIN}
       - FEEDGEN_FEED_DESCRIPTION=whats-hot
       - FEEDGEN_FEED_DISPLAY_NAME=whats-hot
       - FEEDGEN_FEED_RECORD_NAME=whats-hot
