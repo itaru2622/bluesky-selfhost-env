@@ -337,7 +337,7 @@ services:
       # supporting self-signed certificates, easiest way <<<<
     environment:
       # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
-      - ATP_APPVIEW_HOST=https://public.bsky.${DOMAIN}
+      - ATP_APPVIEW_HOST=https://public.api.${DOMAIN}
       # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
       - GOINSECURE=${GOINSECURE}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
