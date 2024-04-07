@@ -461,9 +461,9 @@ services:
       - 2586:3000
     environment:
       - FEEDGEN_BSKY_SERVICE=https://pds.${DOMAIN}
-      - FEEDGEN_FEED_DESCRIPTION=whats-hot
-      - FEEDGEN_FEED_DISPLAY_NAME=whats-hot
-      - FEEDGEN_FEED_RECORD_NAME=whats-hot
+      - FEEDGEN_FEED_DESCRIPTION=whats-alf
+      - FEEDGEN_FEED_DISPLAY_NAME=whats-alf
+      - FEEDGEN_FEED_RECORD_NAME=whats-alf
       - FEEDGEN_HOSTNAME=feed-generator.${DOMAIN}
       - FEEDGEN_LISTENHOST=0.0.0.0
       - FEEDGEN_PLC_URL=https://plc.${DOMAIN}

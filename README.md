@@ -33,7 +33,7 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, working with code asof <strong>2024-04-03</strong> of bluesky-social.<br>
+at current, working with code asof <strong>2024-04-07</strong> of bluesky-social.<br>
 it may not work with latest codes.
 
 ## <a id="status"/>Current status regarding self-hosting
@@ -41,7 +41,7 @@ it may not work with latest codes.
 as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
 some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
 
-test results with 'asof-2024-04-03':<BR>
+test results with 'asof-2024-04-07':<BR>
 
    -  ok: create user on pds (via bluesky API).
    -  ok: create user on pds on social-app
@@ -57,11 +57,10 @@ test results with 'asof-2024-04-03':<BR>
          - ok: find users with 'display-name' after user configures it in his/her profile page.
          - ok: find users with full qualified handle name before display-name configured in his/her profile page.
    -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
-   -  ok: pin/unpin feeds to home after discovering
-   -  not tested: post an article in feed.
-   -  not tested: view post in feed (channel) on social-app.
+   -  ok: pin/unpin feeds to home on social-app after discovering
+   -  ok: feed-generator subscribes and pushes posts into its feed channel => view them on social-app. (NOTE: it has some delay, so reload on social-app).
+   -  ok: websocket subscribing to pds/bgs with firehose/websocat.
    -  not tested: regarding moderation
-   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
 
 
 [back to top](#top)
@@ -536,6 +535,28 @@ nameserver 192.168.1.27
 
 [back to top](#top)
 ### <a id="old_status"/>Historical status regarding self-hosting
+
+test results with 'asof-2024-04-03':<BR>
+
+   -  ok: create user on pds (via bluesky API).
+   -  ok: create user on pds on social-app
+   -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: edit profilie (display name) on social-app
+   -  ok: post articles on social-app
+   -  ok: vote 'like' to article on social-app
+   -  ok: reply to article on social-app
+   -  ok: start following in others profile page on social-app
+   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
+   -  ok: find posts in 'search' on social-app
+   -  ok: find users in 'search' on social-app
+         - ok: find users with 'display-name' after user configures it in his/her profile page.
+         - ok: find users with full qualified handle name before display-name configured in his/her profile page.
+   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
+   -  ok: pin/unpin feeds to home after discovering
+   -  not tested: post an article in feed.
+   -  not tested: view post in feed (channel) on social-app.
+   -  not tested: regarding moderation
+   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
 
 test results with 'asof-2024-03-16' (now archiving status):<BR>
 
