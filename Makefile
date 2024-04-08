@@ -73,8 +73,8 @@ fork_repo_prefix ?=
 LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
-Sdep  ?=caddy caddy-sidecar database redis opensearch test-wss test-ws pgadmin
-Sbsky ?=plc pds bgs bsky social-app palomar ozone ozone-daemon test-indigo
+Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
+Sbsky ?=pds bgs bsky social-app palomar ozone ozone-daemon
 Sfeed ?=feed-generator
 
 # load passfile content as Makefile variables if exists
