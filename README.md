@@ -34,7 +34,6 @@ this repository aims to get self-hosted bluesky env in easy with:
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
 at current, working with code asof <strong>2024-04-07</strong> of bluesky-social.<br>
-it may not work with latest codes.
 
 ## <a id="status"/>Current status regarding self-hosting
 
