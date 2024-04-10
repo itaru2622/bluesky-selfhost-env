@@ -33,33 +33,28 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, working with code asof <strong>2024-04-07</strong> of bluesky-social.<br>
+at current, my latest release is <strong>2024-04-07r1</strong> based on codes <strong>2024-04-07</strong> of bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
 as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
 some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
 
-test results with 'asof-2024-04-07':<BR>
+test results with 'asof-2024-04-07r1':<BR>
 
-   -  ok: create user on pds (via bluesky API).
-   -  ok: create user on pds on social-app
-   -  ok: sign-in via social-app (with multiple accounts)
-   -  ok: edit profilie (display name) on social-app
-   -  ok: post articles on social-app
-   -  ok: vote 'like' to article on social-app
-   -  ok: reply to article on social-app
-   -  ok: start following in others profile page on social-app
-   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
-   -  ok: find posts in 'search' on social-app
-   -  ok: find users in 'search' on social-app
-         - ok: find users with 'display-name' after user configures it in his/her profile page.
-         - ok: find users with full qualified handle name before display-name configured in his/her profile page.
-   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
-   -  ok: pin/unpin feeds to home on social-app after discovering
-   -  ok: feed-generator subscribes and pushes posts into its feed channel => view them on social-app. (NOTE: it has some delay, so reload on social-app).
-   -  ok: websocket subscribing to pds/bgs with firehose/websocat.
-   -  not tested: regarding moderation
+   -  ok: relaxing restriction on handle length in PDS (applyed https://github.com/bluesky-social/atproto/pull/2392)
+   -  ok: create account on pds (via social-app,  bluesky API).
+   -  ok: sign-in social-app (with multiple accounts)
+   -  ok: basic usages on social-app
+       -  ok: edit profilie (display name)
+       -  ok: post articles
+       -  ok: vote 'like' / repost to article
+       -  ok: follow/un-follow others, via their profile page.
+       -  ok: notification receiving when others vote 'like' or 'follow'
+       -  ok: search posts/users/feeds
+   -  ok: integration with firehose/websocket to pds/bgs(relay) => craw-able.
+   -  ok: integration with feed-generator (NOTE: official feed-generator sample has some delay, so it may need reload on social-app).
+   -  not tested: integration with moderation(ozone).
 
 
 [back to top](#top)
@@ -534,6 +529,27 @@ nameserver 192.168.1.27
 
 [back to top](#top)
 ### <a id="old_status"/>Historical status regarding self-hosting
+
+test results with 'asof-2024-04-07':<BR>
+
+   -  ok: create user on pds (via bluesky API).
+   -  ok: create user on pds on social-app
+   -  ok: sign-in via social-app (with multiple accounts)
+   -  ok: edit profilie (display name) on social-app
+   -  ok: post articles on social-app
+   -  ok: vote 'like' to article on social-app
+   -  ok: reply to article on social-app
+   -  ok: start following in others profile page on social-app
+   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
+   -  ok: find posts in 'search' on social-app
+   -  ok: find users in 'search' on social-app
+         - ok: find users with 'display-name' after user configures it in his/her profile page.
+         - ok: find users with full qualified handle name before display-name configured in his/her profile page.
+   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
+   -  ok: pin/unpin feeds to home on social-app after discovering
+   -  ok: feed-generator subscribes and pushes posts into its feed channel => view them on social-app. (NOTE: it has some delay, so reload on social-app).
+   -  ok: websocket subscribing to pds/bgs with firehose/websocat.
+   -  not tested: regarding moderation
 
 test results with 'asof-2024-04-03':<BR>
 
