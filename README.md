@@ -194,7 +194,8 @@ make publishFeed
 make api_CreateAccount_ozone
 
 # 2) start ozone
-make docker-start-bsky-ozone  OZONE_ADMIN_DID=did:plc:...
+_did=did:plc:...
+make docker-start-bsky-ozone  OZONE_ADMIN_DID=${_did}  OZONE_SERVER_DID=${_did}
 ```
 
 
