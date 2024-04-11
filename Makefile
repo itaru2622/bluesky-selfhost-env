@@ -14,6 +14,10 @@ PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 FEEDGEN_PUBLISHER_HANDLE ?=feedgen.pds.${DOMAIN}
 FEEDGEN_EMAIL ?=feedgen@example.com
 
+# ozone account in bluesky for moderation
+OZONE_ADMIN_HANDLE ?=ozone-admin.pds.${DOMAIN}
+OZONE_ADMIN_EMAIL  ?=ozone-admin@example.com
+
 # datetime to distinguish docker images and sources (date in %Y-%m-%d or 'latest' in docker image naming manner)
 asof ?=latest
 #asof ?=2024-04-03
@@ -74,8 +78,11 @@ LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
-Sbsky ?=pds bgs bsky social-app palomar ozone ozone-daemon
+#Sbsky ?=pds bgs bsky social-app palomar ozone ozone-daemon
+Sbsky ?=pds bgs bsky social-app palomar
 Sfeed ?=feed-generator
+#Sozone ?=ozone ozone-daemon
+Sozone ?=ozone-standalone
 
 # load passfile content as Makefile variables if exists
 ifeq ($(shell test -e ${passfile} && echo -n exists),exists)

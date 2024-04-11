@@ -9,6 +9,9 @@ api_CreateAccount:: _echo_reqAccount _findDid
 #HINT: make api_CreateAccount_feedgen
 api_CreateAccount_feedgen: getFeedgenUserinfo api_CreateAccount
 
+#HINT: make api_CreateAccount_ozone
+api_CreateAccount_ozone: getOzoneUserinfo api_CreateAccount
+
 _sendMsg:
 	@curl -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
 
@@ -22,6 +25,12 @@ getFeedgenUserinfo:
 	$(eval handle=${FEEDGEN_PUBLISHER_HANDLE})
 	$(eval email=${FEEDGEN_EMAIL})
 	$(eval password=$(shell cat ${passfile} | grep FEEDGEN_PUBLISHER_PASSWORD | awk -F= '{ print $$2}'))
+	$(eval resp=${aDir}/${handle}.secrets)
+
+getOzoneUserinfo:
+	$(eval handle=${OZONE_ADMIN_HANDLE})
+	$(eval email=${OZONE_ADMIN_EMAIL})
+	$(eval password=$(shell cat ${passfile} | grep OZONE_ADMIN_PASSWORD | awk -F= '{ print $$2}'))
 	$(eval resp=${aDir}/${handle}.secrets)
 
 _echo_reqAccount:

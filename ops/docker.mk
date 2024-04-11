@@ -15,7 +15,11 @@ LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT} \
 EMAIL4CERTS=${EMAIL4CERTS} \
 PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL} \
 FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID} \
-FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}' \
+FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE} \
+OZONE_ADMIN_HANDLE=${OZONE_ADMIN_HANDLE} \
+OZONE_ADMIN_EMAIL=${OZONE_ADMIN_EMAIL} \
+OZONE_ADMIN_DID=${OZONE_ADMIN_DID} \
+' \
 	| cat))
 	@echo ${_envs} | sed 's/ /\n/g' | awk -F= '{print $$1,"=",$$2}' | sed 's/ //g'
 
@@ -30,6 +34,8 @@ docker-start-bsky:: _applySbsky _dockerUp
 docker-start-bsky:: docker-watchlog
 docker-start-bsky-feedgen:: _applySfeed _dockerUp
 docker-start-bsky-feedgen:: docker-watchlog
+docker-start-bsky-ozone:: _applySozone _dockerUp
+docker-start-bsky-ozone:: docker-watchlog
 
 # execute publishFeed on feed-generator
 publishFeed:
@@ -66,3 +72,5 @@ _applySbsky:
 	$(eval services=${Sbsky})
 _applySfeed:
 	$(eval services=${Sfeed})
+_applySozone:
+	$(eval services=${Sozone})

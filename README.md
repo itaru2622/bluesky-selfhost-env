@@ -187,6 +187,17 @@ make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
 make publishFeed
 ```
 
+### <a id="ops4-run-fg"/>4-2) deploy ozone-standalone on your env.
+
+```bash
+# 1) create account for ozone
+make api_CreateAccount_ozone
+
+# 2) start ozone
+make docker-start-bsky-ozone  OZONE_ADMIN_DID=did:plc:...
+```
+
+
 ### <a id="ops5-play"/>5) play with self-hosted blusky.
 
 on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mysky.local.com/```
