@@ -190,12 +190,11 @@ make publishFeed
 ### <a id="ops4-run-fg"/>4-2) deploy ozone-standalone on your env.
 
 ```bash
-# 1) create account for ozone
-make api_CreateAccount_ozone
+# 1) create DID for Ozone Server
+make api_CreateOzoneServerDid resp=./data/accounts/ozoneServer.did
 
 # 2) start ozone
-_did=did:plc:...
-make docker-start-bsky-ozone  OZONE_ADMIN_DID=${_did}  OZONE_SERVER_DID=${_did}
+make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DID=did:plc:
 ```
 
 

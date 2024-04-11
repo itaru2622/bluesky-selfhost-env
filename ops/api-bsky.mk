@@ -2,6 +2,20 @@
 # output file path of API response.
 resp ?=/dev/null
 
+#HINT: make api_CreateOzoneServerDid
+api_CreateOzoneServerDid:: _mkargs_OzoneServerDid  _execApiCmd
+api_CreateOzoneServerDid:: _echo_args _findDid
+
+_mkargs_OzoneServerDid:
+	$(eval cmd=./ops-helper/apiImpl/createOzoneServerDidOnPlc.ts)
+	$(eval signingKeyHex=$(shell cat ${passfile} | grep OZONE_SIGNING_KEY_HEX | awk -F= '{ print $$2}'))
+	$(eval args=--plc https://plc.${DOMAIN} --signingKeyHex ${signingKeyHex})
+_execApiCmd:
+	${cmd} ${args} | tee -a ${resp}
+_echo_args:
+	@echo ""
+	@echo "cmd:     ${cmd} ${args}"
+
 #HINT: make api_CreateAccount email=...  password=...  handle=...
 api_CreateAccount:: _mkmsg_createAccount  _sendMsg
 api_CreateAccount:: _echo_reqAccount _findDid
