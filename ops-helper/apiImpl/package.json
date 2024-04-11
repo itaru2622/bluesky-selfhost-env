@@ -1,0 +1,29 @@
+{
+  "name": "bluesky-ops",
+  "version": "1.0.0",
+  "description": "implementing ops aginst bluesky, including self-hosting blusky",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ops",
+    "actuation",
+    "bluesky",
+    "self-hosting"
+  ],
+  "author": "itaru2622@gmail.com",
+  "license": "MIT",
+  "homepage": "https://github.com/itaru2622/bluesky-selfhost-env#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@atproto/api": "*",
+    "@atproto/crypto": "*",
+    "@did-plc/lib": "*",
+    "@types/yargs": "*",
+    "ts-node": "*",
+    "yargs": "*"
+  }
+}

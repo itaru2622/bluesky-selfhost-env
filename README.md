@@ -420,7 +420,7 @@ this hask uses the result(/tmp/envs.txt) of [the above](#hack-EnvVars-Sources) a
 
 ```bash
 # create table showing { env x container => value } with ops-helper script.
-cat ./docker-compose-builder.yaml | ./ops-helper/compose2envtable.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
+cat ./docker-compose-builder.yaml | ./ops-helper/compose2envtable/main.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
 ```
 
 [back to top](#top)
