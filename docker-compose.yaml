@@ -229,12 +229,14 @@ services:
       - PDS_INVITE_INTERVAL=604800000
       - PDS_INVITE_REQUIRED=false
       - PDS_JWT_SECRET=${PDS_JWT_SECRET}
-      - PDS_MOD_SERVICE_DID=did:web:ozone.${DOMAIN}
-      - PDS_MOD_SERVICE_URL=https://ozone.${DOMAIN}
       - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}
       - PDS_PORT=2583
-      - PDS_REPORT_SERVICE_DID=did:web:ozone.${DOMAIN}
-      - PDS_REPORT_SERVICE_URL=https://ozone.${DOMAIN}
+# starts: unset optional env for tesing ozone >>>>>>>
+#     - PDS_MOD_SERVICE_DID=did:web:ozone.${DOMAIN}
+#     - PDS_MOD_SERVICE_URL=https://ozone.${DOMAIN}
+#     - PDS_REPORT_SERVICE_DID=did:web:ozone.${DOMAIN}
+#     - PDS_REPORT_SERVICE_URL=https://ozone.${DOMAIN}
+# ends: unset optional env for tesing ozone <<<<<<<<
       - PDS_SERVICE_DID=did:web:pds.${DOMAIN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
@@ -407,6 +409,7 @@ services:
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_DB_MIGRATE=1
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
+      - NEXT_PUBLIC_PLC_DIRECTORY_URL=https://plc.${DOMAIN}
       - OZONE_APPVIEW_DID=did:web:bsky.${DOMAIN}
       - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
     restart: always

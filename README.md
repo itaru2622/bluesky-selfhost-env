@@ -190,10 +190,12 @@ make publishFeed
 ### <a id="ops4-run-fg"/>4-2) deploy ozone-standalone on your env.
 
 ```bash
-# 1) create DID for Ozone Server
-make api_CreateOzoneServerDid resp=./data/accounts/ozoneServer.did
+# 1) create account for ozone service/admin
+# ~~ make api_CreateOzoneServerDid resp=./data/accounts/ozoneServer.did # <- this ops not works. ~~
+make api_CreateAccount_ozone
 
 # 2) start ozone
+# ozone-standalone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at HOSTING.md
 make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:plc:
 ```
 
