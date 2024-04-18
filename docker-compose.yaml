@@ -154,6 +154,7 @@ services:
       - GOINSECURE=${GOINSECURE}
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
       - bootstrap.memory_lock=true
       - cluster.name=docker-cluster
       - discovery.type=single-node
@@ -361,7 +362,8 @@ services:
       - ATP_PLC_HOST=https://plc.${DOMAIN}
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/palomar
 #     - ES_CERT_FILE=
-      - ES_HOSTS=http://opensearch:9200
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      - ES_HOSTS=http://admin:${OPENSEARCH_INITIAL_ADMIN_PASSWORD}@opensearch:9200
       - ES_INSECURE_SSL=true
       - ES_PASSWORD=
       - ES_USERNAME=
