@@ -10,6 +10,9 @@ GEN_LONG_PASS="openssl ecparam --name secp256k1 --genkey --noout --outform DER |
 GEN_SHORT_PASS="openssl rand --hex 16"
 #GEN_SHORT_PASS="echo 'short-pass'"
 
+# opensearch(for palmar) says openssl rand is weak and wants stronger password with Capital, Num, Symbol...
+GEN_RANDOM_PASS="pwgen -c -n -B -s -1 10 1 | sed 's/$/_/'"
+
 ####### generate secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ADMIN_PASSWORD=$(eval "${GEN_LONG_PASS}")
@@ -35,6 +38,7 @@ TRIAGE_PASSWORD=$(eval "${GEN_LONG_PASS}")
 FEEDGEN_PUBLISHER_PASSWORD=$(eval "${GEN_SHORT_PASS}")
 BSKY_SERVICE_SIGNING_KEY=$(eval "${GEN_LONG_PASS}")
 BSKY_ADMIN_PASSWORD=$(eval "${GEN_SHORT_PASS}")
+OPENSEARCH_INITIAL_ADMIN_PASSWORD=$(eval "${GEN_RANDOM_PASS}")
 PASS=$(eval "${GEN_LONG_PASS}")
 
 # the same as atproto/packages/dev-env/src/const.ts
@@ -78,5 +82,6 @@ echo "BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}"
 echo "BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}"
 echo "BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}"
 echo "EXAMPLE_LABELER=${EXAMPLE_LABELER}"
+echo "OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}"
 
 echo "PASS=${PASS}"
