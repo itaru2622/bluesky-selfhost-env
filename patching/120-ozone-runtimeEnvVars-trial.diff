@@ -1,0 +1,114 @@
+diff --git a/components/shell/LoginModal.tsx b/components/shell/LoginModal.tsx
+index d76716e..4b54a6e 100644
+--- a/components/shell/LoginModal.tsx
++++ b/components/shell/LoginModal.tsx
+@@ -7,6 +7,7 @@ import { AuthState } from '@/lib/types'
+ import Client from '@/lib/client'
+ import { ConfigurationFlow } from './ConfigurationFlow'
+ import { ErrorInfo } from '@/common/ErrorInfo'
++import { EnvGetter, EnvGetterSync } from '@/lib/constants'
+ 
+ export function LoginModal() {
+   const { isValidatingAuth, isLoggedIn, authState } = useContext(AuthContext)
+@@ -42,6 +43,18 @@ export function LoginModal() {
+     }
+   }, [isLoggedIn])
+ 
++  useEffect(() => {
++    /* testing for synchronous call ==>
++       console.log("######### NEXT_PUBLIC_PLC_DIRECTORY_URL: @LoginModal", EnvGetterSync('NEXT_PUBLIC_PLC_DIRECTORY_URL') )
++       console.log("######### all envs: @LoginModal", EnvGetterSync(null) )
++    */
++    const fetchEnv = async() => {
++       console.log("######### NEXT_PUBLIC_PLC_DIRECTORY_URL: @LoginModal", await EnvGetter('NEXT_PUBLIC_PLC_DIRECTORY_URL') )
++       console.log("######### all envs: @LoginModal", await EnvGetter(null) )
++    }
++    fetchEnv()
++  },[])
++
+   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+     e.preventDefault()
+     e.stopPropagation()
+diff --git a/lib/constants.ts b/lib/constants.ts
+index 23ce7c6..e32eed8 100644
+--- a/lib/constants.ts
++++ b/lib/constants.ts
+@@ -1,3 +1,63 @@
++const REST_PATH_ENV = '/.env'
++
++class  EnvProvider {
++    private static instance: EnvProvider = new EnvProvider()
++    private cache: {[key: string]: string} | undefined  = undefined // env holder
++
++    private constructor() {}
++    static getInstance(): EnvProvider {
++        return EnvProvider.instance
++    }
++
++    async get(key: string|null ) { // string | undefined | {[key: string]: string}
++
++        const url = new URL(REST_PATH_ENV, window?.location?.origin ?? '')
++        console.log("############ EnvProvider::fetch key =>", key, url)
++
++        const [ d, fromCache ] = await this._fetch(url)
++        console.log("############ EnvProvider::get => fetch ? ", (d ==undefined) ? 'failed':'success', ", fromCache ? ", fromCache )
++        if( d == undefined) {
++            return (key == null) ? process.env : process.env[key] // return with client side process.env
++        }
++        else{
++            if (fromCache == false) {
++                this._setCache(d)
++            }
++            return (key == null) ? d : d[key]   // return with d
++        }
++    }
++
++    private async _fetch(url: URL|string) {
++        const cache = this._getCache()
++        if (cache != undefined)
++            return [ cache, true ]
++        try {
++            const res = await fetch(url)
++            return [ await res.json(), false ]
++        } catch(err) {
++            return [ undefined, false ]
++        }
++    }
++
++    private _getCache(){
++         return this.cache
++    }
++    private _setCache( d: {[key: string]: string} | undefined ) {
++         if ( d != undefined) {
++            this.cache = d
++         }
++    }
++}
++
++export const EnvGetter = async function(key: string|null) {
++  return await EnvProvider.getInstance().get(key)
++}
++export const EnvGetterSync = function(key: string|null) {
++  const pull = async () =>   { const rtn = await EnvGetter(key); return rtn};
++  // not working yet, it returns Promise instance but not real value.
++  return pull()
++}
++
+ export const OZONE_SERVICE_DID =
+   process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
+ 
+diff --git a/service/index.js b/service/index.js
+index 1b7a221..0361874 100644
+--- a/service/index.js
++++ b/service/index.js
+@@ -31,6 +31,10 @@ async function main() {
+   }
+   const ozone = await OzoneService.create(config, secrets)
+   // setup handlers
++
++  ozone.app.get('/.env', (_req, res) => {
++      return res.json({...process.env})
++  })
+   ozone.app.get('/.well-known/ozone-metadata.json', (_req, res) => {
+     return res.json({
+       did: ozone.ctx.cfg.service.did,
