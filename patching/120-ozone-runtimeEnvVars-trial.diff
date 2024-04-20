@@ -1,102 +1,200 @@
+diff --git a/components/repositories/DidHistory.tsx b/components/repositories/DidHistory.tsx
+index 12332ac..f303526 100644
+--- a/components/repositories/DidHistory.tsx
++++ b/components/repositories/DidHistory.tsx
+@@ -1,5 +1,5 @@
+ import { Loading } from '@/common/Loader'
+-import { PLC_DIRECTORY_URL } from '@/lib/constants'
++import { fetchEnv } from '@/lib/envprovider'
+ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+ import { useQuery } from '@tanstack/react-query'
+ 
+@@ -31,8 +31,8 @@ export const useDidHistory = (did: string) =>
+     cacheTime: 1000 * 60 * 5,
+     queryFn: async () => {
+       if (!did.startsWith('did:plc')) return null
+-
+-      const url = `${PLC_DIRECTORY_URL}/${did}/log/audit`
++      const envs = await fetchEnv()
++      const url = new URL(`${did}/log/audit`, envs?.OZONE_DID_PLC_URL || envs?.NEXT_PUBLIC_PLC_DIRECTORY_URL || 'https://plc.directory')
+       const res = await fetch(url)
+       return res.json()
+     },
 diff --git a/components/shell/LoginModal.tsx b/components/shell/LoginModal.tsx
-index d76716e..4b54a6e 100644
+index d76716e..be49234 100644
 --- a/components/shell/LoginModal.tsx
 +++ b/components/shell/LoginModal.tsx
 @@ -7,6 +7,7 @@ import { AuthState } from '@/lib/types'
  import Client from '@/lib/client'
  import { ConfigurationFlow } from './ConfigurationFlow'
  import { ErrorInfo } from '@/common/ErrorInfo'
-+import { EnvGetter, EnvGetterSync } from '@/lib/constants'
++import { fetchEnv } from '@/lib/envprovider'
  
  export function LoginModal() {
    const { isValidatingAuth, isLoggedIn, authState } = useContext(AuthContext)
-@@ -42,6 +43,18 @@ export function LoginModal() {
+@@ -42,6 +43,13 @@ export function LoginModal() {
      }
    }, [isLoggedIn])
  
 +  useEffect(() => {
-+    /* testing for synchronous call ==>
-+       console.log("######### NEXT_PUBLIC_PLC_DIRECTORY_URL: @LoginModal", EnvGetterSync('NEXT_PUBLIC_PLC_DIRECTORY_URL') )
-+       console.log("######### all envs: @LoginModal", EnvGetterSync(null) )
-+    */
-+    const fetchEnv = async() => {
-+       console.log("######### NEXT_PUBLIC_PLC_DIRECTORY_URL: @LoginModal", await EnvGetter('NEXT_PUBLIC_PLC_DIRECTORY_URL') )
-+       console.log("######### all envs: @LoginModal", await EnvGetter(null) )
++    const pullEnv = async() => {
++       console.log("######### all envs: @LoginModal", await fetchEnv() )
 +    }
-+    fetchEnv()
++    pullEnv()
 +  },[])
 +
    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
      e.preventDefault()
      e.stopPropagation()
+diff --git a/lib/client.ts b/lib/client.ts
+index aa799bc..89a17e8 100644
+--- a/lib/client.ts
++++ b/lib/client.ts
+@@ -2,6 +2,7 @@ import { AtpAgent, AtpServiceClient, AtpSessionData } from '@atproto/api'
+ import { AuthState } from './types'
+ import { OzoneConfig, getConfig } from './client-config'
+ import { OZONE_SERVICE_DID } from './constants'
++import { fetchEnv } from '@/lib/envprovider'
+ 
+ export interface ClientSession extends AtpSessionData {
+   service: string
+@@ -16,6 +17,7 @@ class ClientManager extends EventTarget {
+   hasSetup = false
+   private _agent: AtpAgent | undefined
+   private _session: ClientSession | undefined
++  private _envs: {[key: string]: string} | undefined
+ 
+   get authState() {
+     if (!this._agent || !this._session) {
+@@ -51,6 +53,7 @@ class ClientManager extends EventTarget {
+     if (this.hasSetup) return this.authState
+     this._session = _loadSession()
+     await this._setup()
++    this._envs = await fetchEnv()// get whole envs from server side
+     this.hasSetup = true
+     this._emit('change')
+     return this.authState
+@@ -137,7 +140,7 @@ class ClientManager extends EventTarget {
+   }
+ 
+   private async _getConfig(ozoneDid?: string) {
+-    const builtIn = ozoneDid || OZONE_SERVICE_DID
++    const builtIn = ozoneDid || this._envs?.OZONE_SERVER_DID || this._envs?.OZONE_SERVICE_DID || this._envs?.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
+     return await getConfig(builtIn)
+   }
+ 
 diff --git a/lib/constants.ts b/lib/constants.ts
-index 23ce7c6..e32eed8 100644
+index 23ce7c6..6a66f58 100644
 --- a/lib/constants.ts
 +++ b/lib/constants.ts
-@@ -1,3 +1,63 @@
+@@ -1,8 +1,4 @@
+-export const OZONE_SERVICE_DID =
+-  process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
+-
+-export const PLC_DIRECTORY_URL =
+-  process.env.NEXT_PUBLIC_PLC_DIRECTORY_URL || `https://plc.directory`
++export const OZONE_SERVICE_DID = process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
+ 
+ export const QUEUE_CONFIG = process.env.NEXT_PUBLIC_QUEUE_CONFIG || '{}'
+ 
+diff --git a/lib/envprovider.ts b/lib/envprovider.ts
+new file mode 100644
+index 0000000..41e17b6
+--- /dev/null
++++ b/lib/envprovider.ts
+@@ -0,0 +1,71 @@
++import  * as consts from '@/lib/constants'
++
 +const REST_PATH_ENV = '/.env'
 +
-+class  EnvProvider {
++class EnvProvider{
 +    private static instance: EnvProvider = new EnvProvider()
 +    private cache: {[key: string]: string} | undefined  = undefined // env holder
 +
 +    private constructor() {}
-+    static getInstance(): EnvProvider {
-+        return EnvProvider.instance
++    static getInstance(): EnvProvider { return EnvProvider.instance }
++
++    getEnv( key: string|null = null) {
++          if (this.cache != undefined ){
++              const envs = this.cache
++              console.log("### EnvProvider::getEnv(): found cache.")
++	      return (key == null) ? envs : envs[key]   // return with d
++          } 
++          throw new Error("EnvProvider::getEnv(): no cache exists yet!")
 +    }
 +
-+    async get(key: string|null ) { // string | undefined | {[key: string]: string}
++    async fetchEnv(
++      key: string|null = null,
++      incConst: boolean = true,
++      incBuildEnv: boolean = false,
++      restpath: string = REST_PATH_ENV,
++      save2cache: boolean = true
++    ) {
++        try {
++             return this.getEnv(key)
++        } catch (err){ console.log("### EnvProvider::fetchEnv() got err :=> ", err) }
 +
-+        const url = new URL(REST_PATH_ENV, window?.location?.origin ?? '')
-+        console.log("############ EnvProvider::fetch key =>", key, url)
-+
-+        const [ d, fromCache ] = await this._fetch(url)
-+        console.log("############ EnvProvider::get => fetch ? ", (d ==undefined) ? 'failed':'success', ", fromCache ? ", fromCache )
-+        if( d == undefined) {
-+            return (key == null) ? process.env : process.env[key] // return with client side process.env
++        const url  = new URL(restpath, window?.location?.origin ?? '')
++        const d    = await EnvProvider._fetch(url)
++        const envs = Object.assign({},	(incConst==true)? consts: {},  (incBuildEnv==true)? process.env: {}, d ?? {} )
++        console.log("############ EnvProvider::fetchEnv => fetch ? ", (d ==undefined) ? 'failed':'success', envs )
++        if (save2cache == true) {
++          this.cache = envs
 +        }
-+        else{
-+            if (fromCache == false) {
-+                this._setCache(d)
-+            }
-+            return (key == null) ? d : d[key]   // return with d
-+        }
++	return (key == null) ? envs : envs[key]   // return with d
 +    }
 +
-+    private async _fetch(url: URL|string) {
-+        const cache = this._getCache()
-+        if (cache != undefined)
-+            return [ cache, true ]
++    private static async _fetch(url: URL|string) {
 +        try {
 +            const res = await fetch(url)
-+            return [ await res.json(), false ]
++            return  await res.json()
 +        } catch(err) {
-+            return [ undefined, false ]
++            return undefined
 +        }
 +    }
-+
-+    private _getCache(){
-+         return this.cache
-+    }
-+    private _setCache( d: {[key: string]: string} | undefined ) {
-+         if ( d != undefined) {
-+            this.cache = d
-+         }
-+    }
 +}
 +
-+export const EnvGetter = async function(key: string|null) {
-+  return await EnvProvider.getInstance().get(key)
-+}
-+export const EnvGetterSync = function(key: string|null) {
-+  const pull = async () =>   { const rtn = await EnvGetter(key); return rtn};
-+  // not working yet, it returns Promise instance but not real value.
-+  return pull()
++export const fetchEnv = async function(
++  key: string|null = null,
++  incConst: boolean = true,
++  incBuildEnv: boolean = false,
++  restpath: string = REST_PATH_ENV
++) {
++  return await EnvProvider.getInstance().fetchEnv(key, incConst, incBuildEnv, restpath)
 +}
 +
- export const OZONE_SERVICE_DID =
-   process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
++//export const getEnv =  function( key: string|null = null) { return EnvProvider.getInstance().getEnv(key) }
++
++export const fetchEnvSync = function(
++  key: string|null = null,
++  incConst: boolean = true,
++  incBuildEnv: boolean = false,
++  restpath: string = REST_PATH_ENV
++) {
++  const pull = async () =>   { const rtn = await fetchEnv(key, incConst, incBuildEnv, restpath); return rtn};
++  return pull() // it returns Promise instance but not real value.
++}
+diff --git a/lib/identity.ts b/lib/identity.ts
+index 3fa4f5f..44164a2 100644
+--- a/lib/identity.ts
++++ b/lib/identity.ts
+@@ -1,5 +1,5 @@
+ import clientManager from './client'
+-import { PLC_DIRECTORY_URL } from './constants'
++import { fetchEnv } from './envprovider'
  
+ export const getDidFromHandle = async (
+   handle: string,
+@@ -20,7 +20,8 @@ export const resolveDidDocData = async function (
+   did: string,
+ ): Promise<DidDocData | null> {
+   if (did.startsWith('did:plc:')) {
+-    const url = new URL(`/${did}/data`, PLC_DIRECTORY_URL)
++    const envs = await fetchEnv()
++    const url = new URL(`/${did}/data`, envs?.OZONE_DID_PLC_URL || envs?.NEXT_PUBLIC_PLC_DIRECTORY_URL || 'https://plc.directory')
+     const res = await fetch(url)
+     if (res.status !== 200) return null
+     const doc = await res.json()
 diff --git a/service/index.js b/service/index.js
 index 1b7a221..0361874 100644
 --- a/service/index.js
