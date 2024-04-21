@@ -1,7 +1,7 @@
 # variable to specify branch to apply patch. as below, <empty> then apply patch to current branch.
 branch2patch=
 
-patch-dockerbuild: ${rDir}/feed-generator/.dockerbuild  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild
+patch-dockerbuild: ${rDir}/feed-generator/.dockerbuild  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild
 
 ${rDir}/feed-generator/.dockerbuild:
 	@echo "make branch and applying patch..."
@@ -9,6 +9,13 @@ ${rDir}/feed-generator/.dockerbuild:
 	for ops in `ls ${wDir}/patching/1*.sh | grep feed-generator`; do wDir=${wDir} rDir=${rDir} pDir=${wDir}/patching DOMAIN=${DOMAIN} asof=${asof}  $${ops} ; done
 	touch $@
 	(cd ${rDir}/feed-generator; git add . ; git commit -m "update: dockerbuild"; )
+
+${rDir}/ozone/.dockerbuild:
+	@echo "make branch and applying patch..."
+	(cd ${rDir}/ozone git status; git checkout ${branch2patch} -b dockerbuild )
+	for ops in `ls ${wDir}/patching/1*.sh | grep ozone`; do wDir=${wDir} rDir=${rDir} pDir=${wDir}/patching DOMAIN=${DOMAIN} asof=${asof}  $${ops} ; done
+	touch $@
+	(cd ${rDir}/ozone; git add . ; git commit -m "update: dockerbuild"; )
 
 ${rDir}/indigo/.dockerbuild:
 	@echo "make branch and applying patch..."
