@@ -1,8 +1,9 @@
 diff --git a/cmd/palomar/Dockerfile.opensearch b/cmd/palomar/Dockerfile.opensearch
-index ddee16f..7113e17 100644
+index 079d4db..f72220b 100644
 --- a/cmd/palomar/Dockerfile.opensearch
 +++ b/cmd/palomar/Dockerfile.opensearch
-@@ -1,2 +1,3 @@
- FROM opensearchproject/opensearch:2.5.0
+@@ -1,3 +1,4 @@
+ FROM opensearchproject/opensearch:2.13.0
 +ARG OPENSEARCH_JAVA_OPTS
  RUN /usr/share/opensearch/bin/opensearch-plugin install --batch analysis-icu
+ RUN /usr/share/opensearch/bin/opensearch-plugin install --batch analysis-kuromoji
