@@ -40,7 +40,7 @@ at current, my latest release is <strong>2024-04-07r1</strong> based on codes <s
 as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
 some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
 
-test results with 'asof-2024-04-07r1':<BR>
+test results with 'asof-2024-04-18r1':<BR>
 
    -  ok: relaxing restriction on handle length in PDS (applyed https://github.com/bluesky-social/atproto/pull/2392)
    -  ok: create account on pds (via social-app,  bluesky API).
@@ -53,9 +53,17 @@ test results with 'asof-2024-04-07r1':<BR>
        -  ok: notification receiving when others vote 'like' or 'follow'
        -  ok: search posts/users/feeds
    -  ok: integration with firehose/websocket to pds/bgs(relay) => craw-able.
-   -  ok: integration with feed-generator (NOTE: official feed-generator sample has some delay, so it may need reload on social-app).
-   -  not tested: integration with moderation(ozone).
-
+   -  ok: integration with [feed-generator](#https://github.com/bluesky-social/feed-generator) (NOTE: feed-generator has some delay, so it may need reload on social-app).
+   -  ok: integration with [ozone/labeler](#https://github.com/bluesky-social/ozone).
+       -  ok: join ozone(labeler) to self-hosting env.
+       -  ok: sign-in to ozone-UI then auto-adding record as labeler in DID doc, when the account was created via sign-up on social-app. (<= i.e becoming as labeler in lazy)
+       -  ok: configure a label on ozone-UI at /configure.
+            - ok: 'labels' tab apears in profile page on social-app.
+	    - ok: 'subscribe to labeler' button apears in profile page on social-app.
+       -  ok: switch subscribe /unsubscribe labeler' on social-app profile page  =>  it apears/disapears in moderation-list in user's profile pages on social-app.
+       -  ok: send report from social-app UI to ozone via each post (dotted pulldown menu)
+       -  ok: receive and view report on ozone-UI (both in /events and /reports)
+       -  not yet: others.
 
 [back to top](#top)
 ## <a id="ops"/>operations for self-hosting bluesky (powered by Makefile)
@@ -71,7 +79,7 @@ export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
 #    2024-04-18(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
-export asof=2024-04-18
+export asof=2024-04-18r1
 
 # 3) set email addresses.
 
@@ -81,7 +89,7 @@ export EMAIL4CERTS=your@mail.address
 # It is recommended to use `internal` for avoid meeting rate limits, until you are sure it ready to self-hosting.
 export EMAIL4CERTS=internal
 
-# 3-2) PDS_EMAIL_SMTP_URL: for PDS,  like smtps://youraccount:password@smtp.gmail.com
+# 3-2) PDS_EMAIL_SMTP_URL: for PDS,  like smtps://youraccount:your-app-password@smtp.gmail.com
 export PDS_EMAIL_SMTP_URL=smtps://
 
 # 3-3) FEEDGEN_EMAIL: for feed-generator account in bluesky
@@ -191,8 +199,8 @@ make publishFeed
 
 ```bash
 # 1) create account for ozone service/admin
-# ~~ make api_CreateOzoneServerDid resp=./data/accounts/ozoneServer.did # <- this ops not works. ~~
-make api_CreateAccount_ozone
+#  you need to use valid email address since ozone/PDS sends email for confirmation code.
+make api_CreateAccount_ozone email=your-valid@email.address.com
 
 # 2) start ozone
 # ozone-standalone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at HOSTING.md
@@ -542,6 +550,25 @@ nameserver 192.168.1.27
 
 [back to top](#top)
 ### <a id="old_status"/>Historical status regarding self-hosting
+
+as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
+some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
+
+test results with 'asof-2024-04-07r1':<BR>
+
+   -  ok: relaxing restriction on handle length in PDS (applyed https://github.com/bluesky-social/atproto/pull/2392)
+   -  ok: create account on pds (via social-app,  bluesky API).
+   -  ok: sign-in social-app (with multiple accounts)
+   -  ok: basic usages on social-app
+       -  ok: edit profilie (display name)
+       -  ok: post articles
+       -  ok: vote 'like' / repost to article
+       -  ok: follow/un-follow others, via their profile page.
+       -  ok: notification receiving when others vote 'like' or 'follow'
+       -  ok: search posts/users/feeds
+   -  ok: integration with firehose/websocket to pds/bgs(relay) => craw-able.
+   -  ok: integration with feed-generator (NOTE: official feed-generator sample has some delay, so it may need reload on social-app).
+   -  not tested: integration with moderation(ozone).
 
 test results with 'asof-2024-04-07':<BR>
 
