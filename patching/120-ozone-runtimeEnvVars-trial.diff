@@ -1,27 +1,30 @@
+diff --git a/.dockerbuild b/.dockerbuild
+new file mode 100644
+index 0000000..e69de29
 diff --git a/components/repositories/DidHistory.tsx b/components/repositories/DidHistory.tsx
-index 12332ac..f303526 100644
+index 12332ac..28b54a5 100644
 --- a/components/repositories/DidHistory.tsx
 +++ b/components/repositories/DidHistory.tsx
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,6 @@
  import { Loading } from '@/common/Loader'
--import { PLC_DIRECTORY_URL } from '@/lib/constants'
+ import { PLC_DIRECTORY_URL } from '@/lib/constants'
 +import { fetchEnv } from '@/lib/envprovider'
  import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
  import { useQuery } from '@tanstack/react-query'
  
-@@ -31,8 +31,8 @@ export const useDidHistory = (did: string) =>
+@@ -31,8 +32,8 @@ export const useDidHistory = (did: string) =>
      cacheTime: 1000 * 60 * 5,
      queryFn: async () => {
        if (!did.startsWith('did:plc')) return null
 -
 -      const url = `${PLC_DIRECTORY_URL}/${did}/log/audit`
 +      const envs = await fetchEnv()
-+      const url = new URL(`${did}/log/audit`, envs?.OZONE_DID_PLC_URL || envs?.NEXT_PUBLIC_PLC_DIRECTORY_URL || 'https://plc.directory')
++      const url = new URL(`${did}/log/audit`, envs?.OZONE_DID_PLC_URL || envs?.PLC_DIRECTORY_URL || envs?.NEXT_PUBLIC_PLC_DIRECTORY_URL || 'https://plc.directory')
        const res = await fetch(url)
        return res.json()
      },
 diff --git a/components/shell/LoginModal.tsx b/components/shell/LoginModal.tsx
-index d76716e..be49234 100644
+index d76716e..4d4227c 100644
 --- a/components/shell/LoginModal.tsx
 +++ b/components/shell/LoginModal.tsx
 @@ -7,6 +7,7 @@ import { AuthState } from '@/lib/types'
@@ -32,14 +35,12 @@ index d76716e..be49234 100644
  
  export function LoginModal() {
    const { isValidatingAuth, isLoggedIn, authState } = useContext(AuthContext)
-@@ -42,6 +43,13 @@ export function LoginModal() {
+@@ -42,6 +43,11 @@ export function LoginModal() {
      }
    }, [isLoggedIn])
  
 +  useEffect(() => {
-+    const pullEnv = async() => {
-+       console.log("######### all envs: @LoginModal", await fetchEnv() )
-+    }
++    const pullEnv = async() => { await fetchEnv() }
 +    pullEnv()
 +  },[])
 +
@@ -83,26 +84,12 @@ index aa799bc..89a17e8 100644
      return await getConfig(builtIn)
    }
  
-diff --git a/lib/constants.ts b/lib/constants.ts
-index 23ce7c6..6a66f58 100644
---- a/lib/constants.ts
-+++ b/lib/constants.ts
-@@ -1,8 +1,4 @@
--export const OZONE_SERVICE_DID =
--  process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
--
--export const PLC_DIRECTORY_URL =
--  process.env.NEXT_PUBLIC_PLC_DIRECTORY_URL || `https://plc.directory`
-+export const OZONE_SERVICE_DID = process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
- 
- export const QUEUE_CONFIG = process.env.NEXT_PUBLIC_QUEUE_CONFIG || '{}'
- 
 diff --git a/lib/envprovider.ts b/lib/envprovider.ts
 new file mode 100644
-index 0000000..41e17b6
+index 0000000..895bc66
 --- /dev/null
 +++ b/lib/envprovider.ts
-@@ -0,0 +1,71 @@
+@@ -0,0 +1,70 @@
 +import  * as consts from '@/lib/constants'
 +
 +const REST_PATH_ENV = '/.env'
@@ -117,9 +104,8 @@ index 0000000..41e17b6
 +    getEnv( key: string|null = null) {
 +          if (this.cache != undefined ){
 +              const envs = this.cache
-+              console.log("### EnvProvider::getEnv(): found cache.")
 +	      return (key == null) ? envs : envs[key]   // return with d
-+          } 
++          }
 +          throw new Error("EnvProvider::getEnv(): no cache exists yet!")
 +    }
 +
@@ -132,7 +118,7 @@ index 0000000..41e17b6
 +    ) {
 +        try {
 +             return this.getEnv(key)
-+        } catch (err){ console.log("### EnvProvider::fetchEnv() got err :=> ", err) }
++        } catch (err){ /* ignore */ }
 +
 +        const url  = new URL(restpath, window?.location?.origin ?? '')
 +        const d    = await EnvProvider._fetch(url)
@@ -175,23 +161,23 @@ index 0000000..41e17b6
 +  return pull() // it returns Promise instance but not real value.
 +}
 diff --git a/lib/identity.ts b/lib/identity.ts
-index 3fa4f5f..44164a2 100644
+index 3fa4f5f..7cdb8dd 100644
 --- a/lib/identity.ts
 +++ b/lib/identity.ts
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,6 @@
  import clientManager from './client'
--import { PLC_DIRECTORY_URL } from './constants'
+ import { PLC_DIRECTORY_URL } from './constants'
 +import { fetchEnv } from './envprovider'
  
  export const getDidFromHandle = async (
    handle: string,
-@@ -20,7 +20,8 @@ export const resolveDidDocData = async function (
+@@ -20,7 +21,8 @@ export const resolveDidDocData = async function (
    did: string,
  ): Promise<DidDocData | null> {
    if (did.startsWith('did:plc:')) {
 -    const url = new URL(`/${did}/data`, PLC_DIRECTORY_URL)
 +    const envs = await fetchEnv()
-+    const url = new URL(`/${did}/data`, envs?.OZONE_DID_PLC_URL || envs?.NEXT_PUBLIC_PLC_DIRECTORY_URL || 'https://plc.directory')
++    const url = new URL(`/${did}/data`, envs?.OZONE_DID_PLC_URL || envs?.PLC_DIRECTORY_URL || envs?.NEXT_PUBLIC_PLC_DIRECTORY_URL || 'https://plc.directory')
      const res = await fetch(url)
      if (res.status !== 200) return null
      const doc = await res.json()
