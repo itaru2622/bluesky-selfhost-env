@@ -208,15 +208,16 @@ services:
     restart: always
 
   plc:
-    image: itaru2622/bluesky-did-method-plc:${asof}
-    build:
-      context: ./repos/did-method-plc/
-      dockerfile: packages/server/Dockerfile
-      args:
-       - http_proxy=${http_proxy}
-       - https_proxy=${https_proxy}
-       - no_proxy=${no_proxy}
-       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/bluesky-did-method-plc:latest
+#   image: itaru2622/bluesky-did-method-plc:${asof}
+#   build:
+#     context: ./repos/did-method-plc/
+#     dockerfile: packages/server/Dockerfile
+#     args:
+#      - http_proxy=${http_proxy}
+#      - https_proxy=${https_proxy}
+#      - no_proxy=${no_proxy}
+#      - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 2582:2582
     volumes:
