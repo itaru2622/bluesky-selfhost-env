@@ -5,10 +5,14 @@ echo "rDir:   ${rDir}"
 echo "pDir:   ${pDir}"
 
 d_=${rDir}/ozone
-p_=${pDir}/120-ozone-runtimeEnvVars-trial.diff
-
-echo "applying patch: under ${d_} for ${p_}"
+patches="${pDir}/120-ozone-runtimeEnvVars-trial-envprovider.diff  ${pDir}/120-ozone-runtimeEnvVars-trial-rest.diff  ${pDir}/120-ozone-runtimeEnvVars-trial-others.diff"
 
 pushd ${d_}
-git apply ${p_}
+
+for p_ in ${patches}
+do
+  echo "applying patch: under ${d_} for ${p_}"
+  git apply ${p_}
+done
+
 popd
