@@ -33,14 +33,14 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, my latest release is <strong>2024-04-07r1</strong> based on codes <strong>2024-04-07</strong> of bluesky-social.<br>
+at current, my latest release is <strong>2024-04-30</strong> based on codes <strong>2024-04-30</strong> of bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
 as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
 some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
 
-test results with 'asof-2024-04-18r1':<BR>
+test results with 'asof-2024-04-18r1' and later:<BR>
 
    -  ok: relaxing restriction on handle length in PDS (applyed https://github.com/bluesky-social/atproto/pull/2392)
    -  ok: create account on pds (via social-app,  bluesky API).
@@ -79,7 +79,7 @@ export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
 #    2024-04-18(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
-export asof=2024-04-18r1
+export asof=2024-04-30
 
 # 3) set email addresses.
 
@@ -177,6 +177,9 @@ make docker-start
 
 # 2) deploy bluesky containers(plc, bgs, appview, pds, ozone, ...)
 make docker-start-bsky
+
+# 3) set bgs parameter for perDayLimit via REST API.
+make api_setPerDayLimit
 ```
 
 ### <a id="ops4-run-fg"/>4) deploy feed-generator on your env.

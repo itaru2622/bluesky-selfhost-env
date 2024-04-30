@@ -2,6 +2,12 @@
 # output file path of API response.
 resp ?=/dev/null
 
+#HINT: make api_setPerDayLimit
+api_setPerDayLimit:
+	$(eval _token=$(shell cat ${passfile} | grep BGS_ADMIN_KEY | awk -F= '{ print $$2}'))
+	curl -k -X POST -L "https://bgs.${DOMAIN}/admin/subs/setPerDayLimit?limit=10000" -H "Authorization: Bearer ${_token}"
+	curl -k -X GET  -L "https://bgs.${DOMAIN}/admin/subs/perDayLimit" -H "Authorization: Bearer ${_token}"
+
 #HINT: make api_CreateOzoneServerDid
 api_CreateOzoneServerDid:: _mkargs_OzoneServerDid  _execApiCmd
 api_CreateOzoneServerDid:: _echo_args _findDid
