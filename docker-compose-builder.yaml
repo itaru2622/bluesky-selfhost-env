@@ -612,15 +612,16 @@ services:
       - caddy
 
   feed-generator:
-    image: itaru2622/bluesky-feed-generator:${asof}
-    build:
-      context: ./repos/feed-generator/
-      dockerfile: Dockerfile
-      args:
-       - http_proxy=${http_proxy}
-       - https_proxy=${https_proxy}
-       - no_proxy=${no_proxy}
-       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/bluesky-feed-generator:latest
+   #image: itaru2622/bluesky-feed-generator:${asof}
+   #build:
+   #  context: ./repos/feed-generator/
+   #  dockerfile: Dockerfile
+   #  args:
+   #   - http_proxy=${http_proxy}
+   #   - https_proxy=${https_proxy}
+   #   - no_proxy=${no_proxy}
+   #   - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 2586:3000
     environment:
