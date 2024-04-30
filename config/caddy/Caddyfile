@@ -14,6 +14,37 @@
         }
 #    limits to HTTP/1.1 <<<
 }
+
+# https://caddy.community/t/how-can-i-allow-multiple-domain-origins-in-cors/22129/5
+(cors) {
+    @cors_preflight {
+        method OPTIONS
+    }
+    @corsOrigin {
+        header_regexp Origin ^https?://*.({$DOMAIN})$
+    }
+
+    handle @cors_preflight {
+        header {
+            Access-Control-Allow-Origin "*"
+            Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE"
+            Access-Control-Allow-Headers *
+            Vary Origin
+            defer
+        }
+        respond "" 204
+    }
+
+    handle @corsOrigin {
+        header {
+            Access-Control-Allow-Origin "*"
+            Access-Control-Expose-Headers *
+            Vary Origin
+            defer
+        }
+    }
+}
+
 # global options: ends   <<<<
 
 # self-hosting CA with ACME,  for self signed certicates >>>>
@@ -37,6 +68,7 @@ ca.{$DOMAIN}:9000 {
 
 # starts: to check if sidecar working, this record maybe need just for debugging. >>>>
 #caddy-sidecar.{$DOMAIN} {
+#       import cors
 #	tls {$EMAIL4CERTS} {
 #	  on_demand
 #       }
@@ -47,6 +79,7 @@ ca.{$DOMAIN}:9000 {
 # starts: to check if caddy works as reverse proxy, for HTTP(S) and WS(S) >>>>>>>>>>
 #  for HTTPS/WSS => HTTP/WS, you can test websocket by ```wscat -c wss://test-wss.mybluesky.local.com/ws```
 test-wss.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -63,6 +96,7 @@ test-wss.{$DOMAIN} {
 
 #  for HTTP/WS => HTTP/WS, you can test websocket by ```wscat -c ws://test-ws.mybluesky.local.com/ws```
 http://test-ws.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -80,6 +114,7 @@ http://test-ws.{$DOMAIN} {
 # starts: simple mapping >>>>>
 
 plc.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -87,6 +122,7 @@ plc.{$DOMAIN} {
 }
 
 bgs.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -94,6 +130,7 @@ bgs.{$DOMAIN} {
 }
 
 api.{$DOMAIN}, bsky.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -101,6 +138,7 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 }
 
 social-app.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -108,6 +146,7 @@ social-app.{$DOMAIN} {
 }
 
 ozone.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -115,6 +154,7 @@ ozone.{$DOMAIN} {
 	reverse_proxy http://ozone-standalone:3000
 }
 ozone-standalone.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -123,6 +163,7 @@ ozone-standalone.{$DOMAIN} {
 
 
 palomar.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -130,6 +171,7 @@ palomar.{$DOMAIN} {
 }
 
 feed-generator.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -137,6 +179,7 @@ feed-generator.{$DOMAIN} {
 }
 
 pds.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -154,6 +197,7 @@ pds.{$DOMAIN} {
 
 # starts:  *.pds.DOMAIN >>>>>>>>>>>
 *.pds.{$DOMAIN} {
+        import cors
         tls {$EMAIL4CERTS} {
           on_demand
         }
@@ -213,6 +257,7 @@ pds.{$DOMAIN} {
 # for ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env
 # for https://github.com/bluesky-social/bsky-docs/issues/63
 public.api.{$DOMAIN} {
+        import cors
 	tls {$EMAIL4CERTS} {
           on_demand
         }
