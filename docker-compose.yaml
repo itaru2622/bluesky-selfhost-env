@@ -416,6 +416,9 @@ services:
       - NEXT_PUBLIC_SOCIAL_APP_URL=https://social-app.${DOMAIN}
       - OZONE_APPVIEW_DID=did:web:bsky.${DOMAIN}
       - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
+      - OZONE_APPVIEW_PUSH_EVENTS=true
+      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
+      - OZONE_PDS_URL=https://pds.${DOMAIN}
     restart: always
     depends_on:
       - database
