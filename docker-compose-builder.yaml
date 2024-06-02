@@ -371,7 +371,7 @@ services:
       - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
       - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
       - BSKY_PUBLIC_URL=https://bsky.${DOMAIN}
-      - BSKY_REPO_PROVIDER=ws://pds:2583
+      - BSKY_REPO_PROVIDER=wss://bgs.${DOMAIN}
       - BSKY_SEARCH_URL=https://palomar.${DOMAIN}
       - BSKY_SERVER_DID=did:web:bsky.${DOMAIN}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
