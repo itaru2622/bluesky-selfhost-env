@@ -1,0 +1,21 @@
+{
+  "labelValues": [
+    "label-test-ooa"
+  ],
+  "labelValueDefinitions": [
+    {
+      "blurs": "none",
+      "locales": [
+        {
+          "lang": "en",
+          "name": "label-test-ooa Label Display Name",
+          "description": "label-test-ooa Label description."
+        }
+      ],
+      "severity": "inform",
+      "adultOnly": false,
+      "identifier": "label-test-ooa",
+      "defaultSetting": "warn"
+    }
+  ]
+}
