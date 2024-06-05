@@ -21,6 +21,8 @@
   "dependencies": {
     "@atproto/api": "*",
     "@atproto/crypto": "*",
+    "@atproto/xrpc-server": "*",
+    "@atproto/bsky": "*",
     "@did-plc/lib": "*",
     "@types/yargs": "*",
     "ts-node": "*",
