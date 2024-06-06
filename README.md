@@ -1,4 +1,4 @@
-# <a id="top"/>self-hosting bluesky 
+# <a id="top"/>self-hosting entire bluesky
 
 https://github.com/itaru2622/bluesky-selfhost-env
 
@@ -21,14 +21,13 @@ https://github.com/itaru2622/bluesky-selfhost-env
       - [Screen shots](#screenshots)
       - [Sourses in Use](#sources)
       - [Sample DNS Server Config(bind9)](#sample-dns-config)
-      - [Historical Status](#old_status)
   - [References](#refs)
 
 ## <a id="motivation" />Motivation
 
 this repository aims to get self-hosted bluesky env in easy with:
 
- - configurable hosting domain:  easy to tunable by environment variable (DOMAIN)
+ - configurable hosting domain:  easy to tune by environment variable (DOMAIN)
  - reproducibility: disclosure all configs and operations, including reverse proxy rules, and patches to sources.
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
@@ -37,34 +36,27 @@ at current, my latest release is <strong>2024-06-02</strong> based on codes <str
 
 ## <a id="status"/>Current status regarding self-hosting
 
-as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
-some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
+as below, most features work as expected on self-hosting environment.<br>
+unfortunately, it may not work all features, some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<br>
 
-test results with 'asof-2024-04-18r1' and later:<BR>
+test results with 'asof-2024-06-02' and later:<BR>
 
-   -  ok: relaxing restriction on handle length in PDS (applyed https://github.com/bluesky-social/atproto/pull/2392)
-   -  ok: create account on pds (via social-app,  bluesky API).
-   -  ok: sign-in social-app (with multiple accounts)
+   -  ok: create account on pds (via social-app, bluesky API).
    -  ok: basic usages on social-app
-       -  ok: edit profilie (display name)
-       -  ok: post articles
-       -  ok: vote 'like' / repost to article
-       -  ok: follow/un-follow others, via their profile page.
-       -  ok: notification receiving when others vote 'like' or 'follow'
-       -  ok: search posts/users/feeds
-   -  ok: integration with firehose/websocket to pds/bgs(relay) => craw-able.
-   -  ok: integration with [feed-generator](#https://github.com/bluesky-social/feed-generator) (NOTE: feed-generator has some delay, so it may need reload on social-app).
-   -  ok: integration with [ozone/labeler](#https://github.com/bluesky-social/ozone).
-       -  ok: join ozone(labeler) to self-hosting env.
-       -  ok: sign-in to ozone-UI then auto-adding record as labeler in DID doc, when the account was created via sign-up on social-app. (<= i.e becoming as labeler in lazy)
-       -  ok: configure a label on ozone-UI at /configure.
-            - ok: 'labels' tab apears in profile page on social-app.
-	    - ok: 'subscribe to labeler' button apears in profile page on social-app.
-       -  ok: switch subscribe /unsubscribe labeler' on social-app profile page  =>  it apears/disapears in moderation-list in user's profile pages on social-app.
-       -  ok: send report from social-app UI to ozone via each post (dotted pulldown menu)
-       -  ok: receive and view report on ozone-UI (both in /events and /reports)
-       -  ng: the view of post changed according to label-assignment and user's moderation setting on social-app (refer https://github.com/bluesky-social/atproto/discussions/2511)
-       -  not yet: others.
+       -  ok: sign-in, edit profilie, post/repost article, search posts/users/feeds, vote like/follow.
+       -  ok: receive notification when others vote like/follow
+       -  ok: subscribe/unsubscribe labeler in profile page.
+       -  ok: report to labeler for any post.
+       -  not yet: DM(chat) with others.
+   -  ok: integration with [feed-generator](https://github.com/bluesky-social/feed-generator) NOTE: it has some delay, reload on social-app.
+   -  ok: moderation with [ozone](https://github.com/bluesky-social/ozone).
+       -  ok: sign-in and configure labels on ozone-UI.
+       -  ok: receive the report sent by user.
+       -  ok: assign label to the post on ozone UI, then events published to subscribeLabels.
+       -  ok: the view of post changed on social-app according to label assignments, when using [workaround tool](https://github.com/itaru2622/bluesky-selfhost-env/blob/master/ops-helper/apiImpl/subscribeLabels2BskyDB.ts).
+          -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
+   -  ok: subscribe events from pds/bgs(relay)/ozone by firehose/websocket.
+   -  not yet: others.
 
 [back to top](#top)
 ## <a id="ops"/>operations for self-hosting bluesky (powered by Makefile)
@@ -102,8 +94,8 @@ make echo
 # 5) generate secrets for bluesky containers, and check those value:
 make genSecrets
 
-## install make command as below, if you don't have yet.
-apt install -y make
+## install required tools as below, if you don't have yet.
+apt install -y make pwgen
 ```
 
 ### <a id="ops1-prepare"/>1) prepare on your network
@@ -199,7 +191,7 @@ make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
 make publishFeed
 ```
 
-### <a id="ops4-run-fg"/>4-2) deploy ozone-standalone on your env.
+### <a id="ops4-run-fg"/>4-2) deploy ozone on your env.
 
 ```bash
 # 1) create account for ozone service/admin
@@ -207,7 +199,7 @@ make publishFeed
 make api_CreateAccount_ozone email=your-valid@email.address.com
 
 # 2) start ozone
-# ozone-standalone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at HOSTING.md
+# ozone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)
 make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:plc:
 ```
 
@@ -551,111 +543,6 @@ add it in /etc/resolv.conf as below on all testing machines
 ```
 nameserver 192.168.1.27
 ```
-
-[back to top](#top)
-### <a id="old_status"/>Historical status regarding self-hosting
-
-as described below, most features started working on self-hosting environment, but it may not work with full capabilities yet.
-some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<BR>
-
-test results with 'asof-2024-04-07r1':<BR>
-
-   -  ok: relaxing restriction on handle length in PDS (applyed https://github.com/bluesky-social/atproto/pull/2392)
-   -  ok: create account on pds (via social-app,  bluesky API).
-   -  ok: sign-in social-app (with multiple accounts)
-   -  ok: basic usages on social-app
-       -  ok: edit profilie (display name)
-       -  ok: post articles
-       -  ok: vote 'like' / repost to article
-       -  ok: follow/un-follow others, via their profile page.
-       -  ok: notification receiving when others vote 'like' or 'follow'
-       -  ok: search posts/users/feeds
-   -  ok: integration with firehose/websocket to pds/bgs(relay) => craw-able.
-   -  ok: integration with feed-generator (NOTE: official feed-generator sample has some delay, so it may need reload on social-app).
-   -  not tested: integration with moderation(ozone).
-
-test results with 'asof-2024-04-07':<BR>
-
-   -  ok: create user on pds (via bluesky API).
-   -  ok: create user on pds on social-app
-   -  ok: sign-in via social-app (with multiple accounts)
-   -  ok: edit profilie (display name) on social-app
-   -  ok: post articles on social-app
-   -  ok: vote 'like' to article on social-app
-   -  ok: reply to article on social-app
-   -  ok: start following in others profile page on social-app
-   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
-   -  ok: find posts in 'search' on social-app
-   -  ok: find users in 'search' on social-app
-         - ok: find users with 'display-name' after user configures it in his/her profile page.
-         - ok: find users with full qualified handle name before display-name configured in his/her profile page.
-   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
-   -  ok: pin/unpin feeds to home on social-app after discovering
-   -  ok: feed-generator subscribes and pushes posts into its feed channel => view them on social-app. (NOTE: it has some delay, so reload on social-app).
-   -  ok: websocket subscribing to pds/bgs with firehose/websocat.
-   -  not tested: regarding moderation
-
-test results with 'asof-2024-04-03':<BR>
-
-   -  ok: create user on pds (via bluesky API).
-   -  ok: create user on pds on social-app
-   -  ok: sign-in via social-app (with multiple accounts)
-   -  ok: edit profilie (display name) on social-app
-   -  ok: post articles on social-app
-   -  ok: vote 'like' to article on social-app
-   -  ok: reply to article on social-app
-   -  ok: start following in others profile page on social-app
-   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
-   -  ok: find posts in 'search' on social-app
-   -  ok: find users in 'search' on social-app
-         - ok: find users with 'display-name' after user configures it in his/her profile page.
-         - ok: find users with full qualified handle name before display-name configured in his/her profile page.
-   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
-   -  ok: pin/unpin feeds to home after discovering
-   -  not tested: post an article in feed.
-   -  not tested: view post in feed (channel) on social-app.
-   -  not tested: regarding moderation
-   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
-
-test results with 'asof-2024-03-16' (now archiving status):<BR>
-
-   -  ok: create user on pds (via bluesky API).
-   -  NG: create user on pds on social-app (get stuck after submitting 'continue'. <=> in dev-env, we have 'clear' in upper right corner on social-app to get out from stuck.)
-   -  ok: sign-in via social-app (with multiple accounts)
-   -  ok: edit profilie (display name) on social-app
-   -  ok: post articles on social-app
-   -  ok: vote 'like' to article on social-app
-   -  ok: reply to article on social-app
-   -  ok: start following in others profile page on social-app
-   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
-   -  ok: find posts in 'search' on social-app
-   -  ??: find users in 'search' on social-app
-         - ok: find users with 'display-name' after user configures it in his/her profile page.
-         - none(without any error): find users with full qualified handle name before display-name configured in his/her profile page.
-   -  ok: discover feed in '#feeds' on social-app after feed-generator joined and executed feed-generator/scripts/publishFeedGen.ts.
-   -  ok: pin/unpin feeds to home after discovering
-   -  not tested: post an article in feed.
-   -  not tested: view post in feed (channel) on social-app.
-   -  not tested: regarding moderation
-   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
-
-
-test results with 'asof-2024-01-06' (now archiving status):<BR>
-
-   -  ok: create user on pds via social-app, and bluesky API.
-   -  ok: sign-in via social-app (with multiple accounts)
-   -  ok: post articles on social-app
-   -  ok: vote 'like' to  article on social-app
-   -  ok: reply to article on social-app
-   -  ok: start following in others profile page on social-app
-   -  ok: receive notification in home,  when others marks 'like' or 'follow', on social-app.
-   -  ok: find posts in 'search' on social-app
-   -  NG: find users in 'search' on social-app  <- reason unknown yet.
-   -  NG: find feeds in 'search' on social-app  <- investigation not started
-   -  not tested: regarding moderation
-   -  ok: websocket subscribing; tested with firehose/websocat to pds/bgs, and feed-generator
-
-It seems: indexer and feed-generator are not working by unknown reason even those are staying 'up' status.
 
 [back to top](#top)
 ## <a id="refs"/>References
