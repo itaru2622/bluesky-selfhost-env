@@ -32,7 +32,7 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, my latest release is <strong>2024-06-02</strong> based on codes <strong>2024-06-02</strong> of bluesky-social.<br>
+at current, my latest release is <strong>2024-06-10</strong> based on codes <strong>2024-06-10</strong> of bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
@@ -52,7 +52,7 @@ test results with 'asof-2024-06-02' and later:<BR>
    -  ok: moderation with [ozone](https://github.com/bluesky-social/ozone).
        -  ok: sign-in and configure labels on ozone-UI.
        -  ok: receive the report sent by user.
-       -  ok: assign label to the post on ozone UI, then events published to subscribeLabels.
+       -  ok: assign label to the post/acccount on ozone UI, then events published to subscribeLabels.
        -  ok: the view of post changed on social-app according to label assignments, when using [workaround tool](https://github.com/itaru2622/bluesky-selfhost-env/blob/master/ops-helper/apiImpl/subscribeLabels2BskyDB.ts).
           -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
    -  ok: subscribe events from pds/bgs(relay)/ozone by firehose/websocket.
@@ -72,7 +72,7 @@ export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
 #    2024-04-18(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
-export asof=2024-06-02
+export asof=2024-06-10
 
 # 3) set email addresses.
 
@@ -201,6 +201,10 @@ make api_CreateAccount_ozone email=your-valid@email.address.com
 # 2) start ozone
 # ozone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)
 make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:plc:
+
+# 3) start workaround tool to index label assignments into appview DB via subscribeLabels.
+# ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts --help
+./ops-helper/apiImpl/subscribeLabels2BskyDB.ts
 ```
 
 
