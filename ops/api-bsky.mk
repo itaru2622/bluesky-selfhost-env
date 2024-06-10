@@ -33,7 +33,7 @@ api_CreateAccount_feedgen: getFeedgenUserinfo api_CreateAccount
 api_CreateAccount_ozone: getOzoneUserinfo api_CreateAccount
 
 _sendMsg:
-	@curl -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
+	@curl -k -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
 
 _mkmsg_createAccount:
 	$(eval url='https://pds.${DOMAIN}/xrpc/com.atproto.server.createAccount')
