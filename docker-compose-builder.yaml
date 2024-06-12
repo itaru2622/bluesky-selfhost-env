@@ -30,6 +30,10 @@ volumes:
 # palomar:
 # social-app:
 
+networks:
+ default:
+    name: ${docker_network}
+    external: true
  
 services:
   caddy:
