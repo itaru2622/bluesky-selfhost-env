@@ -72,7 +72,7 @@ export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
 #    2024-04-18(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
-export asof=2024-06-10
+export asof=2024-06-10r1
 
 # 3) set email addresses.
 
