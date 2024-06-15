@@ -171,8 +171,9 @@ make docker-start
 # 2) deploy bluesky containers(plc, bgs, appview, pds, ozone, ...)
 make docker-start-bsky
 
+# below ops is no more needed by patching/152-indigo-newpds-dayper-limit.diff
 # 3) set bgs parameter for perDayLimit via REST API.
-make api_setPerDayLimit
+# ~~~ make api_setPerDayLimit ~~~
 ```
 
 ### <a id="ops4-run-fg"/>4) deploy feed-generator on your env.

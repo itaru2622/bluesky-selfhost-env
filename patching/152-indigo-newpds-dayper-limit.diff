@@ -1,0 +1,113 @@
+diff --git a/bgs/bgs.go b/bgs/bgs.go
+index 96e8241a..97282b58 100644
+--- a/bgs/bgs.go
++++ b/bgs/bgs.go
+@@ -106,7 +106,7 @@ type SocketConsumer struct {
+ 	EventsSent  promclient.Counter
+ }
+ 
+-func NewBGS(db *gorm.DB, ix *indexer.Indexer, repoman *repomgr.RepoManager, evtman *events.EventManager, didr did.Resolver, rf *indexer.RepoFetcher, hr api.HandleResolver, ssl bool, compactInterval time.Duration) (*BGS, error) {
++func NewBGS(db *gorm.DB, ix *indexer.Indexer, repoman *repomgr.RepoManager, evtman *events.EventManager, didr did.Resolver, rf *indexer.RepoFetcher, hr api.HandleResolver, ssl bool, compactInterval time.Duration, initialNewPDSPerDayLimit int64) (*BGS, error) {
+ 	db.AutoMigrate(User{})
+ 	db.AutoMigrate(AuthToken{})
+ 	db.AutoMigrate(models.PDS{})
+@@ -132,6 +132,7 @@ func NewBGS(db *gorm.DB, ix *indexer.Indexer, repoman *repomgr.RepoManager, evtm
+ 	ix.CreateExternalUser = bgs.createExternalUser
+ 	slOpts := DefaultSlurperOptions()
+ 	slOpts.SSL = ssl
++	slOpts.DefaultNewPDSPerDayLimit = initialNewPDSPerDayLimit
+ 	s, err := NewSlurper(db, bgs.handleFedEvent, slOpts)
+ 	if err != nil {
+ 		return nil, err
+diff --git a/bgs/fedmgr.go b/bgs/fedmgr.go
+index 5e761fd3..8450608a 100644
+--- a/bgs/fedmgr.go
++++ b/bgs/fedmgr.go
+@@ -43,6 +43,7 @@ type Slurper struct {
+ 	DefaultRepoLimit  int64
+ 
+ 	NewPDSPerDayLimiter *slidingwindow.Limiter
++	initialNewPDSPerDayLimit   int64
+ 
+ 	newSubsDisabled bool
+ 	trustedDomains  []string
+@@ -66,6 +67,7 @@ type SlurperOptions struct {
+ 	DefaultPerDayLimit    int64
+ 	DefaultCrawlLimit     rate.Limit
+ 	DefaultRepoLimit      int64
++	DefaultNewPDSPerDayLimit int64
+ }
+ 
+ func DefaultSlurperOptions() *SlurperOptions {
+@@ -76,6 +78,7 @@ func DefaultSlurperOptions() *SlurperOptions {
+ 		DefaultPerDayLimit:    10_000,
+ 		DefaultCrawlLimit:     rate.Limit(5),
+ 		DefaultRepoLimit:      10,
++		DefaultNewPDSPerDayLimit: 10,
+ 	}
+ }
+ 
+@@ -104,6 +107,7 @@ func NewSlurper(db *gorm.DB, cb IndexCallback, opts *SlurperOptions) (*Slurper,
+ 		ssl:                   opts.SSL,
+ 		shutdownChan:          make(chan bool),
+ 		shutdownResult:        make(chan []error),
++		initialNewPDSPerDayLimit:     opts.DefaultNewPDSPerDayLimit,
+ 	}
+ 	if err := s.loadConfig(); err != nil {
+ 		return nil, err
+@@ -216,13 +220,15 @@ func (s *Slurper) loadConfig() error {
+ 	}
+ 
+ 	if sc.ID == 0 {
+-		if err := s.db.Create(&SlurpConfig{}).Error; err != nil {
++		sc.NewPDSPerDayLimit = s.initialNewPDSPerDayLimit
++		if err := s.db.Create(&SlurpConfig{ NewPDSPerDayLimit: s.initialNewPDSPerDayLimit, }).Error; err != nil {
+ 			return err
+ 		}
+ 	}
+ 
+ 	s.newSubsDisabled = sc.NewSubsDisabled
+ 	s.trustedDomains = sc.TrustedDomains
++	s.initialNewPDSPerDayLimit = sc.NewPDSPerDayLimit
+ 
+ 	s.NewPDSPerDayLimiter, _ = slidingwindow.NewLimiter(time.Hour*24, sc.NewPDSPerDayLimit, windowFunc)
+ 
+diff --git a/cmd/bigsky/main.go b/cmd/bigsky/main.go
+index a808d632..10795894 100644
+--- a/cmd/bigsky/main.go
++++ b/cmd/bigsky/main.go
+@@ -155,6 +155,12 @@ func run(args []string) {
+ 			Value:   100,
+ 			EnvVars: []string{"MAX_FETCH_CONCURRENCY"},
+ 		},
++		&cli.Int64Flag{
++			Name:    "newpds-perday-limit",
++			Value:   10,
++			EnvVars: []string{"BGS_NEWPDS_PERDAY_LIMIT"},
++			Usage:   "initial value for NewPDSPerDayLimit",
++		},
+ 	}
+ 
+ 	app.Action = Bigsky
+@@ -349,7 +355,7 @@ func Bigsky(cctx *cli.Context) error {
+ 	}
+ 
+ 	log.Infow("constructing bgs")
+-	bgs, err := libbgs.NewBGS(db, ix, repoman, evtman, cachedidr, rf, hr, !cctx.Bool("crawl-insecure-ws"), cctx.Duration("compact-interval"))
++	bgs, err := libbgs.NewBGS(db, ix, repoman, evtman, cachedidr, rf, hr, !cctx.Bool("crawl-insecure-ws"), cctx.Duration("compact-interval"), cctx.Int64("newpds-perday-limit"))
+ 	if err != nil {
+ 		return err
+ 	}
+diff --git a/testing/utils.go b/testing/utils.go
+index c0bfc66a..20239d9f 100644
+--- a/testing/utils.go
++++ b/testing/utils.go
+@@ -582,7 +582,7 @@ func SetupRelay(ctx context.Context, didr plc.PLCClient) (*TestRelay, error) {
+ 
+ 	tr := &api.TestHandleResolver{}
+ 
+-	b, err := bgs.NewBGS(maindb, ix, repoman, evtman, didr, rf, tr, false, time.Hour*4)
++	b, err := bgs.NewBGS(maindb, ix, repoman, evtman, didr, rf, tr, false, time.Hour*4, 10)
+ 	if err != nil {
+ 		return nil, err
+ 	}
