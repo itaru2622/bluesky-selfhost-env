@@ -26,6 +26,13 @@ _echo_args:
 api_CreateAccount:: _mkmsg_createAccount  _sendMsg
 api_CreateAccount:: _echo_reqAccount _findDid
 
+#HINT: make api_DeleteAccount did=...
+api_DeleteAccount:
+	$(eval pass=$(shell cat ${passfile} | grep PDS_ADMIN_PASSWORD | awk -F= '{ print $$2}'))
+	$(eval url='https://pds.${DOMAIN}/xrpc/com.atproto.admin.deleteAccount')
+	curl -k -X POST -u "admin:${pass}" ${url} -H 'content-type: application/json' -d '{ "did": "${did}" }'
+	-echo '' | grep -s -l ${did} ${aDir}/*.secrets | xargs rm -f
+
 #HINT: make api_CreateAccount_feedgen
 api_CreateAccount_feedgen: getFeedgenUserinfo api_CreateAccount
 
