@@ -8,20 +8,6 @@ api_setPerDayLimit:
 	curl -k -X POST -L "https://bgs.${DOMAIN}/admin/subs/setPerDayLimit?limit=10000" -H "Authorization: Bearer ${_token}"
 	curl -k -X GET  -L "https://bgs.${DOMAIN}/admin/subs/perDayLimit" -H "Authorization: Bearer ${_token}"
 
-#HINT: make api_CreateOzoneServerDid
-api_CreateOzoneServerDid:: _mkargs_OzoneServerDid  _execApiCmd
-api_CreateOzoneServerDid:: _echo_args _findDid
-
-_mkargs_OzoneServerDid:
-	$(eval cmd=./ops-helper/apiImpl/createOzoneServerDidOnPlc.ts)
-	$(eval signingKeyHex=$(shell cat ${passfile} | grep OZONE_SIGNING_KEY_HEX | awk -F= '{ print $$2}'))
-	$(eval args=--plc https://plc.${DOMAIN} --signingKeyHex ${signingKeyHex})
-_execApiCmd:
-	${cmd} ${args} | tee -a ${resp}
-_echo_args:
-	@echo ""
-	@echo "cmd:     ${cmd} ${args}"
-
 #HINT: make api_CreateAccount email=...  password=...  handle=...
 api_CreateAccount:: _mkmsg_createAccount  _sendMsg
 api_CreateAccount:: _echo_reqAccount _findDid
