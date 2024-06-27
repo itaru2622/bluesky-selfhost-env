@@ -32,7 +32,7 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, my latest release is <strong>2024-06-26</strong> based on codes <strong>2024-06-26</strong> of bluesky-social.<br>
+at current, my latest release is <strong>2024-06-26r1</strong> based on codes <strong>2024-06-26</strong> of bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
@@ -71,8 +71,8 @@ you can change the domain name by environment variable as below:
 export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
-#    2024-06-26(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
-export asof=2024-06-26
+#    2024-06-26r1(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
+export asof=2024-06-26r1
 
 # 3) set email addresses.
 
@@ -206,6 +206,10 @@ make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:pl
 # 3) start workaround tool to index label assignments into appview DB via subscribeLabels.
 # ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts --help
 ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts
+
+# 4) [optional] add member to the ozone team (i.e: add role to user):
+#    valid roles are: tools.ozone.team.defs#roleAdmin | tools.ozone.team.defs#roleModerator | tools.ozone.team.defs#roleTriage
+make api_ozone_member_add   role=  did=did:plc:
 ```
 
 

@@ -25,6 +25,13 @@ api_CreateAccount_feedgen: getFeedgenUserinfo api_CreateAccount
 #HINT: make api_CreateAccount_ozone
 api_CreateAccount_ozone: getOzoneUserinfo api_CreateAccount
 
+#HINT: api_ozone_member_add role=...  did=...
+api_ozone_member_add:
+	$(eval pass=$(shell cat ${passfile} | grep OZONE_ADMIN_PASSWORD | awk -F= '{ print $$2}'))
+	$(eval url=https://ozone.${DOMAIN})
+	curl -k -L -X POST -u "admin:${pass}" "${url}/xrpc/tools.ozone.team.addMember" -H "content-type: application/json" -d '{"role": "${role}", "did": "${did}" }'
+	curl -k -L -X GET  -u "admin:${pass}" "${url}/xrpc/tools.ozone.team.listMembers" | jq
+
 _sendMsg:
 	@curl -k -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
 
