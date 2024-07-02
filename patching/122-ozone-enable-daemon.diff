@@ -1,0 +1,81 @@
+diff --git a/service/index.js b/service/index.js
+index 1b7a221..3dbbf71 100644
+--- a/service/index.js
++++ b/service/index.js
+@@ -1,5 +1,7 @@
+ const next = require('next')
+-const {
++const ozone = require('@atproto/ozone')
++/*
++{
+   readEnv,
+   httpLogger,
+   envToCfg,
+@@ -7,6 +9,7 @@ const {
+   OzoneService,
+   Database,
+ } = require('@atproto/ozone')
++*/
+ const pkg = require('@atproto/ozone/package.json')
+ 
+ async function main() {
+@@ -16,36 +19,47 @@ async function main() {
+   const frontendHandler = frontend.getRequestHandler()
+   await frontend.prepare()
+   // backend
+-  const env = readEnv()
++  const env = ozone.readEnv()
+   env.version ??= pkg.version
+-  const config = envToCfg(env)
+-  const secrets = envToSecrets(env)
++  const config = ozone.envToCfg(env)
++  const secrets = ozone.envToSecrets(env)
+   const migrate = process.env.OZONE_DB_MIGRATE === '1'
+   if (migrate) {
+-    const db = new Database({
++    const db = new ozone.Database({
+       url: config.db.postgresUrl,
+       schema: config.db.postgresSchema,
+     })
+     await db.migrateToLatestOrThrow()
+     await db.close()
+   }
+-  const ozone = await OzoneService.create(config, secrets)
++  const server = await ozone.OzoneService.create(config, secrets)
+   // setup handlers
+-  ozone.app.get('/.well-known/ozone-metadata.json', (_req, res) => {
++  server.app.get('/.well-known/ozone-metadata.json', (_req, res) => {
+     return res.json({
+-      did: ozone.ctx.cfg.service.did,
+-      url: ozone.ctx.cfg.service.publicUrl,
+-      publicKey: ozone.ctx.signingKey.did(),
++      did: server.ctx.cfg.service.did,
++      url: server.ctx.cfg.service.publicUrl,
++      publicKey: server.ctx.signingKey.did(),
+     })
+   })
+-  ozone.app.get('*', (req, res) => {
++  server.app.get('*', (req, res) => {
+     return frontendHandler(req, res)
+   })
+   // run
+-  const httpServer = await ozone.start()
++  const httpServer = await server.start()
++  // starts: involve ops from atproto/packages/dev-env/src/ozone.ts >>>
++  ozone.httpLogger.info('starts ozone daemon')
++  const daemon = await ozone.OzoneDaemon.create(config, secrets)
++  await daemon.start()
++  //if (process.env.OZONE_ENABLE_EVENT_REVERSER != 'true') // atproto/services/ozone/daemon.js doesn't stop eventReverser
++  //{
++  //    ozone.httpLogger.info('disable ozone daemon eventReverser')
++  //    await daemon.ctx.eventReverser.destroy()
++  //}
++  // ends: involve ops from atproto/packages/dev-env/src/ozone.ts <<<
++
+   /** @type {import('net').AddressInfo} */
+   const addr = httpServer.address()
+-  httpLogger.info(`Ozone is running at http://localhost:${addr.port}`)
++  ozone.httpLogger.info(`Ozone is running at http://localhost:${addr.port}`)
+ }
+ 
+ main().catch(console.error)
