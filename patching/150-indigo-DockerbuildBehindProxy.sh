@@ -10,5 +10,5 @@ p_=${pDir}/150-indigo-DockerbuildBehindProxy.diff
 echo "applying patch: under ${d_} for ${p_}"
 
 pushd ${d_}
-git apply ${p_}
+patch -p1 < ${p_}
 popd

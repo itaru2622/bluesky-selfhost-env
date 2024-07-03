@@ -11,6 +11,6 @@ p2_=${pDir}/010-atproto-devenv-debug-others.diff
 echo "applying patch: under ${d_} for ${p1_} ${p2_}"
 
 pushd ${d_}
-git apply ${p1_}
-git apply ${p2_}
+patch -p1 < ${p1_}
+patch -p1 < ${p2_}
 popd
