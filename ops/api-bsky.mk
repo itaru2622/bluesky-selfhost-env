@@ -32,6 +32,17 @@ api_ozone_member_add:
 	curl -k -L -X POST -u "admin:${pass}" "${url}/xrpc/tools.ozone.team.addMember" -H "content-type: application/json" -d '{"role": "${role}", "did": "${did}" }'
 	curl -k -L -X GET  -u "admin:${pass}" "${url}/xrpc/tools.ozone.team.listMembers" | jq
 
+#HINT: make api_ozone_reqPlcSign handle=... password=...
+api_ozone_reqPlcSign: getOzoneUserinfo
+	./ops-helper/apiImpl/reqPlcOpeSign.ts --pdsURL https://pds.${DOMAIN} --handle ${handle} --password ${password}
+	@echo "########## check email for ${handle}, token sent #########"
+
+#HINT: make api_ozone_updateDidDoc   plcSignToken=...  ozoneURL=...  handle=... password=...
+api_ozone_updateDidDoc: getOzoneUserinfo
+	$(eval signkey=$(shell cat ${passfile} | grep OZONE_SIGNING_KEY_HEX | awk -F= '{ print $$2}'))
+	$(eval ozoneURL=https://ozone.${DOMAIN})
+	./ops-helper/apiImpl/updateDidDoc-labeler.ts --plcSignToken ${plcSignToken} --signingKeyHex ${signkey} --pdsURL https://pds.${DOMAIN} --handle ${handle} --password ${password} --ozoneURL=${ozoneURL}
+
 _sendMsg:
 	@curl -k -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
 

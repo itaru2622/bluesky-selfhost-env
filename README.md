@@ -207,7 +207,13 @@ make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:pl
 # ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts --help
 ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts
 
-# 4) [optional] add member to the ozone team (i.e: add role to user):
+# 4) [required in occasional] update DidDoc before sign-in to ozone
+#    first, request and get PLC sign by email
+make api_ozone_reqPlcSign
+#    update didDoc with above sign
+make api_ozone_updateDidDoc   plcSignToken=
+
+# 5) [optional] add member to the ozone team (i.e: add role to user):
 #    valid roles are: tools.ozone.team.defs#roleAdmin | tools.ozone.team.defs#roleModerator | tools.ozone.team.defs#roleTriage
 make api_ozone_member_add   role=  did=did:plc:
 ```
