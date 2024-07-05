@@ -2,14 +2,11 @@
 
 echo "DOMAIN: ${DOMAIN}"
 echo "rDir:   ${rDir}"
-echo "pDir:   ${pDir}"
 
 d_=${rDir}/ozone
-p_=${pDir}/121-ozone-support-latest-api.diff
-
 pushd ${d_}
 
-echo "applying patch: under ${d_} for ${p_}"
-patch -p1 < ${p_}
+sed -i -E 's#"@atproto/api": "([0-9\.]+)"#"@atproto/api": "^\1"#'     package.json
+sed -i -E 's#"@atproto/ozone": "([0-9\.]+)"#"@atproto/ozone": "^\1"#' service/package.json
 
 popd
