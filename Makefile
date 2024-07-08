@@ -82,7 +82,8 @@ Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-
 Sbsky ?=pds bgs bsky social-app palomar
 Sfeed ?=feed-generator
 #Sozone ?=ozone ozone-daemon
-Sozone ?=ozone-standalone
+#Sozone ?=ozone-standalone
+Sozone ?=ozone-standalone-dev
 Sjetstream ?=jetstream
 
 # load passfile content as Makefile variables if exists

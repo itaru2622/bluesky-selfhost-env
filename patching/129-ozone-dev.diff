@@ -1,0 +1,43 @@
+diff --git a/Dockerfile.dev b/Dockerfile.dev
+new file mode 100644
+index 0000000..dcecf0e
+--- /dev/null
++++ b/Dockerfile.dev
+@@ -0,0 +1,37 @@
++FROM node:20-bookworm
++
++# host side toplevel dir is repos which has atproto and ozone folders
++
++RUN npm install -g pnpm
++RUN apt update; apt install -y dumb-init
++
++# based on atproto/services/bsky/Dockerfile
++COPY ./atproto /usr/src/atproto
++WORKDIR /usr/src/atproto
++RUN pnpm install --frozen-lockfile; \
++    pnpm build;
++RUN rm -rf node_modules; \
++    pnpm install --prod --shamefully-hoist --frozen-lockfile --prefer-offline > /dev/null
++
++
++# based on ozone/Dockerfile
++COPY ./ozone /usr/src/ozone
++WORKDIR /usr/src/ozone
++# for @atproto/api and @atproto/ozone, version => link:@atproto/packages/${pkg}/dist
++RUN sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../atproto/packages/\1/dist"#' ./package.json
++RUN sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../../atproto/packages/\1/dist"#' ./service/package.json
++RUN yarn
++RUN yarn build
++RUN (cd service; yarn )
++RUN cp -p /usr/src/atproto/packages/ozone/package.json /usr/src/atproto/packages/ozone/dist/package.json
++RUN chown -R node:node /usr/src
++
++EXPOSE 3000
++ENV OZONE_PORT=3000
++ENV NODE_ENV=production
++USER node
++CMD dumb-init -- node ./service
++
++LABEL org.opencontainers.image.source=https://github.com/bluesky-social/ozone
++LABEL org.opencontainers.image.description="Ozone Moderation Service Web UI"
++LABEL org.opencontainers.image.licenses=MIT
