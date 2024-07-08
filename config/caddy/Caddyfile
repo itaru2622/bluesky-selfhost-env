@@ -151,7 +151,8 @@ ozone.{$DOMAIN} {
           on_demand
         }
 #	reverse_proxy http://ozone:3000
-	reverse_proxy http://ozone-standalone:3000
+#	reverse_proxy http://ozone-standalone:3000
+	reverse_proxy http://ozone-standalone-dev:3000
 }
 ozone-standalone.{$DOMAIN} {
         import cors
@@ -161,6 +162,13 @@ ozone-standalone.{$DOMAIN} {
 	reverse_proxy http://ozone-standalone:3000
 }
 
+ozone-standalone-dev.{$DOMAIN} {
+        import cors
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://ozone-standalone-dev:3000
+}
 
 palomar.{$DOMAIN} {
         import cors
