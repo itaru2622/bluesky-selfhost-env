@@ -428,6 +428,52 @@ services:
       - database
       - caddy
 
+  ozone-standalone-dev:
+    # moderation-api:
+    image: itaru2622/bluesky-ozone-dev:${asof}
+    ports:
+      - 30000:3000
+    volumes:
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+#     - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
+    environment:
+#     https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
+      - LOG_ENABLED=1
+      - DEBUG_MODE=1
+      - LOG_DESTINATION=1
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+#     - NODE_ENV=development
+      - NODE_ENV=production
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - GOINSECURE=${GOINSECURE}
+      - OZONE_DEV_MODE=true
+      - OZONE_PORT=3000
+      - OZONE_SERVER_DID=${OZONE_SERVER_DID}
+      - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
+      - OZONE_ADMIN_HANDLE=${OZONE_ADMIN_HANDLE}
+      - OZONE_ADMIN_DIDS=${OZONE_ADMIN_DIDS}
+      - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
+      - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
+      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - OZONE_DB_POSTGRES_SCHEMA=ozone
+      - OZONE_DB_MIGRATE=1
+      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
+      - NEXT_PUBLIC_PLC_DIRECTORY_URL=https://plc.${DOMAIN}
+      - NEXT_PUBLIC_OZONE_SERVICE_DID=${OZONE_SERVER_DID}
+      - NEXT_PUBLIC_SOCIAL_APP_DOMAIN=social-app.${DOMAIN}
+      - NEXT_PUBLIC_SOCIAL_APP_URL=https://social-app.${DOMAIN}
+      - OZONE_APPVIEW_DID=did:web:bsky.${DOMAIN}
+      - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
+      - OZONE_APPVIEW_PUSH_EVENTS=true
+      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
+      - OZONE_PDS_URL=https://pds.${DOMAIN}
+    restart: always
+    depends_on:
+      - database
+      - caddy
+
   ozone:
     # moderation-api:
     image: itaru2622/bluesky-atproto-ozone:${asof}
