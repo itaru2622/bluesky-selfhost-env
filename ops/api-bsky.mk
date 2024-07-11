@@ -2,11 +2,16 @@
 # output file path of API response.
 resp ?=/dev/null
 
+# component urls for default:
+pdsURL   ?=https://pds.${DOMAIN}
+bgsURL   ?=https://bgs.${DOMAIN}
+ozoneURL ?=https://ozone.${DOMAIN}
+
 #HINT: make api_setPerDayLimit
 api_setPerDayLimit:
 	$(eval _token=$(shell cat ${passfile} | grep BGS_ADMIN_KEY | awk -F= '{ print $$2}'))
-	curl -k -X POST -L "https://bgs.${DOMAIN}/admin/subs/setPerDayLimit?limit=10000" -H "Authorization: Bearer ${_token}"
-	curl -k -X GET  -L "https://bgs.${DOMAIN}/admin/subs/perDayLimit" -H "Authorization: Bearer ${_token}"
+	curl -k -X POST -L "${bgsURL}/admin/subs/setPerDayLimit?limit=10000" -H "Authorization: Bearer ${_token}"
+	curl -k -X GET  -L "${bgsURL}/admin/subs/perDayLimit" -H "Authorization: Bearer ${_token}"
 
 #HINT: make api_CreateAccount email=...  password=...  handle=...
 api_CreateAccount:: _mkmsg_createAccount  _sendMsg
@@ -15,7 +20,7 @@ api_CreateAccount:: _echo_reqAccount _findDid
 #HINT: make api_DeleteAccount did=...
 api_DeleteAccount:
 	$(eval pass=$(shell cat ${passfile} | grep PDS_ADMIN_PASSWORD | awk -F= '{ print $$2}'))
-	$(eval url='https://pds.${DOMAIN}/xrpc/com.atproto.admin.deleteAccount')
+	$(eval url=${pdsURL}/xrpc/com.atproto.admin.deleteAccount)
 	curl -k -X POST -u "admin:${pass}" ${url} -H 'content-type: application/json' -d '{ "did": "${did}" }'
 	-echo '' | grep -s -l ${did} ${aDir}/*.secrets | xargs rm -f
 
@@ -28,26 +33,24 @@ api_CreateAccount_ozone: getOzoneUserinfo api_CreateAccount
 #HINT: api_ozone_member_add role=...  did=...
 api_ozone_member_add:
 	$(eval pass=$(shell cat ${passfile} | grep OZONE_ADMIN_PASSWORD | awk -F= '{ print $$2}'))
-	$(eval url=https://ozone.${DOMAIN})
-	curl -k -L -X POST -u "admin:${pass}" "${url}/xrpc/tools.ozone.team.addMember" -H "content-type: application/json" -d '{"role": "${role}", "did": "${did}" }'
-	curl -k -L -X GET  -u "admin:${pass}" "${url}/xrpc/tools.ozone.team.listMembers" | jq
+	curl -k -L -X POST -u "admin:${pass}" ${ozoneURL}/xrpc/tools.ozone.team.addMember -H "content-type: application/json" -d '{"role": "${role}", "did": "${did}" }'
+	curl -k -L -X GET  -u "admin:${pass}" ${ozoneURL}/xrpc/tools.ozone.team.listMembers | jq
 
 #HINT: make api_ozone_reqPlcSign handle=... password=...
 api_ozone_reqPlcSign: getOzoneUserinfo
-	./ops-helper/apiImpl/reqPlcOpeSign.ts --pdsURL https://pds.${DOMAIN} --handle ${handle} --password ${password}
+	./ops-helper/apiImpl/reqPlcOpeSign.ts --pdsURL ${pdsURL} --handle ${handle} --password ${password}
 	@echo "########## check email for ${handle}, token sent #########"
 
 #HINT: make api_ozone_updateDidDoc   plcSignToken=...  ozoneURL=...  handle=... password=...
 api_ozone_updateDidDoc: getOzoneUserinfo
 	$(eval signkey=$(shell cat ${passfile} | grep OZONE_SIGNING_KEY_HEX | awk -F= '{ print $$2}'))
-	$(eval ozoneURL=https://ozone.${DOMAIN})
-	./ops-helper/apiImpl/updateDidDoc-labeler.ts --plcSignToken ${plcSignToken} --signingKeyHex ${signkey} --pdsURL https://pds.${DOMAIN} --handle ${handle} --password ${password} --ozoneURL=${ozoneURL}
+	./ops-helper/apiImpl/updateDidDoc-labeler.ts --plcSignToken ${plcSignToken} --signingKeyHex ${signkey} --pdsURL ${pdsURL} --handle ${handle} --password ${password} --labelerURL=${ozoneURL}
 
 _sendMsg:
 	@curl -k -L -X ${method} ${url} ${header} ${msg} | tee -a ${resp}
 
 _mkmsg_createAccount:
-	$(eval url='https://pds.${DOMAIN}/xrpc/com.atproto.server.createAccount')
+	$(eval url=${pdsURL}/xrpc/com.atproto.server.createAccount)
 	$(eval method=POST)
 	$(eval header=-H 'Content-Type: application/json'  -H 'Accept: application/json')
 	$(eval msg=-d '{ "email": "${email}" ,"handle": "${handle}", "password": "${password}" }')
