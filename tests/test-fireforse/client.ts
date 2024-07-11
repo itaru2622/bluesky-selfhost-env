@@ -4,35 +4,33 @@
 **  requires atproto-firehose https://github.com/kcchu/atproto-firehose/tree/main
 **
 
-#############  ops to use: >>>>>>
-
-yarn add atproto-firehose
+npm install atproto-firehose yargs @types/yargs
 npm install ts-node -g
-export ATP_FIREHOSE_HOST=bgs.${DOMAIN}
-
+./clients.ts --help
 ./clients.ts
-############# ops to use: <<<<<<
 
 **
 */
 
 import { subscribeRepos, SubscribeReposMessage, ComAtprotoSyncSubscribeRepos, } from 'atproto-firehose'
+import yargs            from 'yargs/yargs';
 
-let FIREHOSE_HOST  = process.env['ATP_FIREHOSE_HOST'] || "bsky.network";
-
-async function main()
+async function main(opt: any)
 {
-    if ( FIREHOSE_HOST.includes('://')==false ) {
-         FIREHOSE_HOST="wss://" + FIREHOSE_HOST
-         console.log(FIREHOSE_HOST)
-    }
-    const client = subscribeRepos(FIREHOSE_HOST, { decodeRepoOps: true })
+    const client = subscribeRepos(opt.host, { decodeRepoOps: true })
     client.on('message', (tmp: SubscribeReposMessage) => {
-      if (ComAtprotoSyncSubscribeRepos.isCommit(tmp)) {
-        tmp.ops.forEach((m) => { console.log(m.payload) })
-      }
+        console.log(tmp)
+        if (tmp.ops != undefined && Array.isArray(tmp.ops))
+           tmp.ops.forEach((op) => { console.log("ops.payload:=>", op.payload) })
+//      if (ComAtprotoSyncSubscribeRepos.isCommit(tmp)) { console.log("commit") }
     })
 }
 
-console.log(FIREHOSE_HOST)
-main()
+const opt = yargs(process.argv.slice(2)).options({
+  host:        { type: 'string', default: process.env.DOMAIN ? `wss://bgs.${process.env.DOMAIN}` : 'wss://bsky.network', description: 'URL to subscribeRepos' },
+  tls:         { type: 'string', default: '0', description: 'ignore TLS verification(NODE_TLS_REJECT_UNAUTHORIZED)'},
+}).parseSync();
+
+process.env['NODE_TLS_REJECT_UNAUTHORIZED']=opt.tls
+console.log(opt.host)
+main(opt)
