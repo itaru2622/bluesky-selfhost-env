@@ -197,7 +197,7 @@ make publishFeed
 ```bash
 # 1) create account for ozone service/admin
 #  you need to use valid email address since ozone/PDS sends email for confirmation code.
-make api_CreateAccount_ozone email=your-valid@email.address.com
+make api_CreateAccount_ozone                    email=your-valid@email.address.com handle=...
 
 # 2) start ozone
 # ozone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)
@@ -209,9 +209,9 @@ make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:pl
 
 # 4) [required in occasional] update DidDoc before sign-in to ozone
 #    first, request and get PLC sign by email
-make api_ozone_reqPlcSign
+make api_ozone_reqPlcSign                       handle=... password=...
 #    update didDoc with above sign
-make api_ozone_updateDidDoc   plcSignToken=
+make api_ozone_updateDidDoc   plcSignToken=     handle=...  ozoneURL=...
 
 # 5) [optional] add member to the ozone team (i.e: add role to user):
 #    valid roles are: tools.ozone.team.defs#roleAdmin | tools.ozone.team.defs#roleModerator | tools.ozone.team.defs#roleTriage
