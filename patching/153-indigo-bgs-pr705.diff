@@ -1,0 +1,14 @@
+diff --git a/cmd/bigsky/main.go b/cmd/bigsky/main.go
+index 7171691a..5b7fc327 100644
+--- a/cmd/bigsky/main.go
++++ b/cmd/bigsky/main.go
+@@ -365,6 +365,9 @@ func runBigsky(cctx *cli.Context) error {
+ 				}
+ 			}
+ 		} else {
++			if c.Client == nil {
++				c.Client = util.RobustHTTPClient()
++			}
+ 			// Generic PDS timeout
+ 			c.Client.Timeout = time.Minute * 1
+ 		}
