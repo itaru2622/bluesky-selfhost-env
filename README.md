@@ -32,7 +32,7 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, my latest release is <strong>2024-06-26r1</strong> based on codes <strong>2024-06-26</strong> of bluesky-social.<br>
+at current, my latest release is <strong>2024-07-17</strong> based on codes <strong>2024-07-17</strong> of bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
@@ -207,7 +207,7 @@ make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:pl
 # ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts --help
 ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts
 
-# 4) [required in occasional] update DidDoc before sign-in to ozone
+# 4) [required in occasional] update DidDoc before sign-in to ozone (required since asof-2024-07-05)
 #    first, request and get PLC sign by email
 make api_ozone_reqPlcSign                       handle=... password=...
 #    update didDoc with above sign
