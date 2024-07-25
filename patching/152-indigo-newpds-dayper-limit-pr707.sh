@@ -5,7 +5,7 @@ echo "rDir:   ${rDir}"
 echo "pDir:   ${pDir}"
 
 d_=${rDir}/indigo
-p_=${pDir}/152-indigo-newpds-dayper-limit.diff
+p_=${pDir}/152-indigo-newpds-dayper-limit-pr707.diff
 
 echo "applying patch: under ${d_} for ${p_}"
 

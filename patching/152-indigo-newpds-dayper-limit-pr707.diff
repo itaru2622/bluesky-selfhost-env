@@ -80,7 +80,7 @@ index dca05f5a..30971f79 100644
  	s.NewPDSPerDayLimiter, _ = slidingwindow.NewLimiter(time.Hour*24, sc.NewPDSPerDayLimit, windowFunc)
  
 diff --git a/cmd/bigsky/main.go b/cmd/bigsky/main.go
-index 33e60a0b..7171691a 100644
+index d0961ecc..cd546a0f 100644
 --- a/cmd/bigsky/main.go
 +++ b/cmd/bigsky/main.go
 @@ -183,6 +183,12 @@ func run(args []string) error {
@@ -89,7 +89,7 @@ index 33e60a0b..7171691a 100644
  		},
 +		&cli.Int64Flag{
 +			Name:    "newpds-perday-limit",
-+			EnvVars: []string{"BGS_NEWPDS_PERDAY_LIMIT"},
++			EnvVars: []string{"RELAY_NEWPDS_PERDAY_LIMIT"},
 +			Value:   10,
 +			Usage:   "initial value for NewPDSPerDayLimit",
 +		},
