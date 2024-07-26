@@ -304,7 +304,7 @@ services:
       - BSKY_DATAPLANE_PORT=3001
       - BSKY_DATAPLANE_URLS=http://bsky:3001
       - BSKY_DB_POSTGRES_SCHEMA=bsky
-      - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bsky
       - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
       - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
       - BSKY_PUBLIC_URL=https://bsky.${DOMAIN}

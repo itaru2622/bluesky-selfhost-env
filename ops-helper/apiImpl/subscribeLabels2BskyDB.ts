@@ -27,7 +27,7 @@ const dom = process.env.DOMAIN ?? 'mysky.local.com'
 // options to support any deployment.
 const opt = yargs(process.argv.slice(2)).options({
   endpoint:    { type: 'string', default: 'wss://ozone.' + dom },
-  bskyDBUrl:   { type: 'string', default: process.env.BSKY_DB_POSTGRES_URL   || 'postgres://pg:password@localhost/postgres', description: 'appview postgresDB URL'},
+  bskyDBUrl:   { type: 'string', default: process.env.BSKY_DB_POSTGRES_URL   || 'postgres://pg:password@localhost/bsky', description: 'appview postgresDB URL'},
   bskyDBSchema:{ type: 'string', default: process.env.BSKY_DB_POSTGRES_SCHEMA || 'bsky',                                     description: 'appview postgresDB Schema'},
   tls:         { type: 'string', default: '0',                                                                               description: 'ignore TLS verification(NODE_TLS_REJECT_UNAUTHORIZED)'},
 }).parseSync();
