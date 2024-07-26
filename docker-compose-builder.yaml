@@ -507,7 +507,7 @@ services:
       - OZONE_ADMIN_DIDS=${OZONE_ADMIN_DIDS}
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
-      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/ozone
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_DB_MIGRATE=1
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
@@ -559,7 +559,7 @@ services:
       - OZONE_APPVIEW_PUSH_EVENTS=true
       - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
       - OZONE_DB_POSTGRES_SCHEMA=ozone
-      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/ozone
       - OZONE_DEV_MODE=true
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
       - OZONE_MODERATOR_DIDS=did:web:bsky.${DOMAIN}
@@ -605,7 +605,7 @@ services:
       - OZONE_APPVIEW_PUSH_EVENTS=true
       - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
       - OZONE_DB_POSTGRES_SCHEMA=ozone
-      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/postgres
+      - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/ozone
       - OZONE_DEV_MODE=true
       - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
       - OZONE_MODERATOR_DIDS=did:web:bsky.${DOMAIN}
