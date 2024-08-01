@@ -1,8 +1,8 @@
 diff --git a/app/layout.tsx b/app/layout.tsx
-index 682c98b..94f2cac 100644
+index 7186e39..481d880 100644
 --- a/app/layout.tsx
 +++ b/app/layout.tsx
-@@ -8,6 +8,7 @@ import { CommandPaletteRoot } from '@/shell/CommandPalette/Root'
+@@ -11,6 +11,7 @@ import { CommandPaletteRoot } from '@/shell/CommandPalette/Root'
  import { AuthProvider } from '@/shell/AuthContext'
  import { queryClient } from 'components/QueryClient'
  import { isDarkModeEnabled } from '@/common/useColorScheme'
@@ -10,7 +10,7 @@ index 682c98b..94f2cac 100644
  
  export default function RootLayout({
    children,
-@@ -28,6 +29,7 @@ export default function RootLayout({
+@@ -31,6 +32,7 @@ export default function RootLayout({
          isDarkModeEnabled() ? 'dark' : ''
        }`}
      >
@@ -18,7 +18,7 @@ index 682c98b..94f2cac 100644
        <title>Ozone</title>
        <link
          rel="icon"
-@@ -35,6 +37,8 @@ export default function RootLayout({
+@@ -38,6 +40,8 @@ export default function RootLayout({
          sizes="any"
        />
        <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,10 +41,10 @@ index a223416..6c26885 100644
    }
  }
 diff --git a/lib/constants.ts b/lib/constants.ts
-index 23ce7c6..23ce4d2 100644
+index 886f4d7..aceada0 100644
 --- a/lib/constants.ts
 +++ b/lib/constants.ts
-@@ -1,10 +1,12 @@
+@@ -1,13 +1,15 @@
 +import { env } from 'next-runtime-env';
 +
  export const OZONE_SERVICE_DID =
@@ -62,8 +62,11 @@ index 23ce7c6..23ce4d2 100644
 -export const SOCIAL_APP_URL = `https://${SOCIAL_APP_DOMAIN}`
 +export const SOCIAL_APP_DOMAIN = env('NEXT_PUBLIC_SOCIAL_APP_DOMAIN') || 'bsky.app'
 +export const SOCIAL_APP_URL = env('NEXT_PUBLIC_SOCIAL_APP_URL') || `https://${SOCIAL_APP_DOMAIN}`
+ 
+ export const DM_DISABLE_TAG = 'chat-disabled'
+ 
 diff --git a/lib/util.ts b/lib/util.ts
-index 802eabd..d599319 100644
+index 0ca7969..d5d4009 100644
 --- a/lib/util.ts
 +++ b/lib/util.ts
 @@ -1,5 +1,5 @@
@@ -73,7 +76,7 @@ index 802eabd..d599319 100644
  import { AtUri } from '@atproto/api'
  
  export function classNames(...classes: (string | undefined)[]) {
-@@ -54,7 +54,7 @@ export function takesKeyboardEvt(el?: EventTarget | null) {
+@@ -57,7 +57,7 @@ export function takesKeyboardEvt(el?: EventTarget | null) {
    )
  }
  
@@ -83,13 +86,13 @@ index 802eabd..d599319 100644
  export const isBlueSkyAppUrl = (url: string) => blueSkyUrlMatcher.test(url)
  
 diff --git a/package.json b/package.json
-index 1efe039..1d7c7d9 100644
+index d8a8f1d..f6719f1 100644
 --- a/package.json
 +++ b/package.json
 @@ -32,6 +32,7 @@
      "kbar": "^0.1.0-beta.45",
      "lande": "^1.0.10",
-     "next": "14.0.1",
+     "next": "14.2.5",
 +    "next-runtime-env": "^3.2.1",
      "react": "18.2.0",
      "react-dom": "18.2.0",
