@@ -53,6 +53,7 @@ services:
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
       - Container_ozone=${Container_ozone}
+      - Container_socialapp=${Container_socialapp}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates for self-signed. >>>
@@ -337,6 +338,27 @@ services:
 
   social-app:
     image: itaru2622/bluesky-social-app:${asof}
+    ports:
+      - 8100:8100
+    command: /usr/bin/bskyweb serve
+    volumes:
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+    environment:
+      # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
+      - ATP_APPVIEW_HOST=https://public.api.${DOMAIN}
+      # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
+      - GOINSECURE=${GOINSECURE}
+      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - HTTP_ADDRESS=:8100
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+    restart: always
+
+  social-app-dev:
+    image: itaru2622/bluesky-social-app-dev:${asof}
     ports:
       - 8100:8100
     command: /usr/bin/bskyweb serve
