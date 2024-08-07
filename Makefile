@@ -80,10 +80,12 @@ LOG_LEVEL_DEFAULT ?=debug
 # choose service/container to use from variations.
 #  ozone: ozone-atproto ozone-standalone ozone-stanalone-dev
 Container_ozone ?=ozone-standalone
+Container_socialapp ?=social-app
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
-Sbsky ?=pds bgs bsky social-app palomar
+#Sbsky ?=pds bgs bsky social-app palomar
+Sbsky ?=pds bgs bsky ${Container_socialapp} palomar
 Sfeed ?=feed-generator
 Sozone ?=${Container_ozone}
 ifeq ($(Container_ozone), ozone-atproto)
@@ -219,4 +221,6 @@ echo:
 	@echo "fork_repo_prefix: ${fork_repo_prefix}"
 	@echo ""
 	@echo "LOG_LEVEL_DEFAULT=${LOG_LEVEL_DEFAULT}"
+	@echo "Container_ozone:    ${Container_ozone}"
+	@echo "Container_socialapp:${Container_socialapp}"
 	@echo "########## <<<<<<<<<<<<<<"

@@ -142,7 +142,16 @@ social-app.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-	reverse_proxy http://social-app:8100
+#	reverse_proxy http://social-app:8100
+	reverse_proxy http://{$Container_socialapp}:8100
+}
+
+social-app-dev.{$DOMAIN} {
+        import cors
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://social-app-dev:8100
 }
 
 ozone.{$DOMAIN} {

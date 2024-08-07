@@ -417,6 +417,34 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
     restart: always
 
+  social-app-dev:
+    image: itaru2622/bluesky-social-app-dev:${asof}
+    build:
+      context: ./repos/
+      dockerfile: social-app/Dockerfile.dev
+      args:
+       - http_proxy=${http_proxy}
+       - https_proxy=${https_proxy}
+       - no_proxy=${no_proxy}
+       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    ports:
+      - 8100:8100
+    command: /usr/bin/bskyweb serve
+    volumes:
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+    environment:
+#      cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
+      - ATP_APPVIEW_HOST=https://public.api.${DOMAIN}
+#      cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
+      - GOINSECURE=${GOINSECURE}
+      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - HTTP_ADDRESS=:8100
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+    restart: always
 
   palomar:
     image: itaru2622/bluesky-indigo-palomar:${asof}
