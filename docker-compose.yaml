@@ -50,6 +50,7 @@ services:
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
+      - Container_ozone=${Container_ozone}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates for self-signed. >>>
@@ -479,7 +480,7 @@ services:
       - database
       - caddy
 
-  ozone:
+  ozone-atproto:
     # moderation-api:
     image: itaru2622/bluesky-atproto-ozone:${asof}
     command: node --enable-source-maps api.js
@@ -521,7 +522,7 @@ services:
       - database
       - caddy
 
-  ozone-daemon:
+  ozone-atproto-daemon:
     image: itaru2622/bluesky-atproto-ozone:${asof}
     command: node --enable-source-maps daemon.js
     volumes:
@@ -556,7 +557,7 @@ services:
       - OZONE_TRIAGE_DIDS=
     restart: always
     depends_on:
-      - ozone
+      - ozone-atproto
       - database
       - caddy
 
