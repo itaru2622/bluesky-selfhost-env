@@ -1,0 +1,114 @@
+diff --git a/Dockerfile.dev b/Dockerfile.dev
+new file mode 100644
+index 000000000..9cf1a9b9a
+--- /dev/null
++++ b/Dockerfile.dev
+@@ -0,0 +1,108 @@
++FROM golang:1.22-bullseye AS build-env
++
++ENV DEBIAN_FRONTEND=noninteractive
++
++# Node
++ENV NODE_VERSION=18
++ENV NVM_DIR=/usr/share/nvm
++
++# Go
++ENV GODEBUG="netdns=go"
++ENV GOOS="linux"
++ENV GOARCH="amd64"
++ENV CGO_ENABLED=1
++ENV GOEXPERIMENT="loopvar"
++
++# Expo
++ARG EXPO_PUBLIC_BUNDLE_IDENTIFIER
++ENV EXPO_PUBLIC_BUNDLE_IDENTIFIER ${EXPO_PUBLIC_BUNDLE_IDENTIFIER:-dev}
++
++#
++# Generate the JavaScript webpack.
++#
++RUN mkdir --parents $NVM_DIR && \
++  wget \
++    --output-document=/tmp/nvm-install.sh \
++    https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh && \
++  bash /tmp/nvm-install.sh
++
++RUN \. "$NVM_DIR/nvm.sh" && \
++  nvm install $NODE_VERSION && \
++  nvm use $NODE_VERSION && \
++  npm install -g pnpm yarn
++
++# based on atproto/services/bsky/Dockerfile
++WORKDIR /usr/src/atproto
++COPY ./atproto .
++
++RUN \. "$NVM_DIR/nvm.sh" && \
++  nvm use $NODE_VERSION && \
++  pnpm install --frozen-lockfile && \
++  pnpm build
++
++RUN \. "$NVM_DIR/nvm.sh" && \
++  nvm use $NODE_VERSION && \
++  rm -rf node_modules && \
++  pnpm install --prod --shamefully-hoist --frozen-lockfile --prefer-offline > /dev/null
++
++WORKDIR /usr/src/social-app
++COPY ./social-app .
++
++# modify package.json
++# 1) append some @atproto/* listed in @atproto/api/package.json, by unknown reason
++# 2) use local working source for @atproto/*
++RUN sed -i -r 's#"@atproto/api": "(.*)",#"@atproto/api": "\1",\n\t"@atproto/common-web": "anyok",\n\t"@atproto/syntax": "anyok",\n\t"@atproto/lexicon": "anyok",\n\t"@atproto/xrpc": "anyok",\n\t"iso-datestring-validator": "^2.2.2",#' ./package.json; \
++    sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../atproto/packages/\1/dist"#' ./package.json
++
++
++RUN \. "$NVM_DIR/nvm.sh" && \
++  nvm use $NODE_VERSION && \
++  echo "Using bundle identifier: $EXPO_PUBLIC_BUNDLE_IDENTIFIER" && \
++  echo "EXPO_PUBLIC_BUNDLE_IDENTIFIER=$EXPO_PUBLIC_BUNDLE_IDENTIFIER" >> .env && \
++  echo "EXPO_PUBLIC_BUNDLE_DATE=$(date -u +"%y%m%d%H")" >> .env && \
++  yarn && \
++  yarn intl:build && \
++  EXPO_PUBLIC_BUNDLE_IDENTIFIER=$EXPO_PUBLIC_BUNDLE_IDENTIFIER EXPO_PUBLIC_BUNDLE_DATE=$() yarn build-web
++
++# DEBUG
++RUN find ./bskyweb/static && find ./web-build/static
++
++#
++# Generate the bskyweb Go binary.
++#
++RUN cd bskyweb/ && \
++  go mod download && \
++  go mod verify
++
++RUN cd bskyweb/ && \
++  go build \
++    -v  \
++    -trimpath \
++    -tags timetzdata \
++    -o /bskyweb \
++    ./cmd/bskyweb
++
++#FROM debian:bullseye-slim
++
++ENV GODEBUG=netdns=go
++ENV TZ=Etc/UTC
++ENV DEBIAN_FRONTEND=noninteractive
++
++RUN apt-get update && apt-get install --yes \
++  dumb-init \
++  ca-certificates
++
++ENTRYPOINT ["dumb-init", "--"]
++
++#WORKDIR /bskyweb
++#COPY --from=build-env /bskyweb /usr/bin/bskyweb
++
++RUN cp -p /bskyweb /usr/bin/bskyweb
++
++CMD ["/usr/bin/bskyweb"]
++
++LABEL org.opencontainers.image.source=https://github.com/bluesky-social/social-app
++LABEL org.opencontainers.image.description="bsky.app Web App"
++LABEL org.opencontainers.image.licenses=MIT
++
++# NOOP
