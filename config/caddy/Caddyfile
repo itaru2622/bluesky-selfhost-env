@@ -150,10 +150,17 @@ ozone.{$DOMAIN} {
 	tls {$EMAIL4CERTS} {
           on_demand
         }
-#	reverse_proxy http://ozone:3000
-#	reverse_proxy http://ozone-standalone:3000
-	reverse_proxy http://ozone-standalone-dev:3000
+	reverse_proxy http://{$Container_ozone}:3000
 }
+
+ozone-atproto.{$DOMAIN} {
+        import cors
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://ozone-atproto:3000
+}
+
 ozone-standalone.{$DOMAIN} {
         import cors
 	tls {$EMAIL4CERTS} {

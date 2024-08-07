@@ -77,14 +77,19 @@ fork_repo_prefix ?=
 # default log level.
 LOG_LEVEL_DEFAULT ?=debug
 
+# choose service/container to use from variations.
+#  ozone: ozone-atproto ozone-standalone ozone-stanalone-dev
+Container_ozone ?=ozone-standalone
+
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
-#Sbsky ?=pds bgs bsky social-app palomar ozone ozone-daemon
 Sbsky ?=pds bgs bsky social-app palomar
 Sfeed ?=feed-generator
-#Sozone ?=ozone ozone-daemon
-#Sozone ?=ozone-standalone
-Sozone ?=ozone-standalone-dev
+Sozone ?=${Container_ozone}
+ifeq ($(Container_ozone), ozone-atproto)
+# ozone-atproto require ozone-atproto-daemon as side-car.
+Sozone +=ozone-atproto-daemon
+endif
 
 # load passfile content as Makefile variables if exists
 ifeq ($(shell test -e ${passfile} && echo -n exists),exists)
