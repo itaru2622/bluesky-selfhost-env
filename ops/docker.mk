@@ -24,6 +24,7 @@ OZONE_ADMIN_HANDLE=${OZONE_ADMIN_HANDLE} \
 OZONE_ADMIN_EMAIL=${OZONE_ADMIN_EMAIL} \
 OZONE_ADMIN_DIDS=${OZONE_ADMIN_DIDS} \
 OZONE_SERVER_DID=${OZONE_SERVER_DID} \
+Container_ozone=${Container_ozone} \
 ' \
 	| cat))
 	@echo ${_envs} | sed 's/ /\n/g' | awk -F= '{print $$1,"=",$$2}' | sed 's/ //g'
