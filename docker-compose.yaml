@@ -293,6 +293,9 @@ services:
     expose:
       - 2584
     command: node --enable-source-maps api.js
+    # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. >>>>
+    user: root
+    # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
     environment:
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
       - BSKY_BLOB_CACHE_LOC=/cache/
