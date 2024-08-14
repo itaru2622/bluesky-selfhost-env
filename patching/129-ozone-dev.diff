@@ -1,9 +1,9 @@
 diff --git a/Dockerfile.dev b/Dockerfile.dev
 new file mode 100644
-index 0000000..dcecf0e
+index 0000000..610669d
 --- /dev/null
 +++ b/Dockerfile.dev
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,41 @@
 +FROM node:20-bookworm
 +
 +# host side toplevel dir is repos which has atproto and ozone folders
@@ -26,6 +26,10 @@ index 0000000..dcecf0e
 +# for @atproto/api and @atproto/ozone, version => link:@atproto/packages/${pkg}/dist
 +RUN sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../atproto/packages/\1/dist"#' ./package.json
 +RUN sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../../atproto/packages/\1/dist"#' ./service/package.json
++
++# to use atproto/api@0.13.0+, need to follow breaking changes described in https://github.com/bluesky-social/atproto/blob/main/packages/api/CHANGELOG.md
++RUN sed -i 's#AtpServiceClient#AtpBaseClient#g' lib/client.ts
++
 +RUN yarn
 +RUN yarn build
 +RUN (cd service; yarn )
