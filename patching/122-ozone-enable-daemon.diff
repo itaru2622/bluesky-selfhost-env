@@ -54,8 +54,9 @@ index 1b7a221..3dbbf71 100644
 +      publicKey: server.ctx.signingKey.did(),
      })
    })
--  ozone.app.get('*', (req, res) => {
-+  server.app.get('*', (req, res) => {
+// Note: We must use `use()` here. This should be the last middleware.
+-  ozone.app.use((req, res) => {
++  server.app.use((req, res) => {
      return frontendHandler(req, res)
    })
    // run
