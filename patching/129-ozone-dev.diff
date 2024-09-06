@@ -1,9 +1,9 @@
 diff --git a/Dockerfile.dev b/Dockerfile.dev
 new file mode 100644
-index 0000000..610669d
+index 0000000..79019a0
 --- /dev/null
 +++ b/Dockerfile.dev
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,45 @@
 +FROM node:20-bookworm
 +
 +# host side toplevel dir is repos which has atproto and ozone folders
@@ -24,8 +24,12 @@ index 0000000..610669d
 +COPY ./ozone /usr/src/ozone
 +WORKDIR /usr/src/ozone
 +# for @atproto/api and @atproto/ozone, version => link:@atproto/packages/${pkg}/dist
-+RUN sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../atproto/packages/\1/dist"#' ./package.json
-+RUN sed -i -r 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../../atproto/packages/\1/dist"#' ./service/package.json
++RUN sed -i -r -e 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../atproto/packages/\1/dist"#' \
++              -e 's#"@atproto/(oauth-.+)": ".+"#"@atproto/\1": "link:../atproto/packages/oauth/\1/dist"#' \
++    ./package.json
++RUN sed -i -r -e 's#"@atproto/(.+)": ".+"#"@atproto/\1": "link:../../atproto/packages/\1/dist"#' \
++              -e 's#"@atproto/(oauth-.+)": ".+"#"@atproto/\1": "link:../../atproto/packages/oauth/\1/dist"#' \
++    ./service/package.json
 +
 +# to use atproto/api@0.13.0+, need to follow breaking changes described in https://github.com/bluesky-social/atproto/blob/main/packages/api/CHANGELOG.md
 +RUN sed -i 's#AtpServiceClient#AtpBaseClient#g' lib/client.ts
