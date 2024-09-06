@@ -57,7 +57,7 @@ index e14b43f2d..528d588bd 100644
 +    })
 +// ends: involve logics in packages/dev-env/src/bsky.ts   <<<<<<<<<<<<<
 +  await server.start()
-+  sub.run() // involve logics in packages/dev-env/src/bsky.ts
++  sub.start() // involve logics in packages/dev-env/src/bsky.ts
    // Graceful shutdown (see also https://aws.amazon.com/blogs/containers/graceful-shutdowns-with-ecs/)
    const shutdown = async () => {
 -    await bsky.destroy()
@@ -82,34 +82,3 @@ index e14b43f2d..528d588bd 100644
  })
  
  const maybeParseInt = (str) => {
-diff --git a/services/ozone/api.js b/services/ozone/api.js
-index 08d2ad02a..4a00bd7b7 100644
---- a/services/ozone/api.js
-+++ b/services/ozone/api.js
-@@ -25,12 +25,26 @@ const {
-   envToSecrets,
-   readEnv,
-   httpLogger,
-+  Database
- } = require('@atproto/ozone')
- 
- const main = async () => {
-   const env = readEnv()
-   const cfg = envToCfg(env)
-   const secrets = envToSecrets(env)
-+  // starts: emulate packages/dev-env/src/ozone.ts  otherwise get errors saying no relation >>>>>>>>>
-+  // Separate migration db in case migration changes some connection state that we need in the tests, e.g. "alter database ... set ..."
-+    const migrationDb = new Database({
-+      schema: env.dbPostgresSchema,
-+      url: env.dbPostgresUrl,
-+    })
-+    if (env.migration) {
-+      await migrationDb.migrateToOrThrow(env.migration)
-+    } else {
-+      await migrationDb.migrateToLatestOrThrow()
-+    }
-+    await migrationDb.close()
-+  // ends: emulate packages/dev-env/src/ozone.ts  otherwise get errors saying no relation <<<<<<<<<
- 
-   // configure zero, one, or more image invalidators
-   const imgUriEndpoint = process.env.OZONE_IMG_URI_ENDPOINT
