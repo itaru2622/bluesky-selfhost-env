@@ -1,8 +1,9 @@
 
 docker_network ?= bsky_${DOMAIN}
+dockerCompose ?= docker-compose
 
 _dockerUp: _load_vars _dockerUP_network
-	${_envs} docker-compose -f ${f} up -d ${services}
+	${_envs} ${dockerCompose} -f ${f} up -d ${services}
 
 # _env := passfile + below listup vars. cf. sed '1i' command inserts given chars to stdin.
 _load_vars:
@@ -30,9 +31,9 @@ OZONE_SERVER_DID=${OZONE_SERVER_DID} \
 _dockerUP_network:
 	-docker network create ${docker_network}
 docker-pull:
-	DOMAIN= asof=${asof} docker-compose -f ${f} pull
+	DOMAIN= asof=${asof} ${dockerCompose} -f ${f} pull
 build:
-	DOMAIN=${DOMAIN} asof=${asof} docker-compose -f ${f} build ${services}
+	DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
 
 docker-start::      setupdir ${wDir}/config/caddy/Caddyfile ${wDir}/certs/root.crt ${wDir}/certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
 docker-start::      docker-watchlog
@@ -45,23 +46,23 @@ docker-start-bsky-ozone:: docker-watchlog
 
 # execute publishFeed on feed-generator
 publishFeed:
-	DOMAIN=${DOMAIN} asof=${asof} docker_network=${docker_network} docker-compose -f ${f} exec feed-generator npm run publishFeed
+	DOMAIN=${DOMAIN} asof=${asof} docker_network=${docker_network} ${dockerCompose} -f ${f} exec feed-generator npm run publishFeed
 
 # execute reload on caddy container
 reloadCaddy:
-	DOMAIN=${DOMAIN} asof=${asof} docker_network=${docker_network} docker-compose -f ${f} exec caddy caddy reload -c /etc/caddy/Caddyfile
+	DOMAIN=${DOMAIN} asof=${asof} docker_network=${docker_network} ${dockerCompose} -f ${f} exec caddy caddy reload -c /etc/caddy/Caddyfile
 
 docker-stop:
-	docker-compose -f ${f} down ${services}
+	${dockerCompose} -f ${f} down ${services}
 docker-stop-with-clean:
-	docker-compose -f ${f} down -v ${services}
+	${dockerCompose} -f ${f} down -v ${services}
 	docker volume  prune -f
 	docker system  prune -f
 	docker network rm -f ${docker_network}
 	sudo rm -rf ${dDir}
 
 docker-watchlog:
-	-docker-compose -f ${f} logs -f || true
+	-${dockerCompose} -f ${f} logs -f || true
 
 docker-check-status:
 	docker ps -a
