@@ -179,7 +179,8 @@ include ops/api-bsky.mk
 # HINT: make exec under=./repos/* cmd='git push fork --tags              | cat'  => push        tags to remote named fork
 exec: ${under}
 	for d in ${under}; do \
-		echo "############ exec cmd @ $${d} ########################################" ;\
+		r=`basename $${d})`; \
+		echo "############ exec cmd @ $${d} $${r} ########################################" ;\
 		(cd $${d};   ${cmd} ); \
 	done;
 
