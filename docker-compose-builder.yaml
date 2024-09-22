@@ -77,39 +77,18 @@ services:
 
 # debug for caddy>>> 
   test-wss:
-    image: itaru2622/gorilla-websocket:bookworm
-    build:
-      context: ./tests/websocket-service
-      dockerfile: Dockerfile
-      args:
-       - http_proxy=${http_proxy}
-       - https_proxy=${https_proxy}
-       - no_proxy=${no_proxy}
-       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/fastapi:bookworm
     environment:
-      - GOINSECURE=${GOINSECURE}
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - ENABLE_WSS=true
-      - SCRIPT=*.go
-    working_dir: /opt/gorilla-websocket/examples/chat
-    volumes:
-       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - app=main:app
+      - opts=--host 0.0.0.0 --port 8080
+    working_dir: /opt/fastapi-samples/3catchall
 
   test-ws:
-    image: itaru2622/gorilla-websocket:bookworm
-    build:
-       context: ./tests/websocket-service
-       dockerfile: Dockerfile
-       args:
-        - http_proxy=${http_proxy}
-        - https_proxy=${https_proxy}
-        - no_proxy=${no_proxy}
-        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/fastapi:bookworm
     environment:
-      - SCRIPT=*.go
-    working_dir: /opt/gorilla-websocket/examples/chat
-    volumes:
-       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - app=main:app
+      - opts=--host 0.0.0.0 --port 8080
+    working_dir: /opt/fastapi-samples/3catchall
 
 # debug for caddy <<<
 # debug for bluesky with indigo subcmds >>>

@@ -43,21 +43,18 @@ services:
 # ends: to generate HTTPS certifications on-demand <<<<<
 
   test-wss:
-    image: itaru2622/gorilla-websocket:bookworm
+    image: itaru2622/fastapi:bookworm
     environment:
-      - ENABLE_WSS=true
-      - SCRIPT=*.go
-    working_dir: /opt/gorilla-websocket/examples/chat
-    volumes:
-       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - app=main:app
+      - opts=--host 0.0.0.0 --port 8080
+    working_dir: /opt/fastapi-samples/3catchall
 
   test-ws:
-    image: itaru2622/gorilla-websocket:bookworm
+    image: itaru2622/fastapi:bookworm
     environment:
-      - SCRIPT=*.go
-    working_dir: /opt/gorilla-websocket/examples/chat
-    volumes:
-       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - app=main:app
+      - opts=--host 0.0.0.0 --port 8080
+    working_dir: /opt/fastapi-samples/3catchall
 
 # starts: fakes to check caddy mapping rule for social-app, pds, bsky(appview) >>>>>>>>>>
   # refer https://github.com/itaru2622/docker-fastapi.git for docker image of itaru2622/fastapi

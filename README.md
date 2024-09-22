@@ -136,7 +136,6 @@ make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
 # test HTTPS and WSS with your docker environment
 curl -L https://test-wss.${DOMAIN}/
-open -L https://test-wss.${DOMAIN}/ on browser.
 wscat -c https://test-wss.${DOMAIN}/ws with CUI nodejs wscat package
 
 # test reverse proxy mapping if it works as expected for bluesky
