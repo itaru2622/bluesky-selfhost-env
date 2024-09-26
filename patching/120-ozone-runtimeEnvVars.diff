@@ -41,10 +41,10 @@ index 7a47cc2..33ab29f 100644
    }
  }
 diff --git a/lib/constants.ts b/lib/constants.ts
-index 7bd7a3b..908119d 100644
+index fe7c0e8..c286ac6 100644
 --- a/lib/constants.ts
 +++ b/lib/constants.ts
-@@ -1,27 +1,30 @@
+@@ -1,29 +1,32 @@
 +import { env } from 'next-runtime-env';
 +
  export const OAUTH_SCOPE = 'atproto transition:generic'
@@ -67,6 +67,9 @@ index 7bd7a3b..908119d 100644
 -export const QUEUE_CONFIG = process.env.NEXT_PUBLIC_QUEUE_CONFIG || '{}'
 +export const QUEUE_CONFIG = env('NEXT_PUBLIC_QUEUE_CONFIG') || '{}'
 
+-export const QUEUE_SEED = process.env.NEXT_PUBLIC_QUEUE_SEED || ''
++export const QUEUE_SEED = env('NEXT_PUBLIC_QUEUE_SEED') || ''
+
 +export const SOCIAL_APP_DOMAIN = env('NEXT_PUBLIC_SOCIAL_APP_DOMAIN') || 'bsky.app'
  export const SOCIAL_APP_URL =
 -  process.env.NEXT_PUBLIC_SOCIAL_APP_URL ||
@@ -75,7 +78,7 @@ index 7bd7a3b..908119d 100644
      ? 'http://localhost:2584'
 -    : 'https://bsky.app')
 +    : `https://${SOCIAL_APP_DOMAIN}`)
- 
+
  export const HANDLE_RESOLVER_URL =
 -  process.env.NEXT_PUBLIC_HANDLE_RESOLVER_URL ||
 +  env('NEXT_PUBLIC_HANDLE_RESOLVER_URL') ||
