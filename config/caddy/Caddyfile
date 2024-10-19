@@ -178,6 +178,14 @@ feed-generator.{$DOMAIN} {
 	reverse_proxy http://feed-generator:3000
 }
 
+jetstream.{$DOMAIN} {
+        import cors
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://jetstream:6008
+}
+
 pds.{$DOMAIN} {
         import cors
 	tls {$EMAIL4CERTS} {
