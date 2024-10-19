@@ -23,6 +23,8 @@ volumes:
     name: pds
   redis:
     name: redis
+  jetstream:
+    name: jetstream
 # ozone:
 # ozone-daemon:
 # plc:
@@ -379,6 +381,26 @@ services:
     depends_on:
       - opensearch
       - database
+      - caddy
+
+  jetstream:
+    image: itaru2622/bluesky-jetstream:${asof}
+    ports:
+      - 6008:6008
+      - 6009:6009
+    volumes:
+      - jetstream:/data
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+    environment:
+      - JETSTREAM_WS_URL=wss://bgs.${DOMAIN}/xrpc/com.atproto.sync.subscribeRepos
+      - JETSTREAM_DATA_DIR=/data
+      - JETSTREAM_LISTEN_ADDR=:6008
+      - JETSTREAM_METRICS_LISTEN_ADDR=:6009
+      - JETSTREAM_LIVENESS_TTL=96h
+    restart: always
+    depends_on:
       - caddy
 
   ozone-standalone:
