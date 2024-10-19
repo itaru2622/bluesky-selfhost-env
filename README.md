@@ -56,6 +56,7 @@ test results with 'asof-2024-06-02' and later:<BR>
        -  ok: the view of post changed on social-app according to label assignments, when using [workaround tool](https://github.com/itaru2622/bluesky-selfhost-env/blob/master/ops-helper/apiImpl/subscribeLabels2BskyDB.ts).
           -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
    -  ok: subscribe events from pds/bgs(relay)/ozone by firehose/websocket.
+   -  ok: subscribe events from jetstream,  since 2024-10-19r1
    -  not yet: others.
 
 [back to top](#top)
@@ -136,7 +137,7 @@ make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
 # test HTTPS and WSS with your docker environment
 curl -L https://test-wss.${DOMAIN}/
-wscat -c https://test-wss.${DOMAIN}/ws with CUI nodejs wscat package
+websocat https://test-wss.${DOMAIN}/ws with websocat
 
 # test reverse proxy mapping if it works as expected for bluesky
 #  those should be redirect to PDS
@@ -191,7 +192,7 @@ make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
 make publishFeed
 ```
 
-### <a id="ops4-run-fg"/>4-2) deploy ozone on your env.
+### <a id="ops4-run-ozone"/>4-2) deploy ozone on your env.
 
 ```bash
 # 1) create account for ozone service/admin
@@ -217,12 +218,24 @@ make api_ozone_updateDidDoc   plcSignToken=     handle=...  ozoneURL=...
 make api_ozone_member_add   role=  did=did:plc:
 ```
 
+### <a id="ops4-run-jetstream"/>4-3) deploy jetstream on your env.
+```bash
+make docker-start-bsky-jetstream
+```
+
 
 ### <a id="ops5-play"/>5) play with self-hosted blusky.
 
 on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mysky.local.com/```
 
 refer [screenshots](./docs/screenshots), for UI operations to create/sign-in account on your self-hosting bluesky.
+
+### <a id="ops5-play-jetstream"/>5-1) subscribe jetstream
+
+```bash
+# subscribe almost all collections from jetstream
+websocat "wss://jetstream.${DOMAIN}/subscribe?wantedCollections=app.bsky.actor.profile&wantedCollections=app.bsky.feed.like&wantedCollections=app.bsky.feed.post&wantedCollections=app.bsky.feed.repost&wantedCollections=app.bsky.graph.follow&wantedCollections=app.bsky.graph.block&wantedCollections=app.bsky.graph.muteActor&wantedCollections=app.bsky.graph.unmuteActor"
+```
 
 ### <a id="ops6-stop"/>6) stop all containters
 
