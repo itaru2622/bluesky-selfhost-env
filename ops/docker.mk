@@ -43,6 +43,8 @@ docker-start-bsky-feedgen:: _applySfeed _dockerUp
 docker-start-bsky-feedgen:: docker-watchlog
 docker-start-bsky-ozone:: _applySozone _dockerUp
 docker-start-bsky-ozone:: docker-watchlog
+docker-start-bsky-jetstream:: _applySjetstream _dockerUp
+docker-start-bsky-jetstream:: docker-watchlog
 
 # execute publishFeed on feed-generator
 publishFeed:
@@ -85,3 +87,5 @@ _applySfeed:
 	$(eval services=${Sfeed})
 _applySozone:
 	$(eval services=${Sozone})
+_applySjetstream:
+	$(eval services=${Sjetstream})
