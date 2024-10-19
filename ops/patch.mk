@@ -2,7 +2,7 @@
 branch2patch=
 
 #patch-dockerbuild: ${rDir}/feed-generator/.dockerbuild  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild
-patch-dockerbuild:  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild ${rDir}/social-app/.dockerbuild
+patch-dockerbuild:  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild ${rDir}/social-app/.dockerbuild ${rDir}/jetstream/.dockerbuild
 
 ${rDir}/feed-generator/.dockerbuild:
 	@echo "make branch and applying patch..."
@@ -39,6 +39,12 @@ ${rDir}/social-app/.dockerbuild:
 	touch $@
 	(cd ${rDir}/social-app; git add . ; git commit -m "update: dockerbuild"; )
 
+${rDir}/jetstream/.dockerbuild:
+	@echo "make branch and applying patch..."
+	(cd ${rDir}/jetstream; git status; git checkout ${branch2patch} -b dockerbuild )
+	for ops in `ls ${wDir}/patching/1*.sh | grep jetstream`; do wDir=${wDir} rDir=${rDir} pDir=${wDir}/patching DOMAIN=${DOMAIN} asof=${asof}  $${ops} ; done
+	touch $@
+	(cd ${rDir}/jetstream; git add . ; git commit -m "update: dockerbuild"; )
 
 _patch-selfhost-even-not-mandatory: ${rDir}/social-app/.selfhost-${DOMAIN}
 ${rDir}/social-app/.selfhost-${DOMAIN}::
