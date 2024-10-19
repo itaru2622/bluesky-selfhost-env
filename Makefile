@@ -61,8 +61,8 @@ f ?=${wDir}/docker-compose.yaml
 
 # folders of repos
 #_nrepo   :=atproto indigo social-app feed-generator did-method-plc pds ozone
-_nrepo   :=atproto indigo social-app ozone
-repoDirs :=$(addprefix ${rDir}/, ${_nrepo})
+_nrepo   ?=atproto indigo social-app ozone jetstream
+repoDirs ?=$(addprefix ${rDir}/, ${_nrepo})
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # other parameters
@@ -79,11 +79,11 @@ LOG_LEVEL_DEFAULT ?=debug
 
 # services for N-step starting, with single docker-compose file.
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
-#Sbsky ?=pds bgs bsky social-app palomar ozone ozone-daemon
 Sbsky ?=pds bgs bsky social-app palomar
 Sfeed ?=feed-generator
 #Sozone ?=ozone ozone-daemon
 Sozone ?=ozone-standalone
+Sjetstream ?=jetstream
 
 # load passfile content as Makefile variables if exists
 ifeq ($(shell test -e ${passfile} && echo -n exists),exists)
@@ -144,6 +144,13 @@ ${rDir}/did-method-plc:
 	git clone ${gh}did-method-plc/did-method-plc.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}did-method-plc.git; git remote update fork)
+endif
+
+
+${rDir}/jetstream:
+	git clone ${gh}bluesky-social/jetstream.git $@
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}jetstream.git; git remote update fork)
 endif
 
 
