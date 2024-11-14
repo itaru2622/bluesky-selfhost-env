@@ -19,7 +19,7 @@ index 1b7a221..3dbbf71 100644
  const pkg = require('@atproto/ozone/package.json')
  
  async function main() {
-@@ -16,36 +19,47 @@ async function main() {
+@@ -19,36 +22,47 @@ async function main() {
    const frontendHandler = frontend.getRequestHandler()
    await frontend.prepare()
    // backend
@@ -54,10 +54,10 @@ index 1b7a221..3dbbf71 100644
 +      publicKey: server.ctx.signingKey.did(),
      })
    })
-// Note: We must use `use()` here. This should be the last middleware.
+   // Note: We must use `use()` here. This should be the last middleware.
 -  ozone.app.use((req, res) => {
 +  server.app.use((req, res) => {
-     return frontendHandler(req, res)
+     void frontendHandler(req, res, undefined)
    })
    // run
 -  const httpServer = await ozone.start()
@@ -79,4 +79,3 @@ index 1b7a221..3dbbf71 100644
 +  ozone.httpLogger.info(`Ozone is running at http://localhost:${addr.port}`)
  }
  
- main().catch(console.error)
