@@ -210,6 +210,9 @@ make api_CreateAccount_ozone                    email=your-valid@email.address.c
 # ozone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)
 make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:plc:
 
+# install things for ops-helper
+(cd ops-helper/apiImpl ; npm install)
+
 # 3) start workaround tool to index label assignments into appview DB via subscribeLabels.
 # ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts --help
 ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts
