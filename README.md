@@ -89,14 +89,14 @@ export PDS_EMAIL_SMTP_URL=smtps://
 # 3-3) FEEDGEN_EMAIL: for feed-generator account in bluesky
 export FEEDGEN_EMAIL=feedgen@example.com
 
-# 4) check your configuration, from the point of view of ops.
+# 4) install required tools as below, if you don't have yet.
+apt install -y make pwgen
+
+# 5) check your configuration, from the point of view of ops.
 make echo
 
-# 5) generate secrets for bluesky containers, and check those value:
+# 6) generate secrets for bluesky containers, and check those value:
 make genSecrets
-
-## install required tools as below, if you don't have yet.
-apt install -y make pwgen
 ```
 
 ### <a id="ops1-prepare"/>1) prepare on your network
