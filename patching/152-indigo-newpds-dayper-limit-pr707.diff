@@ -3,21 +3,21 @@ index d28481b4..20b3bb31 100644
 --- a/bgs/bgs.go
 +++ b/bgs/bgs.go
 @@ -112,6 +112,7 @@ type BGSConfig struct {
- 	DefaultRepoLimit  int64
- 	ConcurrencyPerPDS int64
- 	MaxQueuePerPDS    int64
+ 	DefaultRepoLimit     int64
+ 	ConcurrencyPerPDS    int64
+ 	MaxQueuePerPDS       int64
 +	InitialNewPDSPerDayLimit int64
+ 	NumCompactionWorkers int
  }
  
- func DefaultBGSConfig() *BGSConfig {
-@@ -121,6 +122,7 @@ func DefaultBGSConfig() *BGSConfig {
- 		DefaultRepoLimit:  100,
- 		ConcurrencyPerPDS: 100,
- 		MaxQueuePerPDS:    1_000,
+@@ -122,6 +123,7 @@ func DefaultBGSConfig() *BGSConfig {
+ 		DefaultRepoLimit:     100,
+ 		ConcurrencyPerPDS:    100,
+ 		MaxQueuePerPDS:       1_000,
 +	        InitialNewPDSPerDayLimit: 10,
+ 		NumCompactionWorkers: 2,
  	}
  }
- 
 @@ -157,6 +159,7 @@ func NewBGS(db *gorm.DB, ix *indexer.Indexer, repoman *repomgr.RepoManager, evtm
  	slOpts.DefaultRepoLimit = config.DefaultRepoLimit
  	slOpts.ConcurrencyPerPDS = config.ConcurrencyPerPDS
@@ -96,11 +96,11 @@ index d0961ecc..cd546a0f 100644
  	}
  
  	app.Action = runBigsky
-@@ -398,6 +404,7 @@ func runBigsky(cctx *cli.Context) error {
+@@ -424,6 +424,7 @@ func runBigsky(cctx *cli.Context) error {
  	bgsConfig.ConcurrencyPerPDS = cctx.Int64("concurrency-per-pds")
  	bgsConfig.MaxQueuePerPDS = cctx.Int64("max-queue-per-pds")
  	bgsConfig.DefaultRepoLimit = cctx.Int64("default-repo-limit")
 +	bgsConfig.InitialNewPDSPerDayLimit = cctx.Int64("newpds-perday-limit")
+ 	bgsConfig.NumCompactionWorkers = cctx.Int("num-compaction-workers")
  	bgs, err := libbgs.NewBGS(db, ix, repoman, evtman, cachedidr, rf, hr, bgsConfig)
  	if err != nil {
- 		return err
