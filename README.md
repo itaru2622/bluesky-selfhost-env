@@ -164,6 +164,8 @@ make    docker-stop-with-clean f=./docker-compose-debug-caddy.yaml
 first, describes deploying bluesky with prebuild images.<BR>
 [later](#hack-clone-and-build) describes how to build images from sources by yourself.
 
+**NB this will remove any existing docker containers on your system; run this on a separate machine if you need to**
+
 ```bash
 # 0) pull prebuild docker images from docker.io, to enforce skip building images.
 make docker-pull
