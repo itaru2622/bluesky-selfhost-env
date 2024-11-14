@@ -142,7 +142,7 @@ cargo install --features=ssl websocat
 
 # test HTTPS and WSS with your docker environment
 curl -L https://test-wss.${DOMAIN}/
-websocat https://test-wss.${DOMAIN}/ws with websocat
+websocat wss://test-wss.${DOMAIN}/ws
 
 # test reverse proxy mapping if it works as expected for bluesky
 #  those should be redirect to PDS
