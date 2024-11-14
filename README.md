@@ -135,6 +135,11 @@ dig  any.${DOMAIN}
 # start containers for test
 make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
+# install requirements to build websocat
+apt install cargo curl build-essential libssl-dev pkg-config
+export PATH=$HOME/.cargo/bin:$PATH
+cargo install --features=ssl websocat
+
 # test HTTPS and WSS with your docker environment
 curl -L https://test-wss.${DOMAIN}/
 websocat https://test-wss.${DOMAIN}/ws with websocat
