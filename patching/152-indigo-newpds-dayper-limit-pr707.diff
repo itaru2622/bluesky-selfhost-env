@@ -1,24 +1,24 @@
 diff --git a/bgs/bgs.go b/bgs/bgs.go
-index d28481b4..20b3bb31 100644
+index 35dfab9d..7e225f6c 100644
 --- a/bgs/bgs.go
 +++ b/bgs/bgs.go
 @@ -112,6 +112,7 @@ type BGSConfig struct {
- 	DefaultRepoLimit  int64
- 	ConcurrencyPerPDS int64
- 	MaxQueuePerPDS    int64
+ 	DefaultRepoLimit     int64
+ 	ConcurrencyPerPDS    int64
+ 	MaxQueuePerPDS       int64
 +	InitialNewPDSPerDayLimit int64
+ 	NumCompactionWorkers int
  }
  
- func DefaultBGSConfig() *BGSConfig {
-@@ -121,6 +122,7 @@ func DefaultBGSConfig() *BGSConfig {
- 		DefaultRepoLimit:  100,
- 		ConcurrencyPerPDS: 100,
- 		MaxQueuePerPDS:    1_000,
+@@ -122,6 +123,7 @@ func DefaultBGSConfig() *BGSConfig {
+ 		DefaultRepoLimit:     100,
+ 		ConcurrencyPerPDS:    100,
+ 		MaxQueuePerPDS:       1_000,
 +	        InitialNewPDSPerDayLimit: 10,
+ 		NumCompactionWorkers: 2,
  	}
  }
- 
-@@ -157,6 +159,7 @@ func NewBGS(db *gorm.DB, ix *indexer.Indexer, repoman *repomgr.RepoManager, evtm
+@@ -159,6 +161,7 @@ func NewBGS(db *gorm.DB, ix *indexer.Indexer, repoman *repomgr.RepoManager, evtm
  	slOpts.DefaultRepoLimit = config.DefaultRepoLimit
  	slOpts.ConcurrencyPerPDS = config.ConcurrencyPerPDS
  	slOpts.MaxQueuePerPDS = config.MaxQueuePerPDS
@@ -27,7 +27,7 @@ index d28481b4..20b3bb31 100644
  	if err != nil {
  		return nil, err
 diff --git a/bgs/fedmgr.go b/bgs/fedmgr.go
-index dca05f5a..30971f79 100644
+index 42ce7407..9072ba05 100644
 --- a/bgs/fedmgr.go
 +++ b/bgs/fedmgr.go
 @@ -45,6 +45,7 @@ type Slurper struct {
@@ -80,12 +80,12 @@ index dca05f5a..30971f79 100644
  	s.NewPDSPerDayLimiter, _ = slidingwindow.NewLimiter(time.Hour*24, sc.NewPDSPerDayLimit, windowFunc)
  
 diff --git a/cmd/bigsky/main.go b/cmd/bigsky/main.go
-index d0961ecc..cd546a0f 100644
+index 540796f5..cb946aed 100644
 --- a/cmd/bigsky/main.go
 +++ b/cmd/bigsky/main.go
-@@ -183,6 +183,12 @@ func run(args []string) error {
- 			EnvVars: []string{"RELAY_MAX_QUEUE_PER_PDS"},
- 			Value:   1_000,
+@@ -195,6 +195,12 @@ func run(args []string) error {
+ 			EnvVars: []string{"RELAY_EVENT_PLAYBACK_TTL"},
+ 			Value:   72 * time.Hour,
  		},
 +		&cli.Int64Flag{
 +			Name:    "newpds-perday-limit",
@@ -93,14 +93,14 @@ index d0961ecc..cd546a0f 100644
 +			Value:   10,
 +			Usage:   "initial value for NewPDSPerDayLimit",
 +		},
- 	}
- 
- 	app.Action = runBigsky
-@@ -398,6 +404,7 @@ func runBigsky(cctx *cli.Context) error {
+ 		&cli.IntFlag{
+ 			Name:    "num-compaction-workers",
+ 			EnvVars: []string{"RELAY_NUM_COMPACTION_WORKERS"},
+@@ -418,6 +424,7 @@ func runBigsky(cctx *cli.Context) error {
  	bgsConfig.ConcurrencyPerPDS = cctx.Int64("concurrency-per-pds")
  	bgsConfig.MaxQueuePerPDS = cctx.Int64("max-queue-per-pds")
  	bgsConfig.DefaultRepoLimit = cctx.Int64("default-repo-limit")
 +	bgsConfig.InitialNewPDSPerDayLimit = cctx.Int64("newpds-perday-limit")
+ 	bgsConfig.NumCompactionWorkers = cctx.Int("num-compaction-workers")
  	bgs, err := libbgs.NewBGS(db, ix, repoman, evtman, cachedidr, rf, hr, bgsConfig)
  	if err != nil {
- 		return err
