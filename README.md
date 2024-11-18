@@ -65,7 +65,7 @@ test results with 'asof-2024-06-02' and later:<BR>
 below, it assumes self-hosting domain is <strong>mysky.local.com</strong> (defined in Makefile).<br>
 you can change the domain name by environment variable as below:
 
-### <a id="ops0-configparams"/>0) configure params for ops
+### <a id="ops0-configparams"/>0) configure params and install tools for ops
 
 ```bash
 # 1) set domain name for self-hosting bluesky
@@ -89,14 +89,16 @@ export PDS_EMAIL_SMTP_URL=smtps://
 # 3-3) FEEDGEN_EMAIL: for feed-generator account in bluesky
 export FEEDGEN_EMAIL=feedgen@example.com
 
+## install tools, if you don't have yet.
+apt install -y make pwgen
+(cd ops-helper/apiImpl ; npm install)
+(sudo curl -o /usr/local/bin/websocat -L https://github.com/vi/websocat/releases/download/v1.13.0/websocat.x86_64-unknown-linux-musl; sudo chmod a+x /usr/local/bin/websocat)
+
 # 4) check your configuration, from the point of view of ops.
 make echo
 
 # 5) generate secrets for bluesky containers, and check those value:
 make genSecrets
-
-## install required tools as below, if you don't have yet.
-apt install -y make pwgen
 ```
 
 ### <a id="ops1-prepare"/>1) prepare on your network
@@ -137,7 +139,7 @@ make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
 # test HTTPS and WSS with your docker environment
 curl -L https://test-wss.${DOMAIN}/
-websocat https://test-wss.${DOMAIN}/ws with websocat
+websocat wss://test-wss.${DOMAIN}/ws
 
 # test reverse proxy mapping if it works as expected for bluesky
 #  those should be redirect to PDS
