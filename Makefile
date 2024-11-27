@@ -4,6 +4,23 @@
 # domain of self-hosting bluesky (care TLD, otherwise get failure, ie: NG=>mysky.local)
 DOMAIN ?=mysky.local.com
 
+# FQDN of your self hosting bsky components.  DO NOT CHANGE THOSE, FOR USUAL CASES.
+# CHANGING THESE WITHOUT UNDERSTANDING WHAT YOU DOING, GETTING TROUBLES.
+# - these parameters aim to intergration test for your hosting env and official bluesky components, like fediverse.
+# - it is strongly recommended that FQDNs should be renamed only if the components provided by the fediverse/integration partner.
+# - take care for avoiding confusion, you may need to change other codes according to your trial.
+
+bgsFQDN       ?=bgs.${DOMAIN}
+bskyFQDN      ?=bsky.${DOMAIN}
+feedgenFQDN   ?=feed-generator.${DOMAIN}
+jetstreamFQDN ?=jetstream.${DOMAIN}
+ozoneFQDN     ?=ozone.${DOMAIN}
+palomarFQDN   ?=palomar.${DOMAIN}
+pdsFQDN       ?=pds.${DOMAIN}
+plcFQDN       ?=plc.${DOMAIN}
+publicApiFQDN ?=public.api.${DOMAIN}
+socialappFQDN ?=social-app.${DOMAIN}
+
 # email address to get public-signed certs ("internal" for self-signed certs by caddy)
 EMAIL4CERTS ?=internal
 
@@ -11,11 +28,11 @@ EMAIL4CERTS ?=internal
 PDS_EMAIL_SMTP_URL ?= smtps://change:me@smtp.gmail.com
 
 # feed-generator account in bluesky to send posts ( last part may need to be equal to PDS_HOSTNAME)
-FEEDGEN_PUBLISHER_HANDLE ?=feedgen.pds.${DOMAIN}
+FEEDGEN_PUBLISHER_HANDLE ?=feedgen.${pdsFQDN}
 FEEDGEN_EMAIL ?=feedgen@example.com
 
 # ozone account in bluesky for moderation
-OZONE_ADMIN_HANDLE ?=ozone-admin.pds.${DOMAIN}
+OZONE_ADMIN_HANDLE ?=ozone-admin.${pdsFQDN}
 OZONE_ADMIN_EMAIL  ?=ozone-admin@example.com
 
 # datetime to distinguish docker images and sources (date in %Y-%m-%d or 'latest' in docker image naming manner)
@@ -77,7 +94,15 @@ fork_repo_prefix ?=
 # default log level.
 LOG_LEVEL_DEFAULT ?=debug
 
-# services for N-step starting, with single docker-compose file.
+# services to start in N-step ops, with single docker-compose file.
+# by these parameters, you can tune which components to start
+#  - no need to edit this file. just set environment as below before execute ops.
+#  - following three lines allow you try-out integration/fediverse with official PLC and public CA(lets encrypt).
+#    export plcFQDN=plc.directory
+#    export EMAIL4CERTS=YOUR-VALID-EMAIL-ADDRESS
+#    export Sdep='caddy caddy-sidecar database redis opensearch test-wss test-ws test-indigo pgadmin'
+#    # no plc in Sdep, comparing below line.
+#
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
 Sbsky ?=pds bgs bsky social-app palomar
 Sfeed ?=feed-generator
@@ -198,6 +223,17 @@ echo:
 	@echo "########## >>>>>>>>>>>>>>"
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
+	@echo ""
+	@echo "bgsFQDN       ${bgsFQDN}"
+	@echo "bskyFQDN      ${bskyFQDN}"
+	@echo "feedgenFQDN   ${feedgenFQDN}"
+	@echo "jetstreamFQDN ${jetstreamFQDN}"
+	@echo "ozoneFQDN     ${ozoneFQDN}"
+	@echo "palomarFQDN   ${palomarFQDN}"
+	@echo "pdsFQDN       ${pdsFQDN}"
+	@echo "plcFQDN       ${plcFQDN}"
+	@echo "publicApiFQDN ${publicApiFQDN}"
+	@echo "socialappFQDN ${socialappFQDN}"
 	@echo ""
 	@echo "EMAIL4CERTS: ${EMAIL4CERTS}"
 	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
