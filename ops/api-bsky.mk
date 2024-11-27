@@ -3,9 +3,9 @@
 resp ?=/dev/null
 
 # component urls for default:
-pdsURL   ?=https://pds.${DOMAIN}
-bgsURL   ?=https://bgs.${DOMAIN}
-ozoneURL ?=https://ozone.${DOMAIN}
+pdsURL   ?=https://${pdsFQDN}
+bgsURL   ?=https://${bsgFQDN}
+ozoneURL ?=https://${ozoneFQDN}
 
 #HINT: make api_setPerDayLimit
 api_setPerDayLimit:
