@@ -106,7 +106,7 @@ services:
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     command: tail -f /dev/null
     environment:
-      - ATP_PLC_HOST=https://plc.${DOMAIN}
+      - ATP_PLC_HOST=https://${plcFQDN}
       - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
       - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
@@ -254,29 +254,29 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD}
       - PDS_BLOBSTORE_DISK_LOCATION=/pds/blobs
-      - PDS_BSKY_APP_VIEW_DID=did:web:bsky.${DOMAIN}
-      - PDS_BSKY_APP_VIEW_URL=https://bsky.${DOMAIN}
-      - PDS_CRAWLERS=https://bgs.${DOMAIN}
+      - PDS_BSKY_APP_VIEW_DID=did:web:${bskyFQDN}
+      - PDS_BSKY_APP_VIEW_URL=https://${bskyFQDN}
+      - PDS_CRAWLERS=https://${bgsFQDN}
       - PDS_DATA_DIRECTORY=/pds
       - PDS_DEV_MODE=true
 #     - PDS_BLOBSTORE_DISK_TMP_LOCATION=/pds/image/tmp
-      - PDS_DID_PLC_URL=https://plc.${DOMAIN}
+      - PDS_DID_PLC_URL=https://${plcFQDN}
       - PDS_EMAIL_FROM_ADDRESS=no-reply@gmail.com
       - PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL}
       - PDS_ENABLE_DID_DOC_WITH_SESSION=true
-      - PDS_HOSTNAME=pds.${DOMAIN}
+      - PDS_HOSTNAME=${pdsFQDN}
       - PDS_INVITE_INTERVAL=604800000
       - PDS_INVITE_REQUIRED=false
       - PDS_JWT_SECRET=${PDS_JWT_SECRET}
       - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX=${PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX}
       - PDS_PORT=2583
 # starts: unset optional env for tesing ozone >>>>>>>
-#     - PDS_MOD_SERVICE_DID=did:web:ozone.${DOMAIN}
-#     - PDS_MOD_SERVICE_URL=https://ozone.${DOMAIN}
-#     - PDS_REPORT_SERVICE_DID=did:web:ozone.${DOMAIN}
-#     - PDS_REPORT_SERVICE_URL=https://ozone.${DOMAIN}
+#     - PDS_MOD_SERVICE_DID=did:web:${ozoneFQDN}
+#     - PDS_MOD_SERVICE_URL=https://${ozoneFQDN}
+#     - PDS_REPORT_SERVICE_DID=did:web:${ozoneFQDN}
+#     - PDS_REPORT_SERVICE_URL=https://${ozoneFQDN}
 # ends: unset optional env for tesing ozone <<<<<<<
-      - PDS_SERVICE_DID=did:web:pds.${DOMAIN}
+      - PDS_SERVICE_DID=did:web:${pdsFQDN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
@@ -301,7 +301,7 @@ services:
       - 2470:2470
     command: /bigsky
     environment:
-      - ATP_PLC_HOST=https://plc.${DOMAIN}
+      - ATP_PLC_HOST=https://${plcFQDN}
       - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
       - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
@@ -357,21 +357,21 @@ services:
       - BSKY_DATAPLANE_URLS=http://bsky:3001
       - BSKY_DB_POSTGRES_SCHEMA=bsky
       - BSKY_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bsky
-      - BSKY_DID_PLC_URL=https://plc.${DOMAIN}
+      - BSKY_DID_PLC_URL=https://${plcFQDN}
       - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
-      - BSKY_PUBLIC_URL=https://bsky.${DOMAIN}
-      - BSKY_REPO_PROVIDER=wss://bgs.${DOMAIN}
-      - BSKY_SEARCH_URL=https://palomar.${DOMAIN}
-      - BSKY_SERVER_DID=did:web:bsky.${DOMAIN}
+      - BSKY_PUBLIC_URL=https://${bskyFQDN}
+      - BSKY_REPO_PROVIDER=wss://${bgsFQDN}
+      - BSKY_SEARCH_URL=https://${palomarFQDN}
+      - BSKY_SERVER_DID=did:web:${bskyFQDN}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
       - DEBUG_MODE=1
-      - DID_PLC_URL=https://plc.${DOMAIN}
+      - DID_PLC_URL=https://${plcFQDN}
       - ENABLE_MIGRATIONS=false
       - GOINSECURE=${GOINSECURE}
       - LOG_DESTINATION=1
       - LOG_ENABLED=true
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - MOD_SERVICE_DID=did:web:ozone.${DOMAIN}
+      - MOD_SERVICE_DID=did:web:${ozoneFQDN}
       - NODE_ENV=development
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - PORT=2584
@@ -408,7 +408,7 @@ services:
       # supporting self-signed certificates, easiest way <<<<
     environment:
 #      cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
-      - ATP_APPVIEW_HOST=https://public.api.${DOMAIN}
+      - ATP_APPVIEW_HOST=https://${publicApiFQDN}
 #      cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
       - GOINSECURE=${GOINSECURE}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -437,8 +437,8 @@ services:
       # supporting self-signed certificates, easiest way <<<<
     environment:
 #       refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
-      - ATP_BGS_HOST=wss://bgs.${DOMAIN}
-      - ATP_PLC_HOST=https://plc.${DOMAIN}
+      - ATP_BGS_HOST=wss://${bgsFQDN}
+      - ATP_PLC_HOST=https://${plcFQDN}
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/palomar
 #     - ES_CERT_FILE=
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
@@ -473,7 +473,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - JETSTREAM_WS_URL=wss://bgs.${DOMAIN}/xrpc/com.atproto.sync.subscribeRepos
+      - JETSTREAM_WS_URL=wss://${bgsFQDN}/xrpc/com.atproto.sync.subscribeRepos
       - JETSTREAM_DATA_DIR=/data
       - JETSTREAM_LISTEN_ADDR=:6008
       - JETSTREAM_METRICS_LISTEN_ADDR=:6009
@@ -513,7 +513,7 @@ services:
       - OZONE_DEV_MODE=true
       - OZONE_PORT=3000
       - OZONE_SERVER_DID=${OZONE_SERVER_DID}
-      - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
+      - OZONE_PUBLIC_URL=https://${ozoneFQDN}
       - OZONE_ADMIN_HANDLE=${OZONE_ADMIN_HANDLE}
       - OZONE_ADMIN_DIDS=${OZONE_ADMIN_DIDS}
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
@@ -521,18 +521,18 @@ services:
       - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/ozone
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_DB_MIGRATE=1
-      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - NEXT_PUBLIC_PLC_DIRECTORY_URL=https://plc.${DOMAIN}
+      - OZONE_DID_PLC_URL=https://${plcFQDN}
+      - NEXT_PUBLIC_PLC_DIRECTORY_URL=https://${plcFQDN}
       - NEXT_PUBLIC_OZONE_SERVICE_DID=${OZONE_SERVER_DID}
-      - NEXT_PUBLIC_OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
-      - NEXT_PUBLIC_SOCIAL_APP_DOMAIN=social-app.${DOMAIN}
-      - NEXT_PUBLIC_SOCIAL_APP_URL=https://social-app.${DOMAIN}
-      - NEXT_PUBLIC_HANDLE_RESOLVER_URL=https://public.api.${DOMAIN}
-      - OZONE_APPVIEW_DID=did:web:bsky.${DOMAIN}
-      - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
+      - NEXT_PUBLIC_OZONE_PUBLIC_URL=https://${ozoneFQDN}
+      - NEXT_PUBLIC_SOCIAL_APP_DOMAIN=${socialappFQDN}
+      - NEXT_PUBLIC_SOCIAL_APP_URL=https://${socialappFQDN}
+      - NEXT_PUBLIC_HANDLE_RESOLVER_URL=https://${publicApiFQDN}
+      - OZONE_APPVIEW_DID=did:web:${bskyFQDN}
+      - OZONE_APPVIEW_URL=https://${bskyFQDN}
       - OZONE_APPVIEW_PUSH_EVENTS=true
-      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
-      - OZONE_PDS_URL=https://pds.${DOMAIN}
+      - OZONE_PDS_DID=did:web:${pdsFQDN}
+      - OZONE_PDS_URL=https://${pdsFQDN}
     restart: always
     depends_on:
       - database
@@ -568,19 +568,19 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - OZONE_ADMIN_DIDS=
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
-      - OZONE_APPVIEW_DID=did:web:bsky.${DOMAIN}
+      - OZONE_APPVIEW_DID=did:web:${bskyFQDN}
       - OZONE_APPVIEW_PUSH_EVENTS=true
-      - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
+      - OZONE_APPVIEW_URL=https://${bskyFQDN}
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/ozone
       - OZONE_DEV_MODE=true
-      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - OZONE_MODERATOR_DIDS=did:web:bsky.${DOMAIN}
-      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
-      - OZONE_PDS_URL=https://pds.${DOMAIN}
+      - OZONE_DID_PLC_URL=https://${plcFQDN}
+      - OZONE_MODERATOR_DIDS=did:web:${bskyFQDN}
+      - OZONE_PDS_DID=did:web:${pdsFQDN}
+      - OZONE_PDS_URL=https://${pdsFQDN}
       - OZONE_PORT=3000
-      - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
-      - OZONE_SERVER_DID=did:web:ozone.${DOMAIN}
+      - OZONE_PUBLIC_URL=https://${ozoneFQDN}
+      - OZONE_SERVER_DID=did:web:${ozoneFQDN}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
       - OZONE_TRIAGE_DIDS=
     restart: always
@@ -614,19 +614,19 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - OZONE_ADMIN_DIDS=
       - OZONE_ADMIN_PASSWORD=${OZONE_ADMIN_PASSWORD}
-      - OZONE_APPVIEW_DID=did:web:bsky.${DOMAIN}
+      - OZONE_APPVIEW_DID=did:web:${bskyFQDN}
       - OZONE_APPVIEW_PUSH_EVENTS=true
-      - OZONE_APPVIEW_URL=https://bsky.${DOMAIN}
+      - OZONE_APPVIEW_URL=https://${bskyFQDN}
       - OZONE_DB_POSTGRES_SCHEMA=ozone
       - OZONE_DB_POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/ozone
       - OZONE_DEV_MODE=true
-      - OZONE_DID_PLC_URL=https://plc.${DOMAIN}
-      - OZONE_MODERATOR_DIDS=did:web:bsky.${DOMAIN}
-      - OZONE_PDS_DID=did:web:pds.${DOMAIN}
-      - OZONE_PDS_URL=https://pds.${DOMAIN}
+      - OZONE_DID_PLC_URL=https://${plcFQDN}
+      - OZONE_MODERATOR_DIDS=did:web:${bskyFQDN}
+      - OZONE_PDS_DID=did:web:${pdsFQDN}
+      - OZONE_PDS_URL=https://${pdsFQDN}
       - OZONE_PORT=3000
-      - OZONE_PUBLIC_URL=https://ozone.${DOMAIN}
-      - OZONE_SERVER_DID=did:web:ozone.${DOMAIN}
+      - OZONE_PUBLIC_URL=https://${ozoneFQDN}
+      - OZONE_SERVER_DID=did:web:${ozoneFQDN}
       - OZONE_SIGNING_KEY_HEX=${OZONE_SIGNING_KEY_HEX}
       - OZONE_TRIAGE_DIDS=
     restart: always
@@ -649,20 +649,20 @@ services:
     ports:
       - 2586:3000
     environment:
-      - FEEDGEN_BSKY_SERVICE=https://pds.${DOMAIN}
+      - FEEDGEN_BSKY_SERVICE=https://${pdsFQDN}
       - FEEDGEN_FEED_DESCRIPTION=whats-alf
       - FEEDGEN_FEED_DISPLAY_NAME=whats-alf
       - FEEDGEN_FEED_RECORD_NAME=whats-alf
-      - FEEDGEN_HOSTNAME=feed-generator.${DOMAIN}
+      - FEEDGEN_HOSTNAME=${feedgenFQDN}
       - FEEDGEN_LISTENHOST=0.0.0.0
-      - FEEDGEN_PLC_URL=https://plc.${DOMAIN}
+      - FEEDGEN_PLC_URL=https://${plcFQDN}
       - FEEDGEN_PORT=3000
       - FEEDGEN_PUBLISHER_DID=${FEEDGEN_PUBLISHER_DID}
       - FEEDGEN_PUBLISHER_HANDLE=${FEEDGEN_PUBLISHER_HANDLE}
       - FEEDGEN_PUBLISHER_PASSWORD=${FEEDGEN_PUBLISHER_PASSWORD}
-      - FEEDGEN_SERVICE_DID=did:web:feed-generator.${DOMAIN}
+      - FEEDGEN_SERVICE_DID=did:web:${feedgenFQDN}
       - FEEDGEN_SQLITE_LOCATION=/data/db.sqlite
-      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://bgs.${DOMAIN}
+      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://${bgsFQDN}
       - FEEDGEN_SUBSCRIPTION_RECONNECT_DELAY=3000
       - GOINSECURE=${GOINSECURE}
       - NODE_ENV=development
