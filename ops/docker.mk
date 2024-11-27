@@ -9,6 +9,16 @@ _dockerUp: _load_vars _dockerUP_network
 _load_vars:
 	$(eval _envs=$(shell cat ${passfile} | sed '1i\
 DOMAIN=${DOMAIN} \
+bgsFQDN=${bgsFQDN} \
+bskyFQDN=${bskyFQDN} \
+feedgenFQDN=${feedgenFQDN} \
+jetstreamFQDN=${jetstreamFQDN} \
+ozoneFQDN=${ozoneFQDN} \
+palomarFQDN=${palomarFQDN} \
+pdsFQDN=${pdsFQDN} \
+plcFQDN=${plcFQDN} \
+publicApiFQDN=${publicApiFQDN} \
+socialappFQDN=${socialappFQDN} \
 docker_network=${docker_network} \
 asof=${asof} \
 dDir=${dDir} \
