@@ -493,6 +493,7 @@ then, all of below methods are involved for safe, when it uses self-signed certi
 | pds            | https://github.com/bluesky-social/pds.git              |
 | ozone          | https://github.com/bluesky-social/ozone.git            |
 | did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
+| jetstream      | https://github.com/bluesky-social/jetstream.git        |
 
 other dependencies:
 
