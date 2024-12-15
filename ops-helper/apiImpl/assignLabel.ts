@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env tsx
 
 import { AtpAgent } from "@atproto/api";
 import yargs        from 'yargs/yargs';
