@@ -77,7 +77,7 @@ f ?=${wDir}/docker-compose.yaml
 #f ?=${wDir}/docker-compose-builder.yaml
 
 # folders of repos
-#_nrepo   :=atproto indigo social-app feed-generator did-method-plc pds ozone
+#_nrepo  ?=atproto indigo social-app feed-generator did-method-plc pds ozone jetstream
 _nrepo   ?=atproto indigo social-app ozone jetstream
 repoDirs ?=$(addprefix ${rDir}/, ${_nrepo})
 
@@ -87,6 +87,10 @@ repoDirs ?=$(addprefix ${rDir}/, ${_nrepo})
 # prefix of github (https://github.com/ | git@github.com:)
 gh  ?=$(addsuffix /, https://github.com)
 gh_git ?=$(addsuffix :, git@github.com)
+
+# origin repo prefix to clone source, points code owner(org). DO NOT CHANGE THESE, FOR USUAL CASES. these are features for experts.
+origin_repo_bsky_prefix ?=${gh}bluesky-social/
+origin_repo_did_prefix  ?=${gh}did-method-plc/
 
 fork_repo_prefix ?=
 #fork_repo_prefix =${gh_git}itaru2622/bluesky-
@@ -124,56 +128,56 @@ endif
 cloneAll:   ${repoDirs}
 
 ${rDir}/atproto:
-	git clone ${gh}bluesky-social/atproto.git $@
+	git clone ${origin_repo_bsky_prefix}atproto.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}atproto.git; git remote update fork)
 endif
 
 
 ${rDir}/indigo:
-	git clone ${gh}bluesky-social/indigo.git $@
+	git clone ${origin_repo_bsky_prefix}indigo.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}indigo.git; git remote update fork)
 endif
 
 
 ${rDir}/social-app:
-	git clone ${gh}bluesky-social/social-app.git $@
+	git clone ${origin_repo_bsky_prefix}social-app.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}social-app.git; git remote update fork)
 endif
 
 
 ${rDir}/feed-generator:
-	git clone ${gh}bluesky-social/feed-generator.git $@
+	git clone ${origin_repo_bsky_prefix}feed-generator.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}feed-generator.git; git remote update fork)
 endif
 
 
 ${rDir}/pds:
-	git clone ${gh}bluesky-social/pds.git $@
+	git clone ${origin_repo_bsky_prefix}pds.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}pds.git; git remote update fork)
 endif
 
 
 ${rDir}/ozone:
-	git clone ${gh}bluesky-social/ozone.git $@
+	git clone ${origin_repo_bsky_prefix}ozone.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}ozone.git; git remote update fork)
 endif
 
 
 ${rDir}/did-method-plc:
-	git clone ${gh}did-method-plc/did-method-plc.git $@
+	git clone ${origin_repo_did_prefix}did-method-plc.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}did-method-plc.git; git remote update fork)
 endif
 
 
 ${rDir}/jetstream:
-	git clone ${gh}bluesky-social/jetstream.git $@
+	git clone ${origin_repo_bsky_prefix}jetstream.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}jetstream.git; git remote update fork)
 endif
