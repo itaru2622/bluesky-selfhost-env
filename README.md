@@ -32,7 +32,7 @@ this repository aims to get self-hosted bluesky env in easy with:
  - simple:          all bluesky components runs on one host, by docker-compose.
  - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
 
-at current, my latest release is <strong>2024-12-22</strong> based on codes <strong>2024-12-22</strong> of bluesky-social.<br>
+at current, my latest release is <strong>2024-12-29</strong> based on codes <strong>2024-12-29</strong> of bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
@@ -72,8 +72,8 @@ you can change the domain name by environment variable as below:
 export DOMAIN=whatever.yourdomain.com
 
 # 2) set asof date, to distinguish docker images / its sources.
-#    2024-12-22(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
-export asof=2024-12-22
+#    2024-12-29(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
+export asof=2024-12-29
 
 # 3) set email addresses.
 
