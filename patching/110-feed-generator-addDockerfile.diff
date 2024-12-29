@@ -1,14 +1,18 @@
 diff --git a/Dockerfile b/Dockerfile
 new file mode 100644
-index 0000000..b6307bc
+index 0000000..cb6c318
 --- /dev/null
 +++ b/Dockerfile
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,17 @@
 +FROM node:18
++
++# install expect to handle inquirer prompt for automation
++RUN apt update; apt install -y expect ; \
++    npm install -g ts-node;
 +
 +WORKDIR /app
 +COPY . .
-+RUN yarn install; npm install -g ts-node
++RUN yarn install
 +
 +ENV NODE_ENV=production
 +ENV FEEDGEN_PORT=3000
