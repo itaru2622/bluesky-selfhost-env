@@ -1,6 +1,7 @@
 
 docker_network ?= bsky_${DOMAIN}
 dockerCompose ?= docker compose
+auto_watchlog ?= true
 
 _dockerUp: _load_vars _dockerUP_network
 	${_envs} ${dockerCompose} -f ${f} up -d ${services}
@@ -46,15 +47,29 @@ build:
 	DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
 
 docker-start::      setupdir ${wDir}/config/caddy/Caddyfile ${wDir}/certs/root.crt ${wDir}/certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
+ifeq ($(auto_watchlog),true)
 docker-start::      docker-watchlog
+endif
+
 docker-start-bsky:: _applySbsky _dockerUp
+ifeq ($(auto_watchlog),true)
 docker-start-bsky:: docker-watchlog
+endif
+
 docker-start-bsky-feedgen:: _applySfeed _dockerUp
+ifeq ($(auto_watchlog),true)
 docker-start-bsky-feedgen:: docker-watchlog
+endif
+
 docker-start-bsky-ozone:: _applySozone _dockerUp
+ifeq ($(auto_watchlog),true)
 docker-start-bsky-ozone:: docker-watchlog
+endif
+
 docker-start-bsky-jetstream:: _applySjetstream _dockerUp
+ifeq ($(auto_watchlog),true)
 docker-start-bsky-jetstream:: docker-watchlog
+endif
 
 # execute publishFeed on feed-generator
 publishFeed:
