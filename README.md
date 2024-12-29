@@ -239,6 +239,10 @@ refer [screenshots](./docs/screenshots), for UI operations to create/sign-in acc
 websocat "wss://jetstream.${DOMAIN}/subscribe?wantedCollections=app.bsky.actor.profile&wantedCollections=app.bsky.feed.like&wantedCollections=app.bsky.feed.post&wantedCollections=app.bsky.feed.repost&wantedCollections=app.bsky.graph.follow&wantedCollections=app.bsky.graph.block&wantedCollections=app.bsky.graph.muteActor&wantedCollections=app.bsky.graph.unmuteActor"
 ```
 
+### <a id="ops5-play-ozone"/>5-2) play with ozone (moderation)
+
+on your browser, access ```https://ozone.${DOMAIN}/configure``` such as ```https://ozone.mysky.local.com/configure```
+
 ### <a id="ops6-stop"/>6) stop all containters
 
 ```bash
