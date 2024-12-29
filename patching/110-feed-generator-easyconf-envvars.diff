@@ -1,0 +1,41 @@
+diff --git a/scripts/publishFeed.exp b/scripts/publishFeed.exp
+new file mode 100755
+index 0000000..77a2eb2
+--- /dev/null
++++ b/scripts/publishFeed.exp
+@@ -0,0 +1,35 @@
++#!/usr/bin/expect -f
++
++# argv: commandline params to feed publishFeedGen.ts
++
++set handle  [lindex $argv 0]
++set passwd  [lindex $argv 1]
++set pdsURL  [lindex $argv 2]
++set rname   [lindex $argv 3]
++
++set timeout 5
++
++spawn env LANG=C yarn publishFeed
++expect "handle:"
++send "$handle\n"
++
++expect "Enter your Bluesky password (preferably an App Password):"
++send "$passwd\n"
++
++expect "sign in with:"
++send "$pdsURL\n"
++
++expect "URL:"
++send "$rname\n"
++
++expect "display name for your feed:"
++send "$rname\n"
++
++expect "description of your feed:"
++send "$rname\n"
++
++expect ":"
++send "\n"
++
++interact
++exit 0
