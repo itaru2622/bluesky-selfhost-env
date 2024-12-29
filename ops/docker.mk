@@ -1,6 +1,6 @@
 
 docker_network ?= bsky_${DOMAIN}
-dockerCompose ?= docker-compose
+dockerCompose ?= docker compose
 
 _dockerUp: _load_vars _dockerUP_network
 	${_envs} ${dockerCompose} -f ${f} up -d ${services}
