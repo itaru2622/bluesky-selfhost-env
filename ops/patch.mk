@@ -2,7 +2,12 @@
 branch2patch=
 
 #patch-dockerbuild: ${rDir}/feed-generator/.dockerbuild  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild
-patch-dockerbuild:  ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild ${rDir}/social-app/.dockerbuild ${rDir}/jetstream/.dockerbuild
+#patch-dockerbuild: ${rDir}/indigo/.dockerbuild  ${rDir}/atproto/.dockerbuild ${rDir}/ozone/.dockerbuild ${rDir}/social-app/.dockerbuild ${rDir}/jetstream/.dockerbuild
+
+# generate targets for patch-dockerbuild from variables like above sample;   items=${_nrepo}-${nopatch},  with prefix=${rDir}  and  suffix=/.dockerbuild
+_nopatch=did-method-plc pds
+_prepo=$(filter-out ${_nopatch},${_nrepo})
+patch-dockerbuild:  $(addprefix ${rDir}/, $(addsuffix /.dockerbuild, ${_prepo}))
 
 ${rDir}/feed-generator/.dockerbuild:
 	@echo "make branch and applying patch..."
