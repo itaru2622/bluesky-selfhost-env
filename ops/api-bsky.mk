@@ -82,4 +82,4 @@ _echo_apiops:
 
 _findDid:
 	@echo -n "### DID: "
-	-@cat ${resp} | jq .did | sed 's/"//g'
+	-@cat ${resp} | jq ".did // empty" | sed 's/"//g'
