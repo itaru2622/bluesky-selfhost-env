@@ -1,10 +1,10 @@
 diff --git a/Dockerfile b/Dockerfile
 new file mode 100644
-index 00000000..a8b46360
+index 00000000..d742c942
 --- /dev/null
 +++ b/Dockerfile
 @@ -0,0 +1,15 @@
-+FROM golang:1.22-bookworm
++FROM golang:1.23-bookworm
 +
 +RUN apt update; apt install -y dumb-init ca-certificates runit    bash-completion git make curl
 +
