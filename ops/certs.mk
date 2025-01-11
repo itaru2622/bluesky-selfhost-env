@@ -12,9 +12,11 @@ getCAcert:
 	docker run -it --rm -d --name caddy -v ${wDir}/config/caddy/Caddyfile4cert:/etc/caddy/Caddyfile caddy:2
 	@echo "wait a little for caddy get ready..."
 	@sleep 1
-	@echo "get self-signed CA certificate(root.key, root.crt) from caddy container"
+	@echo "get self-signed CA certificates from caddy container"
 	docker cp caddy:/data/caddy/pki/authorities/local/root.crt ${wDir}/certs/
 	docker cp caddy:/data/caddy/pki/authorities/local/root.key ${wDir}/certs/
+	docker cp caddy:/data/caddy/pki/authorities/local/intermediate.crt ${wDir}/certs/
+	docker cp caddy:/data/caddy/pki/authorities/local/intermediate.key ${wDir}/certs/
 	docker rm -f caddy
 
 installCAcert:
