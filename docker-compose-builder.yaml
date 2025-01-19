@@ -456,15 +456,16 @@ services:
       - caddy
 
   jetstream:
-    image: itaru2622/bluesky-jetstream:${asof}
-    build:
-      context: ./repos/jetstream/
-      dockerfile: Dockerfile
-      args:
-       - http_proxy=${http_proxy}
-       - https_proxy=${https_proxy}
-       - no_proxy=${no_proxy}
-       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+   #image: itaru2622/bluesky-jetstream:${asof}
+    image: itaru2622/bluesky-jetstream:latest
+   #build:
+   #  context: ./repos/jetstream/
+   #  dockerfile: Dockerfile
+   #  args:
+   #   - http_proxy=${http_proxy}
+   #   - https_proxy=${https_proxy}
+   #   - no_proxy=${no_proxy}
+   #   - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 6008:6008
     volumes:

@@ -78,7 +78,7 @@ f ?=${wDir}/docker-compose.yaml
 
 # folders of repos
 #_nrepo  ?=atproto indigo social-app feed-generator did-method-plc pds ozone jetstream
-_nrepo   ?=atproto indigo social-app ozone jetstream
+_nrepo   ?=atproto indigo social-app ozone
 repoDirs ?=$(addprefix ${rDir}/, ${_nrepo})
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

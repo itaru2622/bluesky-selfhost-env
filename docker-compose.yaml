@@ -385,7 +385,8 @@ services:
       - caddy
 
   jetstream:
-    image: itaru2622/bluesky-jetstream:${asof}
+   #image: itaru2622/bluesky-jetstream:${asof}
+    image: itaru2622/bluesky-jetstream:latest
     ports:
       - 6008:6008
       - 6009:6009
