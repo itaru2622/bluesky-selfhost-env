@@ -113,7 +113,7 @@ http://test-ws.{$DOMAIN} {
 
 # starts: simple mapping >>>>>
 
-plc.{$DOMAIN} {
+{$plcFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -121,7 +121,7 @@ plc.{$DOMAIN} {
 	reverse_proxy http://plc:2582
 }
 
-bgs.{$DOMAIN} {
+{$bgsFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -129,7 +129,7 @@ bgs.{$DOMAIN} {
 	reverse_proxy http://bgs:2470
 }
 
-api.{$DOMAIN}, bsky.{$DOMAIN} {
+api.{$DOMAIN}, {$bskyFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -137,7 +137,7 @@ api.{$DOMAIN}, bsky.{$DOMAIN} {
 	reverse_proxy http://bsky:2584
 }
 
-social-app.{$DOMAIN} {
+{$socialappFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -145,7 +145,7 @@ social-app.{$DOMAIN} {
 	reverse_proxy http://social-app:8100
 }
 
-ozone.{$DOMAIN} {
+{$ozoneFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -162,7 +162,7 @@ ozone-standalone.{$DOMAIN} {
 }
 
 
-palomar.{$DOMAIN} {
+{$palomarFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -170,7 +170,7 @@ palomar.{$DOMAIN} {
 	reverse_proxy http://palomar:3999
 }
 
-feed-generator.{$DOMAIN} {
+{$feedgenFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -178,7 +178,7 @@ feed-generator.{$DOMAIN} {
 	reverse_proxy http://feed-generator:3000
 }
 
-jetstream.{$DOMAIN} {
+{$jetstreamFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -186,7 +186,7 @@ jetstream.{$DOMAIN} {
 	reverse_proxy http://jetstream:6008
 }
 
-pds.{$DOMAIN} {
+{$pdsFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand
@@ -203,8 +203,8 @@ pds.{$DOMAIN} {
 }
 # ends:  simple mapping <<<<<
 
-# starts:  *.pds.DOMAIN >>>>>>>>>>>
-*.pds.{$DOMAIN} {
+# starts:  *.pdsFQDN (pds.DOMAIN) >>>>>>>>>>>
+*.{$pdsFQDN} {
         import cors
         tls {$EMAIL4CERTS} {
           on_demand
@@ -215,25 +215,25 @@ pds.{$DOMAIN} {
         @ws {
           header Connection *Upgrade*
           header Upgrade websocket
-          header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
+          header_regexp host Host ^(.*)\.{$pdsFQDN}$
 	  path_regexp   path      ^(.*)
         }
         rewrite       @ws           {http.regexp.path.1}
         reverse_proxy @ws           http://pds:2583
 
 #---------------
-#      *.pds.DOMAIN/xrpc*  => http://pds:2583
+#      *.pdsFQDN/xrpc*  => http://pds:2583
         @xrpc {
-            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.{$pdsFQDN}$
             path_regexp   path      ^(/xrpc.*)
         }
         rewrite        @xrpc        {http.regexp.path.1}
         reverse_proxy  @xrpc        http://pds:2583
 
 #---------------
-#      *.pds.DOMAIN/.well-known* => http://pds:2583
+#      *.pdsFQDN/.well-known* => http://pds:2583
         @wellknown {
-            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.{$pdsFQDN}$
             path_regexp   path      ^(/\.well-known.*)
         }
         rewrite        @wellknown   {http.regexp.path.1}
@@ -241,30 +241,30 @@ pds.{$DOMAIN} {
 
 
 #---------------
-#      *.pds.DOMAIN/robots.txt* => http://pds:2583
+#      *.pdsFQDN/robots.txt* => http://pds:2583
         @robots {
-            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.{$pdsFQDN}$
             path_regexp   path      ^(/robots\.txt*)
         }
         rewrite        @robots      {http.regexp.path.1}
         reverse_proxy  @robots      http://pds:2583
 
 #---------------
-#     (.*).pds.DOMAIN/(.*) => http://social-app:8100/profile/$$1/$$2
+#     (.*).pdsFQDN/(.*) => http://social-app:8100/profile/$$1/$$2
         @others {
-            header_regexp host Host ^(.*)\.pds\.{$DOMAIN}$
+            header_regexp host Host ^(.*)\.{$pdsFQDN}$
             path_regexp   path      ^(.*)
         }
         rewrite        @others      /profile/{http.regexp.host.1}{http.regexp.path.1}
         reverse_proxy  @others      http://social-app:8100
 }
-# ends: *.pds.DOMAIN <<<<<<<<<<<
+# ends: *.pdsFQDN <<<<<<<<<<<
 
 # starts: additional (long FQDN) >>>>>>>>>
 
 # for ATP_APPVIEW_HOST=https://public.api.bsky.app in https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env
 # for https://github.com/bluesky-social/bsky-docs/issues/63
-public.api.{$DOMAIN} {
+{$publicApiFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
           on_demand

@@ -17,6 +17,16 @@ services:
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
+      - bgsFQDN=${bgsFQDN}
+      - bskyFQDN=${bskyFQDN}
+      - feedgenFQDN=${feedgenFQDN}
+      - jetstreamFQDN=${jetstreamFQDN}
+      - ozoneFQDN=${ozoneFQDN}
+      - palomarFQDN=${palomarFQDN}
+      - pdsFQDN=${pdsFQDN}
+      - plcFQDN=${plcFQDN}
+      - publicApiFQDN=${publicApiFQDN}
+      - socialappFQDN=${socialappFQDN}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates for self-signed. >>>
