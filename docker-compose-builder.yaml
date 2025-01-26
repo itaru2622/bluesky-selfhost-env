@@ -96,6 +96,7 @@ services:
 # debug for bluesky with indigo subcmds >>>
   test-indigo:
     image: itaru2622/bluesky-indigo-tools:${asof}
+    profiles: ['', 'indigo']
     build:
        context: ./repos/indigo/
        dockerfile: Dockerfile
@@ -160,6 +161,7 @@ services:
 
   opensearch:
     image: itaru2622/bluesky-indigo-opensearch:${asof}
+    profiles: ['', 'indigo']
     build:
       context: ./repos/indigo/
       dockerfile: cmd/palomar/Dockerfile.opensearch
@@ -193,16 +195,16 @@ services:
     restart: always
 
   plc:
-    image: itaru2622/bluesky-did-method-plc:latest
-#   image: itaru2622/bluesky-did-method-plc:${asof}
-#   build:
-#     context: ./repos/did-method-plc/
-#     dockerfile: packages/server/Dockerfile
-#     args:
-#      - http_proxy=${http_proxy}
-#      - https_proxy=${https_proxy}
-#      - no_proxy=${no_proxy}
-#      - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/bluesky-did-method-plc:${asof}
+    profiles: ['', 'did-method-plc']
+    build:
+      context: ./repos/did-method-plc/
+      dockerfile: packages/server/Dockerfile
+      args:
+       - http_proxy=${http_proxy}
+       - https_proxy=${https_proxy}
+       - no_proxy=${no_proxy}
+       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 2582:2582
     volumes:
@@ -229,6 +231,7 @@ services:
       
   pds:
     image: itaru2622/bluesky-atproto-pds:${asof}
+    profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
       dockerfile: services/pds/Dockerfile
@@ -289,6 +292,7 @@ services:
 
   bgs:
     image: itaru2622/bluesky-indigo-bgs:${asof}
+    profiles: ['', 'indigo']
     build:
       context: ./repos/indigo/
       dockerfile: cmd/bigsky/Dockerfile
@@ -329,6 +333,7 @@ services:
   bsky:
     # appview(api)
     image: itaru2622/bluesky-atproto-bsky:${asof}
+    profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
       dockerfile: services/bsky/Dockerfile
@@ -391,6 +396,7 @@ services:
   social-app:
     image: itaru2622/bluesky-social-app:${asof}
     #image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
+    profiles: ['', 'social-app']
     build:
       context: ./repos/social-app/
       dockerfile: Dockerfile
@@ -421,6 +427,7 @@ services:
 
   palomar:
     image: itaru2622/bluesky-indigo-palomar:${asof}
+    profiles: ['', 'indigo']
     build:
       context: ./repos/indigo/
       dockerfile: cmd/palomar/Dockerfile
@@ -456,16 +463,16 @@ services:
       - caddy
 
   jetstream:
-   #image: itaru2622/bluesky-jetstream:${asof}
-    image: itaru2622/bluesky-jetstream:latest
-   #build:
-   #  context: ./repos/jetstream/
-   #  dockerfile: Dockerfile
-   #  args:
-   #   - http_proxy=${http_proxy}
-   #   - https_proxy=${https_proxy}
-   #   - no_proxy=${no_proxy}
-   #   - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/bluesky-jetstream:${asof}
+    profiles: ['', 'jetstream']
+    build:
+      context: ./repos/jetstream/
+      dockerfile: Dockerfile
+      args:
+       - http_proxy=${http_proxy}
+       - https_proxy=${https_proxy}
+       - no_proxy=${no_proxy}
+       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 6008:6008
     volumes:
@@ -486,6 +493,7 @@ services:
   ozone-standalone:
     # moderation-api:
     image: itaru2622/bluesky-ozone:${asof}
+    profiles: ['', 'ozone']
     build:
       context: ./repos/ozone/
       dockerfile: Dockerfile
@@ -542,6 +550,7 @@ services:
   ozone:
     # moderation-api:
     image: itaru2622/bluesky-atproto-ozone:${asof}
+    profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
       dockerfile: services/ozone/Dockerfile
@@ -591,6 +600,7 @@ services:
 
   ozone-daemon:
     image: itaru2622/bluesky-atproto-ozone:${asof}
+    profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
       dockerfile: services/ozone/Dockerfile
@@ -637,16 +647,16 @@ services:
       - caddy
 
   feed-generator:
-    image: itaru2622/bluesky-feed-generator:latest
-   #image: itaru2622/bluesky-feed-generator:${asof}
-   #build:
-   #  context: ./repos/feed-generator/
-   #  dockerfile: Dockerfile
-   #  args:
-   #   - http_proxy=${http_proxy}
-   #   - https_proxy=${https_proxy}
-   #   - no_proxy=${no_proxy}
-   #   - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    image: itaru2622/bluesky-feed-generator:${asof}
+    profiles: ['', 'feed-generator']
+    build:
+      context: ./repos/feed-generator/
+      dockerfile: Dockerfile
+      args:
+       - http_proxy=${http_proxy}
+       - https_proxy=${https_proxy}
+       - no_proxy=${no_proxy}
+       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 2586:3000
     environment:

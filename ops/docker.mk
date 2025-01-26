@@ -2,6 +2,7 @@
 docker_network ?= bsky_${DOMAIN}
 dockerCompose ?= docker compose
 auto_watchlog ?= true
+COMPOSE_PROFILES ?= $(shell echo ${_nrepo} | sed 's/ /,/g')
 
 _dockerUp: _load_vars _dockerUP_network
 	${_envs} ${dockerCompose} -f ${f} up -d ${services}
@@ -44,7 +45,7 @@ _dockerUP_network:
 docker-pull:
 	DOMAIN= asof=${asof} ${dockerCompose} -f ${f} pull
 build:
-	DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
+	COMPOSE_PROFILES=${COMPOSE_PROFILES} DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
 
 docker-start::      setupdir ${wDir}/config/caddy/Caddyfile ${wDir}/certs/root.crt ${wDir}/certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
 ifeq ($(auto_watchlog),true)
