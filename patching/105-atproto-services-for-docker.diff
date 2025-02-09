@@ -1,13 +1,14 @@
 diff --git a/services/bsky/api.js b/services/bsky/api.js
-index e14b43f2d..528d588bd 100644
+index 56c769b9d..5d14c0057 100644
 --- a/services/bsky/api.js
 +++ b/services/bsky/api.js
-@@ -43,18 +43,61 @@ const path = require('node:path')
- const assert = require('node:assert')
- const cluster = require('cluster')
- const { Secp256k1Keypair } = require('@atproto/crypto')
--const { ServerConfig, BskyAppView } = require('@atproto/bsky')
+@@ -44,19 +44,62 @@ const assert = require('node:assert')
+ const cluster = require('node:cluster')
+ const path = require('node:path')
+
+-const { BskyAppView, ServerConfig } = require('@atproto/bsky')
 +const bsky = require('@atproto/bsky') // import all bsky features
+ const { Secp256k1Keypair } = require('@atproto/crypto')
  
  const main = async () => {
    const env = getEnv()
@@ -37,7 +38,7 @@ index e14b43f2d..528d588bd 100644
 +      poolSize: 10,
 +  })
 +
-+  const dataplane =  await bsky.DataPlaneServer.create(
++  const dataplane = await bsky.DataPlaneServer.create(
 +      db,
 +      env.dataplanePort,
 +      config.didPlcUrl
@@ -69,7 +70,7 @@ index e14b43f2d..528d588bd 100644
    }
    process.on('SIGTERM', shutdown)
    process.on('disconnect', shutdown) // when clustering
-@@ -62,6 +105,12 @@ const main = async () => {
+@@ -64,6 +107,12 @@ const main = async () => {
  
  const getEnv = () => ({
    serviceSigningKey: process.env.BSKY_SERVICE_SIGNING_KEY || undefined,
