@@ -134,6 +134,10 @@ make installCAcert
 dig  ${DOMAIN}
 dig  any.${DOMAIN}
 
+# check if DNS works as expected. test from all nodes you want to access to your selfhosting bluesky, including host and client machines.
+ping ${DOMAIN}
+ping any.${DOMAIN}
+
 # start containers for test
 make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
