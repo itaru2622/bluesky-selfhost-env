@@ -7,7 +7,7 @@ https://github.com/itaru2622/bluesky-selfhost-env
   - [Current Status](#status)
   - [Operations for self-hosting bluesky](#ops)
       - [configuration](#ops0-configparams)
-      - [prepare on your network](#ops1-prepare)
+      - [prepare your network](#ops1-prepare)
       - [check](#ops2-check)
       - [deploy](#ops3-run)
       - [play](#ops5-play)
@@ -25,248 +25,250 @@ https://github.com/itaru2622/bluesky-selfhost-env
 
 ## <a id="motivation" />Motivation
 
-this repository aims to get self-hosted bluesky env in easy with:
+This repository aims to get self-hosted a bluesky environment easy, with:
 
- - configurable hosting domain:  easy to tune by environment variable (DOMAIN)
- - reproducibility: disclosure all configs and operations, including reverse proxy rules, and patches to sources.
- - simple:          all bluesky components runs on one host, by docker-compose.
- - less remapping:  simple rules as possible, among FQDN <=> reverse proxy <=> docker-container, for easy understanding and tunning.
+ - Configurable hosting domain: easily tuned by environment variable (${DOMAIN}).
+ - Reproducibility: full disclosure of all configurations and operations, including reverse proxy rules and patches to the original code of bluesky-social.
+ - Simplicity: all bluesky components run on one host, powered by docker-compose.
+ - Minimal remapping: the simplest possible mapping rules between FQDN, reverse proxy, and docker-container, for easy understanding and tuning.
 
-at current, my latest release is <strong>2025-03-12</strong> based on codes <strong>2025-03-12</strong> of bluesky-social.<br>
+Currently, my latest release is <strong>2025-03-12</strong>, based on the <strong>2025-03-12</strong> code from bluesky-social.<br>
 
 ## <a id="status"/>Current status regarding self-hosting
 
-as below, most features work as expected on self-hosting environment.<br>
-unfortunately, it may not work all features, some of reasons are described in https://github.com/bluesky-social/atproto/discussions/2334<br>
+As shown below, most features work as expected in the self-hosting environment.<br>
+Unfortunately, some features may not work correctly; the reasons for this are described in https://github.com/bluesky-social/atproto/discussions/2334<br>
 
-test results with 'asof-2024-06-02' and later:<BR>
+Test results with 'asof-2024-06-02' and later:<BR>
 
-   -  ok: create account on pds (via social-app, bluesky API).
-   -  ok: basic usages on social-app
-       -  ok: sign-in, edit profilie, post/repost article, search posts/users/feeds, vote like/follow.
-       -  ok: receive notification when others vote like/follow
-       -  ok: subscribe/unsubscribe labeler in profile page.
-       -  ok: report to labeler for any post.
+   -  ok: Create account on pds (via social-app, bluesky API).
+   -  ok: Basic usages on social-app
+       -  ok: Sign in, edit profile, post/repost articles, search posts/users/feeds, vote like/follow.
+       -  ok: Receive notifications when others vote like/follow you.
+       -  ok: Subscribe/unsubscribe to labeler in profile page.
+       -  ok: Report to labeler for any post.
        -  not yet: DM(chat) with others.
-   -  ok: integration with [feed-generator](https://github.com/bluesky-social/feed-generator) NOTE: it has some delay, reload on social-app.
-   -  ok: moderation with [ozone](https://github.com/bluesky-social/ozone).
-       -  ok: sign-in and configure labels on ozone-UI.
-       -  ok: receive the report sent by user.
-       -  ok: assign label to the post/acccount on ozone UI, then events published to subscribeLabels.
-       -  ok: the view of post changed on social-app according to label assignments, when using [workaround tool](https://github.com/itaru2622/bluesky-selfhost-env/blob/master/ops-helper/apiImpl/subscribeLabels2BskyDB.ts).
+   -  ok: Integrate with [feed-generator](https://github.com/bluesky-social/feed-generator) NOTE: it has some delay, reload on social-app.
+   -  ok: Moderate with [ozone](https://github.com/bluesky-social/ozone).
+       -  ok: Sign in and configure labels on ozone-UI.
+       -  ok: Receive the report sent by user.
+       -  ok: Assign label to the post/account on ozone-UI, then events published to subscribeLabels.
+       -  ok: The view of post changes on social-app when using [workaround tool](https://github.com/itaru2622/bluesky-selfhost-env/blob/master/ops-helper/apiImpl/subscribeLabels2BskyDB.ts).
           -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
-   -  ok: subscribe events from pds/bgs(relay)/ozone by firehose/websocket.
-   -  ok: subscribe events from jetstream,  since 2024-10-19r1
-   -  not yet: others.
+   -  ok: Subscribe to events from pds/bgs(relay)/ozone by firehose/websocket.
+   -  ok: Subscribe to events from jetstream, since 2024-10-19r1
+   -  not yet: Others.
 
 [back to top](#top)
-## <a id="ops"/>operations for self-hosting bluesky (powered by Makefile)
+## <a id="ops"/>Operations for self-hosting bluesky (powered by Makefile)
 
-below, it assumes self-hosting domain is <strong>mysky.local.com</strong> (defined in Makefile).<br>
-you can change the domain name by environment variable as below:
+The following operations assume that the self-hosting domain is <strong>mysky.local.com</strong> (defined in Makefile).<br>
+You can change the domain name by setting the environment variable as follows:
 
-### <a id="ops0-configparams"/>0) configure params and install tools for ops
+### <a id="ops0-configparams"/>0) Configure params and install tools for ops
 
 ```bash
-# 1) set domain name for self-hosting bluesky
+### <a id="ops0-configparams"/>0) Configure parameters and install tools
+
+```bash
+# 1) Set domain name for self-hosting bluesky
 export DOMAIN=whatever.yourdomain.com
 
-# 2) set asof date, to distinguish docker images / its sources.
-#    2025-03-12(for latest prebuild, in %Y-%m-%d), or latest (following docker image naming manner in lazy).
+# 2) Set 'asof' date (YYYY-MM-DD or 'latest') to select docker images and sources.
+#    Example: 2025-03-12 (latest prebuild) or 'latest' (following docker image naming).
 export asof=2025-03-12
 
-# 3) set email addresses.
+# 3) Set email addresses:
 
-# 3-1) EMAIL4CERTS:  to lets encrypt for signing certificates.
+# 3-1) EMAIL4CERTS: for Let's Encrypt certificate signing.
 export EMAIL4CERTS=your@mail.address
-# for self-signed certificates, use below(`internal` is reserved keyword).
-# It is recommended to use `internal` for avoid meeting rate limits, until you are sure it ready to self-hosting.
+# Use 'internal' (reserved) for self-signed certificates to avoid rate limits during setup.
 export EMAIL4CERTS=internal
 
-# 3-2) PDS_EMAIL_SMTP_URL: for PDS,  like smtps://youraccount:your-app-password@smtp.gmail.com
+# 3-2) PDS_EMAIL_SMTP_URL: for PDS (e.g., smtps://youraccount:your-app-password@smtp.gmail.com)
 export PDS_EMAIL_SMTP_URL=smtps://
 
-# 3-3) FEEDGEN_EMAIL: for feed-generator account in bluesky
+# 3-3) FEEDGEN_EMAIL: for feed-generator account.
 export FEEDGEN_EMAIL=feedgen@example.com
 
-## install tools, if you don't have yet.
+## Install required tools (if missing).
 apt install -y make pwgen
 (cd ops-helper/apiImpl ; npm install)
 (sudo curl -o /usr/local/bin/websocat -L https://github.com/vi/websocat/releases/download/v1.13.0/websocat.x86_64-unknown-linux-musl; sudo chmod a+x /usr/local/bin/websocat)
 
-# 4) check your configuration, from the point of view of ops.
+# 4) Check configuration.
 make echo
 
-# 5) generate secrets for bluesky containers, and check those value:
+# 5) Generate and check container secrets.
 make genSecrets
 ```
 
-### <a id="ops1-prepare"/>1) prepare on your network
+### <a id="ops1-prepare"/>1) Prepare your network
 
-1) make DNS A-Records in your self-hosting network.<BR>
+1) Create DNS A-Records in your self-hosting network.<BR>
 
-at least, following two A-Records are required.<BR>
-refer [appendix](#sample-dns-config) for sample DNS server(bind9) configuration.
+At a minimum, you will need the following two A-Records.<BR>
+Refer the [appendix](#sample-dns-config) for a sample DNS server (bind9) configuration.
 
 ```
      -    ${DOMAIN}
      -  *.${DOMAIN}
 ```
 
-2) generate and install CA certificate (usecases for private/closed network, and others using self-signed certificates).
-    -  after generation, copy crt and key as ./certs/root.{crt,key}
-    -  note: don't forget to install root.crt to your host machine and browser.
+2) Generate and install a CA certificate (necessary for private/closed networks and when working with self-signed certificates).
+    -  Once generated, copy the crt and key files to ./certs/root.{crt,key}
+    -  Important: Install root.crt on your host machine and within your browser.
+Follow the steps below to easily obtain self-signed CA certificates:
 
-the easiest way to get self-signed CA certificates is below.
 ```
-# get and store self-signed CA certificate into ./certs/root.{crt,key}, by using caddy.
+# Get and store the self-signed CA certificate into ./certs/root.{crt,key} with caddy.
 make getCAcert
-# install CA cert on host machine.
+# Install the CA certificate on the host machine.
 make installCAcert
 
-# don't forget to install certificate to browser.
+# Remember to install the certificate in your browser.
 ```
 
-### <a id="ops2-check"/>2) check if it's ready to self-host bluesky
+### <a id="ops2-check"/>2) Check if it's ready to self-host bluesky
 
 ```bash
-# check DNS server responses for your self-host domain
+# Check DNS server responses for your self-hosting domain
 dig  ${DOMAIN}
 dig  any.${DOMAIN}
 
-# check if DNS works as expected. test from all nodes you want to access to your selfhosting bluesky, including host and client machines.
+# Check if DNS works as expected. Test from all nodes you want to access your self-hosting bluesky, including host and client machines.
 ping ${DOMAIN}
 ping any.${DOMAIN}
 
-# start containers for test
+# Start containers for testing
 make    docker-start f=./docker-compose-debug-caddy.yaml services=
 
-# test HTTPS and WSS with your docker environment
+# Test HTTPS and WSS with your docker environment
 curl -L https://test-wss.${DOMAIN}/
 websocat wss://test-wss.${DOMAIN}/ws
 
-# test reverse proxy mapping if it works as expected for bluesky
-#  those should be redirect to PDS
+# Test reverse proxy mapping to ensure it works as expected for bluesky
+#  These should redirect to PDS
 curl -L https://pds.${DOMAIN}/xrpc/any-request | jq
 curl -L https://some-hostname.pds.${DOMAIN}/xrpc/any-request | jq
 
-#  those should be redirect to social-app
+#  These should redirect to social-app
 curl -L https://pds.${DOMAIN}/others | jq
 curl -L https://some-hostname.pds.${DOMAIN}/others | jq
 
-# stop test containers, without persisting data
+# Stop test containers, without persisting data
 make    docker-stop-with-clean f=./docker-compose-debug-caddy.yaml
 ```
-=> if testOK then go ahead, otherwise check your environment.
 
+=> If testOK, then go ahead; otherwise, examine your environment.
 
-### <a id="ops3-run"/>3) deploy bluesky on your env.
+### <a id="ops3-run"/>3) Deploy bluesky
 
-first, describes deploying bluesky with prebuild images.<BR>
-[later](#hack-clone-and-build) describes how to build images from sources by yourself.
+This section first outlines deploying bluesky with prebuilt images.<BR>
+Refer [later](#hack-clone-and-build) for instructions on building images from sources independently.
 
 ```bash
-# 0) pull prebuild docker images from docker.io, to enforce skip building images.
+# 0) Pull prebuilt docker images from docker.io to explicitly avoid building images.
 make docker-pull
 
-# 1) deploy required containers (database, caddy etc).
+# 1) Deploy the essential containers (database, caddy, etc.).
 make docker-start
 
-# wait until log message becomes silent.
+# Wait for log messages to cease.
 
-# 2) deploy bluesky containers(plc, bgs, appview, pds, ozone, ...)
+# 2) Deploy the core bluesky containers (plc, bgs, appview, pds, ozone, ...).
 make docker-start-bsky
 
-# below ops is no more needed by patching/152-indigo-newpds-dayper-limit.diff
-# 3) set bgs parameter for perDayLimit via REST API.
+# The operation below is obsolete due to patching/152-indigo-newpds-dayper-limit.diff
+# 3) Configure the bgs parameter for the perDayLimit setting using the REST API.
 # ~~~ make api_setPerDayLimit ~~~
 ```
 
-### <a id="ops4-run-fg"/>4) deploy feed-generator on your env.
+### <a id="ops4-run-fg"/>4) Deploy the Feed Generator
 
 ```bash
-# 1) check if social-app is ready to serve.
+# 1) Verify that the social-app is ready to serve content.
 curl -L https://social-app.${DOMAIN}/
 
-# 2) create account for feed-generator
+# 2) Generate an account specifically for the feed generator.
 make api_CreateAccount_feedgen
 
-# 3) start bluesky feed-generator
+# 3) Launch the bluesky feed-generator.
 make docker-start-bsky-feedgen  FEEDGEN_PUBLISHER_DID=did:plc:...
 
-# 4) announce existence of feed ( by scripts/publishFeedGen.ts on feed-generator).
+# 4) Publish the feed's existence (using scripts/publishFeedGen.ts on the feed-generator).
 make publishFeed
 ```
 
-### <a id="ops4-run-ozone"/>4-2) deploy ozone on your env.
+### <a id="ops4-run-ozone"/>4-2) Deploy Ozone
 
 ```bash
-# 1) create account for ozone service/admin
-#  you need to use valid email address since ozone/PDS sends email for confirmation code.
+# 1) Generate an account for the ozone service or administrator.
+#  A working email address is essential, as ozone/PDS will send a confirmation code to it.
 make api_CreateAccount_ozone                    email=your-valid@email.address.com handle=...
 
-# 2) start ozone
-# ozone uses the same DID for  OZONE_SERVER_DID and OZONE_ADMIN_DIDS, at [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)
+# 2) Launch Ozone
+# Ozone uses the same DID for both OZONE_SERVER_DID and OZONE_ADMIN_DIDS, as documented in [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)
 make docker-start-bsky-ozone  OZONE_SERVER_DID=did:plc:  OZONE_ADMIN_DIDS=did:plc:
 
-# 3) start workaround tool to index label assignments into appview DB via subscribeLabels.
+# 3) Run the workaround tool to index label assignments into the appview DB through subscribeLabels.
 # ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts --help
 ./ops-helper/apiImpl/subscribeLabels2BskyDB.ts
 
-# 4) [required in occasional] update DidDoc before sign-in to ozone (required since asof-2024-07-05)
-#    first, request and get PLC sign by email
+# 4) [Required occasionally] Refresh the DidDoc prior to ozone sign-in (required since asof-2024-07-05)
+#    First, request and get PLC signature by email
 make api_ozone_reqPlcSign                       handle=... password=...
-#    update didDoc with above sign
+#    Then, update the didDoc using obtained signature
 make api_ozone_updateDidDoc   plcSignToken=     handle=...  ozoneURL=...
 
-# 5) [optional] add member to the ozone team (i.e: add role to user):
-#    valid roles are: tools.ozone.team.defs#roleAdmin | tools.ozone.team.defs#roleModerator | tools.ozone.team.defs#roleTriage
+# 5) [Optional] Invite a new member to the ozone team (by assigning a role):
+#    Valid roles are: tools.ozone.team.defs#roleAdmin | tools.ozone.team.defs#roleModerator | tools.ozone.team.defs#roleTriage
 make api_ozone_member_add   role=  did=did:plc:
 ```
 
-### <a id="ops4-run-jetstream"/>4-3) deploy jetstream on your env.
+### <a id="ops4-run-jetstream"/>4-3) Deploy Jetstream
 ```bash
 make docker-start-bsky-jetstream
 ```
 
 
-### <a id="ops5-play"/>5) play with self-hosted blusky.
+### <a id="ops5-play"/>5) Play with self-hosted blusky.
 
-on your browser, access ```https://social-app.${DOMAIN}/``` such as ```https://social-app.mysky.local.com/```
+Access ```https://social-app.${DOMAIN}/``` (e.g., ```https://social-app.mysky.local.com/```) in your browser.
 
-refer [screenshots](./docs/screenshots), for UI operations to create/sign-in account on your self-hosting bluesky.
+See the [screenshots](./docs/screenshots) for instructions on creating or signing in to an account.
 
-### <a id="ops5-play-jetstream"/>5-1) subscribe jetstream
+### <a id="ops5-play-jetstream"/>5-1) Subscribe Jetstream
 
 ```bash
-# subscribe almost all collections from jetstream
+# Subscribe almost all collections from jetstream
 websocat "wss://jetstream.${DOMAIN}/subscribe?wantedCollections=app.bsky.actor.profile&wantedCollections=app.bsky.feed.like&wantedCollections=app.bsky.feed.post&wantedCollections=app.bsky.feed.repost&wantedCollections=app.bsky.graph.follow&wantedCollections=app.bsky.graph.block&wantedCollections=app.bsky.graph.muteActor&wantedCollections=app.bsky.graph.unmuteActor"
 ```
 
-### <a id="ops5-play-ozone"/>5-2) play with ozone (moderation)
+### <a id="ops5-play-ozone"/>5-2) Play with ozone (moderation)
 
-on your browser, access ```https://ozone.${DOMAIN}/configure``` such as ```https://ozone.mysky.local.com/configure```
+Access ```https://ozone.${DOMAIN}/configure``` (e.g., ```https://ozone.mysky.local.com/configure```) in your browser.
 
-### <a id="ops6-stop"/>6) stop all containters
+### <a id="ops6-stop"/>6) Stop all containters
 
 ```bash
-# choice1) shutdown containers but keep data alive.
+# Choice 1: Shut down containers, retaining data.
 make docker-stop
 
-# choice2) shutdown containers and clean those data
+# Choice 2: Shut down containers and delete the data.
 make docker-stop-with-clean
 ```
 
 [back to top](#top)
 ## <a id="hack"/>Hack
 
-### <a id="hack-ops-CreateAccount"/>create accounts on your bluesky in easy
+### <a id="hack-ops-CreateAccount"/>Create accounts on your bluesky easily
 
 ```bash
 export u=foo
 make api_CreateAccount handle=${u}.pds.${DOMAIN} password=${u} email=${u}@example.com resp=./data/accounts/${u}.secrets
 
-#then, to make another accounts, just re-assign $u and call the above ops, like below.
+# To create more accounts, simply re-assign $u and call the above operation, as shown below.
 export u=bar
 !make
 
@@ -274,60 +276,58 @@ export u=baz
 !make
 ```
 
-### <a id="hack-clone-and-build"/>build docker images from sources by yourself
+### <a id="hack-clone-and-build"/>Build docker images from sources yourself
 
-after configuring [params](#ops0-configparams) and [optional env](#hack-ops-development),
-operate as below:
+After configuring the [parameters](#ops0-configparams) and [optional environment variable](#hack-ops-development), proceed as follows:
 
 ```bash
-# get sources from all repositories
+# Get source code from all repositories
 make    cloneAll
 
-# create work branches and keep staying on them for all repositories (repos/*; optional but recommended for safe.)
+# Create work branches and stay on them for all repositories (repos/*); optional but recommended for safety.
 make    createWorkBranch
 ```
 
-then build docker images as below:
+Then, build the docker images as follows:
 
 ```bash
-# 0) apply mimimum patch to build images, regardless self-hosting.
-#      as described in https://github.com/bluesky-social/atproto/discussions/2026 for feed-generator/Dockerfile etc.
-# NOTE: this ops checkout new branch before applying patch, and keep staying new branch
+# 0) Apply the minimum necessary patch to build images, regardless of self-hosting.
+#    See https://github.com/bluesky-social/atproto/discussions/2026 for details, specifically for feed-generator/Dockerfile etc.
+# NOTE: This operation will create a new branch, apply the patch, and stay on that new branch.
 make patch-dockerbuild
 
-# 1) build images with original
+# 1) Build the images
 make build DOMAIN= f=./docker-compose-builder.yaml
 
-# below ops is now obsoleted and unsupported bacause of fragile(high cost and low return). also below patch has no effect on PDS scaling out(multiple PDS domains).
-# ~~ 2) apply optional patch for self-hosting, and re-build image ~~
-# ~~  'optional' means, applying this patch is not mandatory to get self-hosting environment. ~~
-# ~~ NOTE: this ops checkout new branch before applying patch, and keep staying new branch ~~
+# The following operation is obsolete and no longer supported due to its fragile nature (high cost and low return). Also, this patch has no effect on PDS scaling out (multiple PDS domains).
+# ~~ 2) Optionally apply a patch for self-hosting and rebuild the image ~~
+# ~~  'optional' signifies that applying this patch is not essential for achieving a self-hosting environment. ~~
+# ~~ NOTE: This operation will create a new branch, apply the patch, and keep you on that branch. ~~
 #
 # ~~ make _patch-selfhost-even-not-mandatory ~~
 # ~~ make build services=social-app f=./docker-compose-builder.yaml ~~
 ```
 
 [back to top](#top)
-### <a id="hack-ops-development"/>ops on development with your remote fork repo.
+### <a id="hack-ops-development"/>Streamlined Development Using Your Remote Fork Repository
 
-when you set fork_repo_prefix variable before cloneAll,
-this ops registers your remote fork repository with ```git remote add fork ....```
-then you have additional easy ops against multiple repositores, as below.
+By setting the fork_repo_prefix variable before cloneAll, it registers your remote fork repository with `git remote add fork ....`
+then you have additional easy operations against multiple repositores, as below.
 
 ```bash
 export fork_repo_prefix=git@github.com:YOUR_GITHUB_ACCOUNT/
 
 make cloneAll
 
-# manage(push and pull) branches and tags for all repos by single operation against your remote fork repositories.
+# Easily manage (push and pull) branches and tags for all repositories with a single command targeting your remote fork repositories.
 make exec under=./repos/* cmd='git push fork branch'
 make exec under=./repos/* cmd='git tag -a "asof-XXXX-XX-XX" '
 make exec under=./repos/* cmd='git push fork --tags'
 
-# push something on justOneRepo to your fork repository.
-make exec under=./repos/justOneRepo cmd='git push fork something'
+# Push your develop-branch in justOneRepo working folder to your remote fork repository.
+make exec under=./repos/justOneRepo cmd='git push fork develop-branch'
 
-# refer Makefile for details and samples.
+# See the Makefile for complete details and usage examples.
 ```
 
 [back to top](#top)
