@@ -331,33 +331,33 @@ make exec under=./repos/justOneRepo cmd='git push fork develop-branch'
 ```
 
 [back to top](#top)
-### <a id="hack-EnvVars-Compose"/>check Env Vars in docker-compose
+### <a id="hack-EnvVars-Compose"/>Check Env Vars in docker-compose
 
-1) get all env vars in docker-compose
+1) Get all env vars in docker-compose
 
 ```bash
-# names and those values
+# Names and their values
 _yqpath='.services[].environment, .services[].build.args'
 _yqpath='.services[].environment'
 
-# lists of var=val
+# List of var=val
 cat ./docker-compose-builder.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f
 
-# output in yaml
+# Output in yaml
 cat ./docker-compose-builder.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f  \
   | awk -F= -v col=":" -v q="'" -v sp="  " -v list="-" '{print   sp list sp q $1 q col sp q $2 q}' \
   | sed '1i defs:' | yq -y
 
 
-# list of names
+# List of names
 cat ./docker-compose-builder.yaml | yq -y "${_yqpath}" \
   | grep -v '^---' | sed 's/^- //' | sort -u -f \
   | awk -F= '{print $1}' | sort -u -f
 ```
 
-2) env vars regarding {URL | DID | DOMAIN} == mapping rules in docker-compose
+2) Get env vars regarding {URL | DID | DOMAIN} == mapping rules in docker-compose
 
 ```bash
 # get {name=value} of env vars regarding { URL | DID | DOMAIN }
@@ -373,7 +373,7 @@ cat ./docker-compose-builder.yaml | yq -y .services[].environment \
  | tee /tmp/url-or-did.txt
 ```
 
-3) get mapping rules in reverse proxy (caddy )
+3) Get mapping rules in reverse proxy (caddy )
 
 ```bash
 # dump rules, no idea to convert into  easy readable format...
@@ -381,35 +381,35 @@ cat config/caddy/Caddyfile
 ```
 
 [back to top](#top)
-### <a id="hack-EnvVars-Sources"/>check Env Vars in sources
+### <a id="hack-EnvVars-Sources"/>Check Env Vars in sources
 
-1) files related env vars in sources
+1) Get files related env vars in sources
 
 ```bash
-# files named *env*
+# Files named *env*
 find repos -type f | grep -v -e /.git/  | grep -i env \
   | grep -v -e .jpg$ -e .ts$  -e .json$ -e .png$ -e .js$
 
-# files containing 'export'
+# Files containing 'export'
 find repos -type f | grep -v /.git/  | xargs grep -l export \
   | grep -v -e .js$ -e .jsx$  -e .ts$ -e .tsx$ -e .go$ -e go.sum$ -e go.mod$ -e .po$ -e .json$ -e .patch$ -e .lock$ -e .snap$
 ```
 
-2) get all env vars from source code
+2) Get all env vars from source code
 
 ```bash
-#in easy
+# In an easy way
 _files=repos
-#ensure files to search  envs
+# Ensure files to search for envs
 _files=`find repos -type f | grep -v -e '/.git' -e /__  -e /tests/ -e _test.go -e /interop-test-files  -e /testdata/ -e /testing/ -e /jest/ -e /node_modules/ -e /dist/ | sort -u -f`
 
-# for javascripts families from process.env.ENVNAME
+# For JavaScripts families, get env vars from process.env.ENVNAME
 grep -R process.env ${_files} \
   | cut -d : -f 2- | sed 's/.*process\.//' | grep '^env\.' | sed 's/^env\.//' \
   | sed -r 's/(^[A-Za-z_0-9\-]+).*/\1/' | sort -u -f \
   | tee /tmp/vars-js1.txt
 
-# for javascripts families from envXXX('MORE_ENVNAME'), refer atproto/packages/common/src/env.ts for envXXX
+# For JavaScripts families, get env vars from envXXX('MORE_ENVNAME'), Refer to atproto/packages/common/src/env.ts for envXXX
 grep -R -e envStr -e envInt -e envBool -e envList ${_files} \
   | cut -d : -f 2- \
   | grep -v -e ^import -e ^export -e ^function  \
@@ -417,13 +417,13 @@ grep -R -e envStr -e envInt -e envBool -e envList ${_files} \
   | grep \' | awk -F\' '{print $2}' | sort -u -f \
   | tee /tmp/vars-js2.txt
 
-# for golang  from EnvVar(s): []string{"ENVNAME", "MORE_ENVNAME"}
+# For golang, get env vars from EnvVar(s): []string{"ENVNAME", "MORE_ENVNAME"}
 grep -R EnvVar ${_files} \
   | cut -d : -f 3- | sed -e 's/.*string//' -e 's/[,"{}]//g' \
   | tr ' ' '\n' | grep -v ^$ | sort -u -f \
   | tee /tmp/vars-go.txt
 
-# for docker-compose from services[].environment
+# for docker-compose, get env vars from services[].environment
 echo {$_files} \
   | tr ' ' '\n' | grep -v ^$ | grep -e .yaml$ -e .yml$ | grep compose \
   | xargs yq -y .services[].environment | grep -v ^--- | sed 's/^- //' \
@@ -433,14 +433,14 @@ echo {$_files} \
   | tee /tmp/vars-compose.txt
 
 
-# get unique lists
+# Get unique lists
 cat /tmp/vars-js1.txt /tmp/vars-js2.txt /tmp/vars-go.txt /tmp/vars-compose.txt | sort -u -f > /tmp/envs.txt
 
-# pick env vars related to mapping {URL, ENDPOINT, DID, HOST, PORT, ADDRESS}
+# Pick env vars related to mapping {URL, ENDPOINT, DID, HOST, PORT, ADDRESS}
 cat /tmp/envs.txt  | grep -e URL -e ENDPOINT -e DID -e HOST -e PORT -e ADDRESS
 ```
 
-3) find {URL | DID | bsky } near env names in sources
+3) Find {URL | DID | bsky } near env names in sources
 
 ```bash
 find repos -type f | grep -v -e /.git  -e __ -e .json$ \
@@ -448,7 +448,7 @@ find repos -type f | grep -v -e /.git  -e __ -e .json$ \
   | grep -A2 -B2 -e :// -e did: -e bsky
 ```
 
-4) find bsky.{social,app,network} in sources ( to check hard-coded domain/FQDN )
+4) Find bsky.{social, app, network} in sources (to check hard-coded domain/FQDN)
 
 ```bash
 find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e .md$  -e .sh$ -e .json$ -e .txt$ -e _test.go$ \
@@ -456,41 +456,41 @@ find repos -type f | grep -v -e /.git -e /tests/ -e /__ -e Makefile -e .yaml$ -e
 ```
 
 [back to top](#top)
-### <a id="hack-EnvVars-Table"/>create a table showing {env x container => value} from source and docker-compose.
+### <a id="hack-EnvVars-Table"/>Create a table showing {env x container => value} from source and docker-compose.
 
-this hask uses the result(/tmp/envs.txt) of [the above](#hack-EnvVars-Sources) as input.
+This task uses the result(/tmp/envs.txt) of [the above](#hack-EnvVars-Sources) as input.
 
 ```bash
-# create table showing { env x container => value } with ops-helper script.
+# Create table showing { env x container => value } with the ops-helper script.
 cat ./docker-compose-builder.yaml | ./ops-helper/compose2envtable/main.py -l /tmp/envs.txt -o ./docs/env-container-val.xlsx
 ```
 
 [back to top](#top)
-### <a id="hack-self-signed-certs"/>regarding self-signed certificates x HTTPS x containers.
+### <a id="hack-self-signed-certs"/>Regarding self-signed certificates x HTTPS x containers.
 
-this self-hosting env tried to use self-signed certificates as usual trusted certificate by installing certificates into containers.
-The expected behavior is: by sharing /etc/ssl/certs/ca-certificates.crt amang all containers, containers distinguish those in ca-certificates.crt are trusted.
+This self-hosting env tries to use self-signed certificates as trusted certificates by installing them into containers.
+The expected behavior is that by sharing /etc/ssl/certs/ca-certificates.crt amang all containers, containers can distinguish that those in ca-certificates.crt are trusted.
 
-unfortunately, this approach works just in some containers but not all.
-It seems depending on distribution(debian/alpine/...) and language(java/nodejs/golang). the rule cannot be found in actual behaviors.
-then, all of below methods are involved for safe, when it uses self-signed certificates.
+Unfortunately, this approach works just in some containers, but not all.
+It seems depending on distribution(Debian/Alpine/...) and language(Java/Node.js/Golang). The rule cannot be determined in actual behaviors.
+Therefore, all of the methods below are involved for safety when using self-signed certificates.
 
-- host deploys /etc/ssl/certs/ca-certificates.crts to containers by volume mount.
-- define env vars for self-signed certificates, such as GOINSECURE, NODE_TLS_REJECT_UNAUTHORIZED for each language.
+- The host deploys /etc/ssl/certs/ca-certificates.crts to containers by volume mount.
+- Define env vars for self-signed certificates, such as GOINSECURE, NODE_TLS_REJECT_UNAUTHORIZED for each language.
 
 
 [back to top](#top)
 ## <a id="appendix"/>Appendix
 
-### <a id="screenshots"/> screen shots:
+### <a id="screenshots"/>Screen shots:
 
-| create account | sign-in|
+| Create account | Sign-in|
 |:---|:---|
 |<img src="./docs/screenshots/1-bluesky-create-account.png" style="height:45%; width:45%">|<img src="./docs/screenshots/1-bluesky-sign-in.png"  style="height:45%; width:45%">|
 |<img src="./docs/screenshots/2-bluesky-choose-server.png"  style="height:45%; width:45%">|<img src="./docs/screenshots/2-bluesky-choose-server.png"  style="height:45%; width:45%">|
 |<img src="./docs/screenshots/3-bluesky-create-account.png"  style="height:45%; width:45%">|<img src="./docs/screenshots/3-bluesky-sign-in.png"  style="height:45%; width:45%">|
 
-### <a id="sources"/>sources in use:
+### <a id="sources"/>Sources in use:
 
 | components     | url (origin)                                           |
 |----------------|:-------------------------------------------------------|
@@ -514,7 +514,7 @@ other dependencies:
 
 ### <a id="sample-dns-config"/>DNS server configuration sample (bind9)
 
-description of test network:
+Description of test network:
 
 ```
 DOMAIN for self-hosting: mysky.local.com
@@ -529,7 +529,7 @@ DNS A-Records:
   - *.mysky.local.com  : 192.168.1.51
 ```
 
-the above would be described in bind9 configuration file as below:
+The above would be described in bind9 configuration file as below:
 
 ```
 ::::::::::::::
@@ -574,9 +574,9 @@ $ORIGIN mysky.local.com.
 *			A	192.168.1.51
 ```
 
-cf. the most simple way to use the above DNS server(192.168.1.27) in temporal,<br>
-add it in /etc/resolv.conf as below on all testing machines
-(docker host, client machines for browser)
+cf. The simplest way to use the above DNS server(192.168.1.27) temporaly is<br>
+to add it to /etc/resolv.conf as shown below on all testing machines
+(docker host, client machines for browsers)
 
 ```
 nameserver 192.168.1.27
