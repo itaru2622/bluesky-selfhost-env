@@ -106,14 +106,14 @@ index 0aa4460..ecec7d1 100644
  export const isBlueSkyAppUrl = (url: string) => blueSkyUrlMatcher.test(url)
  
 diff --git a/package.json b/package.json
-index d6bf5fc..b3b426c 100644
+index 8919841..750dce9 100644
 --- a/package.json
 +++ b/package.json
-@@ -36,6 +36,7 @@
+@@ -37,6 +37,7 @@
      "kbar": "^0.1.0-beta.45",
      "lande": "^1.0.10",
-     "next": "14.2.5",
+     "next": "15.2.4",
 +    "next-runtime-env": "^3.2.1",
-     "react": "18.2.0",
-     "react-dom": "18.2.0",
-     "react-json-view": "1.21.3",
+     "react": "19.1.0",
+     "react-dom": "19.1.0",
+     "react-dropzone": "^14.3.5",
