@@ -417,7 +417,7 @@ services:
 
   ozone-standalone:
     # moderation-api:
-    image: itaru2622/bluesky-ozone:${asof}
+    image: itaru2622/bluesky-ozone:latest
     ports:
       - 3000:3000
     volumes:
