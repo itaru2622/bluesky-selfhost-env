@@ -1,0 +1,17 @@
+diff --git a/Dockerfile b/Dockerfile
+index 65f2595..fe10caf 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -2,9 +2,10 @@ FROM node:20.11-alpine3.18 as build
+ 
+ WORKDIR /usr/src/ozone
+ 
+-COPY package.json yarn.lock .
+-RUN yarn
+ COPY . .
++RUN corepack enable
++RUN yarn
++RUN yarn type-check
+ RUN yarn build
+ RUN rm -rf node_modules .next/cache
+ RUN mv service/package.json package.json && mv service/yarn.lock yarn.lock
