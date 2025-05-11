@@ -1,0 +1,35 @@
+diff --git a/Dockerfile b/Dockerfile
+index fe10caf..5fe2e25 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,8 +1,16 @@
+ FROM node:20.11-alpine3.18 as build
+ 
++WORKDIR /usr/src/next-runtime-env
++RUN apk add git; npm install -g pnpm typescript; \
++    ( git clone https://github.com/itaru2622/next-runtime-env . -b fix-nextjs-15-compatibility; \
++      pnpm i; \
++      pnpm build; \
++    )
++
+ WORKDIR /usr/src/ozone
+ 
+ COPY . .
++RUN sed -i 's#"next-runtime-env": .*#"next-runtime-env": "file://usr/src/next-runtime-env",#' package.json
+ RUN corepack enable
+ RUN yarn
+ RUN yarn type-check
+@@ -18,9 +26,12 @@ FROM node:20.11-alpine3.18
+ RUN apk add --update dumb-init
+ ENV TZ=Etc/UTC
+ 
++WORKDIR /usr/src/next-runtime-env
++COPY --from=build /usr/src/next-runtime-env /usr/src/next-runtime-env
++
+ WORKDIR /usr/src/ozone
+ COPY --from=build /usr/src/ozone /usr/src/ozone
+-RUN chown -R node:node .
++RUN chown -R node:node . /usr/src/next-runtime-env
+ 
+ ENTRYPOINT ["dumb-init", "--"]
+ EXPOSE 3000
