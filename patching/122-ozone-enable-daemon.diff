@@ -1,5 +1,5 @@
 diff --git a/service/index.js b/service/index.js
-index 943c281..7721cd9 100644
+index d5295a3..b78ad42 100644
 --- a/service/index.js
 +++ b/service/index.js
 @@ -1,5 +1,7 @@
@@ -19,7 +19,7 @@ index 943c281..7721cd9 100644
  const pkg = require('@atproto/ozone/package.json')
  
  async function main() {
-@@ -16,37 +19,48 @@ async function main() {
+@@ -16,30 +19,41 @@ async function main() {
    const frontendHandler = frontend.getRequestHandler()
    await frontend.prepare()
    // backend
@@ -42,18 +42,7 @@ index 943c281..7721cd9 100644
    }
 -  const ozone = await OzoneService.create(config, secrets)
 +  const server = await ozone.OzoneService.create(config, secrets)
-   // setup handlers
--  ozone.app.get('/.well-known/ozone-metadata.json', (_req, res) => {
-+  server.app.get('/.well-known/ozone-metadata.json', (_req, res) => {
-     return res.json({
--      did: ozone.ctx.cfg.service.did,
--      url: ozone.ctx.cfg.service.publicUrl,
--      publicKey: ozone.ctx.signingKey.did(),
-+      did: server.ctx.cfg.service.did,
-+      url: server.ctx.cfg.service.publicUrl,
-+      publicKey: server.ctx.signingKey.did(),
-     })
-   })
+ 
    // Note: We must use `use()` here. This should be the last middleware.
 -  ozone.app.use((req, res) => {
 +  server.app.use((req, res) => {
