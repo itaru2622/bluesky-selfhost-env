@@ -4,6 +4,7 @@
 #
 # global options: starts >>>>
 {
+        email {$EMAIL4CERTS}
 #	debug
         on_demand_tls {
           ask http://caddy-sidecar:80
@@ -23,21 +24,24 @@
     @corsOrigin {
         header_regexp Origin ^https?://*.({$DOMAIN})$
     }
-
+    @corsOriginAllowed {
+        header_regexp Origin ^https?://(.*\.{$DOMAIN}|bsky\.app)$
+    }
     handle @cors_preflight {
         header {
-            Access-Control-Allow-Origin "*"
+            Access-Control-Allow-Origin {http.request.header.Origin}
             Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE"
-            Access-Control-Allow-Headers *
+            Access-Control-Allow-Headers "Authorization, Content-Type, atproto-accept-labelers, atproto-proxy, x-bsky-topics"
             Vary Origin
             defer
         }
         respond "" 204
     }
 
-    handle @corsOrigin {
+    handle @corsOriginAllowed {
         header {
-            Access-Control-Allow-Origin "*"
+            Access-Control-Allow-Origin {http.request.header.Origin}
+            Access-Control-Allow-Headers "Authorization, Content-Type, atproto-accept-labelers, atproto-proxy, x-bsky-topics"
             Access-Control-Expose-Headers *
             Vary Origin
             defer
@@ -51,10 +55,10 @@
 #   accessible as https://ca.DOMAIN:9000/acme/local/directory
 #   cf. https://blog.kurokobo.com/archives/3669#Caddy_acme_server
 #
-ca.{$DOMAIN}:9000 {
-	tls internal
-	acme_server
-}
+#ca.{$DOMAIN}:9000 {
+#	tls internal
+#	acme_server
+#}
 # self-hosting CA with ACME,  for self signed certicates <<<<
 
 # starts; reverse proxying rules >>>>>

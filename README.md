@@ -162,6 +162,20 @@ make    docker-stop-with-clean f=./docker-compose-debug-caddy.yaml
 
 => If testOK, then go ahead; otherwise, examine your environment.
 
+### Configure pod PLC
+
+Create a file .env.plc and insert 3 env variables there:
+
+1. `POD_PLC_CONTRACT_ADDRESS=0x....`: the address of deployed PLC contract
+2. `POD_PLC_RPC_URL=ws://...`: the adress of the network RPC URL
+3. `POD_PLC_PRIVATE_KEY=0x...`: the private key of wallet that will be used to sign PLC transactions
+
+Build PLC service Docker image from:
+
+1. Clone https://github.com/podnetwork/pod-sdk
+2. `cd pod-sdk`
+3. `docker build -f examples/bsky/Dockerfile -t pod-plc .`
+
 ### <a id="ops3-run"/>3) Deploy bluesky
 
 This section first outlines deploying bluesky with prebuilt images.<BR>

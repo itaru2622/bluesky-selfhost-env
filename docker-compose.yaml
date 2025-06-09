@@ -1,4 +1,3 @@
-version: "3.9"
 volumes:
   caddy-data:
     name: caddy-data
@@ -65,8 +64,8 @@ services:
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates for self-signed. >>>
-      - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt:ro
-      - ./certs/root.key:/data/caddy/pki/authorities/local/root.key:ro
+      # - ./certs/root.crt:/data/caddy/pki/authorities/local/root.crt:ro
+      # - ./certs/root.key:/data/caddy/pki/authorities/local/root.key:ro
       # CA certificates for self-signed. <<<
       - caddy-data:/data
       - caddy-config:/config
@@ -82,8 +81,8 @@ services:
     environment:
       - GOINSECURE=${GOINSECURE}
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-    volumes:
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    # volumes:
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
   # to generate HTTPS certifications on-demand <<<<<
   # debug for caddy>>> 
 
@@ -118,8 +117,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - NODE_ENV=development
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-    volumes:
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    # volumes:
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # debug for bluesky with indigo subcmds <<<
 
   database:
@@ -180,32 +179,40 @@ services:
       - opensearch:/usr/share/opensearch/data/
     restart: always
 
+#   plc:
+# #   image: itaru2622/bluesky-did-method-plc:${asof}
+#     image: itaru2622/bluesky-did-method-plc:latest
+#     ports:
+#       - 2582:2582
+#     volumes:
+#       # supporting self-signed certificates, easiest way >>>>
+#       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+#       # supporting self-signed certificates, easiest way <<<<
+#     environment:
+#       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/plc
+#       - DB_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
+#       - DB_MIGRATE_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
+#       - DEBUG_MODE=1
+#       - ENABLE_MIGRATIONS=true
+#       - GOINSECURE=${GOINSECURE}
+#       - LOG_DESTINATION=1
+#       - LOG_ENABLED=true
+#       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+#       - NODE_ENV=development
+#       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+#       - PORT=2582
+#     restart: always
+#     depends_on:
+#       - database
+#       - caddy
+
   plc:
-#   image: itaru2622/bluesky-did-method-plc:${asof}
-    image: itaru2622/bluesky-did-method-plc:latest
+    image: pod-plc
     ports:
       - 2582:2582
-    volumes:
-      # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
-      # supporting self-signed certificates, easiest way <<<<
-    environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/plc
-      - DB_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
-      - DB_MIGRATE_CREDS_JSON={"username":"${POSTGRES_USER}","password":"${POSTGRES_PASSWORD}","host":"database","port":"5432","database":"plc"}
-      - DEBUG_MODE=1
-      - ENABLE_MIGRATIONS=true
-      - GOINSECURE=${GOINSECURE}
-      - LOG_DESTINATION=1
-      - LOG_ENABLED=true
-      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - NODE_ENV=development
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - PORT=2582
+    env_file:
+      - .env.plc
     restart: always
-    depends_on:
-      - database
-      - caddy
 
   pds:
     image: itaru2622/bluesky-atproto-pds:${asof}
@@ -251,7 +258,7 @@ services:
       - PDS_SERVICE_DID=did:web:${pdsFQDN}
     volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
       - pds:/pds
     restart: always
@@ -282,7 +289,7 @@ services:
       - RELAY_NEWPDS_PERDAY_LIMIT=10000
     volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
       - bgs:/data/bigsky
     restart: always
@@ -334,7 +341,7 @@ services:
       - REDIS_HOST=redis
     volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
       - bsky:/cache/
 #     - ./repos/atproto/services/bsky/api.js:/app/services/bsky/api.js:ro
@@ -349,9 +356,9 @@ services:
     ports:
       - 8100:8100
     command: /usr/bin/bskyweb serve
-    volumes:
+    # volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
       # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
@@ -369,9 +376,9 @@ services:
     image: itaru2622/bluesky-indigo-palomar:${asof}
     ports:
       - 3999:3999
-    volumes:
+    # volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
       # refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
@@ -403,7 +410,7 @@ services:
     volumes:
       - jetstream:/data
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
       - JETSTREAM_WS_URL=wss://${bgsFQDN}/xrpc/com.atproto.sync.subscribeRepos
@@ -420,9 +427,9 @@ services:
     image: itaru2622/bluesky-ozone:latest
     ports:
       - 3000:3000
-    volumes:
+    # volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
 #     - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
     environment:
@@ -468,9 +475,9 @@ services:
     command: node --enable-source-maps api.js
     ports:
       - 3000:3000
-    volumes:
+    # volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
 #     - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
     environment:
@@ -507,9 +514,9 @@ services:
   ozone-daemon:
     image: itaru2622/bluesky-atproto-ozone:${asof}
     command: node --enable-source-maps daemon.js
-    volumes:
+    # volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
       - DEBUG_MODE=1
@@ -564,6 +571,6 @@ services:
     restart: always
     volumes:
       # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
       - feed-generator:/data/
