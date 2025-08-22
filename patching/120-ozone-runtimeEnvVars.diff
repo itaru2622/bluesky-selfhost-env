@@ -47,7 +47,7 @@ index fe7c0e8..c286ac6 100644
 @@ -1,29 +1,32 @@
 +import { env } from 'next-runtime-env';
 +
- export const OAUTH_SCOPE = 'atproto transition:generic'
+ export const OAUTH_SCOPE = 'atproto transition:generic transition:chat.bsky'
 
  export const OZONE_SERVICE_DID =
 -  process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
