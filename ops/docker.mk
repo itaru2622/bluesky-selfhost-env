@@ -2,6 +2,7 @@
 docker_network ?= bsky_${DOMAIN}
 dockerCompose ?= docker compose
 auto_watchlog ?= true
+
 COMPOSE_PROFILES ?= $(shell echo ${_nrepo} | sed 's/ /,/g')
 
 _dockerUp: _load_vars _dockerUP_network
@@ -36,14 +37,16 @@ OZONE_ADMIN_HANDLE=${OZONE_ADMIN_HANDLE} \
 OZONE_ADMIN_EMAIL=${OZONE_ADMIN_EMAIL} \
 OZONE_ADMIN_DIDS=${OZONE_ADMIN_DIDS} \
 OZONE_SERVER_DID=${OZONE_SERVER_DID} \
+EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID} \
 ' \
 	| cat))
-	@echo ${_envs} | sed 's/ /\n/g' | awk -F= '{print $$1,"=",$$2}' | sed 's/ //g'
+	@echo ${_envs} | sed 's/ /\n/g' | awk -F= -v c='=' '{print $$1 c $$2}'
 
 _dockerUP_network:
 	-docker network create ${docker_network}
 docker-pull:
 	DOMAIN= asof=${asof} ${dockerCompose} -f ${f} pull
+
 build:
 	COMPOSE_PROFILES=${COMPOSE_PROFILES} DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
 
