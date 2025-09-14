@@ -348,15 +348,25 @@ services:
     image: itaru2622/bluesky-social-app:${asof}
     ports:
       - 8100:8100
-    command: /usr/bin/bskyweb serve
+    command: /usr/local/bin/boot.sh /usr/bin/bskyweb serve
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
+#      starts special envs to rewrite hardcoded EXPO_PUBLIC_ envs at built phase.
+#      real env values to use   ---v
+      - EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID}
+#     envs to rewrite from placeholder to real (space separated list) ---v
+      - PLACEHOLDER2REAL=EXPO_PUBLIC_BLUESKY_PROXY_DID
+#      target files to rewrite  ---v
+      - REWRITE_TARGETS=/localStaticCDN/static/js/*.js
+#      local folder, re-use existing env for almost same manner --v
+      - STATIC_CDN_HOST=/localStaticCDN
+#      end of special envs to rewrite hardcoded EXPO_PUBLIC_ envs at built phase.
+#       cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
       - ATP_APPVIEW_HOST=https://${publicApiFQDN}
-      # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
+#       cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
       - GOINSECURE=${GOINSECURE}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - HTTP_ADDRESS=:8100
