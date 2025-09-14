@@ -72,7 +72,10 @@ You can change the domain name by setting the environment variable as follows:
 
 ```bash
 # 1) Set domain name for self-hosting bluesky
-export DOMAIN=whatever.yourdomain.com
+#    it is recommended to try below prebuild DOMAIN, then try your original domain in next step.
+#    it is required to build social-app image by yourself because of upstream's breaking changes during Aug-Sep 2025.
+#export DOMAIN=whatever.yourdomain.com
+export DOMAIN=mysky.local.com
 
 # 2) Set 'asof' date (YYYY-MM-DD or 'latest') to select docker images and sources.
 #    Example: 2025-09-13 (latest prebuild) or 'latest' (following docker image naming).
@@ -299,13 +302,10 @@ make patch-dockerbuild
 # 1) Build the images
 make build DOMAIN= f=./docker-compose-builder.yaml
 
-# The following operation is obsolete and no longer supported due to its fragile nature (high cost and low return). Also, this patch has no effect on PDS scaling out (multiple PDS domains).
-# ~~ 2) Optionally apply a patch for self-hosting and rebuild the image ~~
-# ~~  'optional' signifies that applying this patch is not essential for achieving a self-hosting environment. ~~
-# ~~ NOTE: This operation will create a new branch, apply the patch, and keep you on that branch. ~~
-#
-# ~~ make _patch-selfhost-even-not-mandatory ~~
-# ~~ make build services=social-app f=./docker-compose-builder.yaml ~~
+# 2) apply patch and build image for selfhost domainize.
+# these are required by breaking changes in upstream during Aug-Sep 2025.
+make patch-selfhost-domainize
+make build-domainsize services=social-app f=./docker-compose-builder.yaml
 ```
 
 [back to top](#top)
