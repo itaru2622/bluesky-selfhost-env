@@ -35,6 +35,9 @@ FEEDGEN_EMAIL ?=feedgen@example.com
 OZONE_ADMIN_HANDLE ?=ozone-admin.${pdsFQDN}
 OZONE_ADMIN_EMAIL  ?=ozone-admin@example.com
 
+# social-app config to build its image
+EXPO_PUBLIC_BLUESKY_PROXY_DID=did:web:${bskyFQDN}
+
 # datetime to distinguish docker images and sources (date in %Y-%m-%d or 'latest' in docker image naming manner)
 asof ?=latest
 #asof ?=2024-04-03
@@ -238,6 +241,7 @@ echo:
 	@echo "plcFQDN       ${plcFQDN}"
 	@echo "publicApiFQDN ${publicApiFQDN}"
 	@echo "socialappFQDN ${socialappFQDN}"
+	@echo "EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID}"
 	@echo ""
 	@echo "EMAIL4CERTS: ${EMAIL4CERTS}"
 	@echo "PDS_EMAIL_SMTP_URL: ${PDS_EMAIL_SMTP_URL}"
