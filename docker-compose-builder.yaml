@@ -394,8 +394,7 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-social-app:${asof}
-    #image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
+    image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
     profiles: ['', 'social-app']
     build:
       context: ./repos/social-app/
@@ -405,6 +404,7 @@ services:
        - https_proxy=${https_proxy}
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+       - EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID}
     ports:
       - 8100:8100
     command: /usr/bin/bskyweb serve

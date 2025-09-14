@@ -345,7 +345,7 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-social-app:${asof}
+    image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
     ports:
       - 8100:8100
     command: /usr/bin/bskyweb serve
@@ -357,6 +357,7 @@ services:
       # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 >>>>
       - ATP_APPVIEW_HOST=https://${publicApiFQDN}
       # cf. https://github.com/bluesky-social/social-app/blob/main/bskyweb/example.env and https://github.com/bluesky-social/bsky-docs/issues/63 <<<<
+      - EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID}
       - GOINSECURE=${GOINSECURE}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - HTTP_ADDRESS=:8100
