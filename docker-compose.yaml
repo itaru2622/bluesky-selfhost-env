@@ -345,7 +345,7 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
+    image: itaru2622/bluesky-social-app:${tagSocial}
     ports:
       - 8100:8100
     command: /usr/bin/bskyweb serve
