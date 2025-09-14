@@ -43,6 +43,9 @@ asof ?=latest
 #asof ?=2024-04-03
 #asof ?=$(shell date +'%Y-%m-%d')
 
+#tag for social-app
+tagSocial ?=${DOMAIN}-${asof}
+
 
 ifeq ($(EMAIL4CERTS), internal)
 GOINSECURE :=${DOMAIN},*.${DOMAIN}
@@ -230,6 +233,7 @@ echo:
 	@echo "########## >>>>>>>>>>>>>>"
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
+	@echo "tagSocial ${tagSocial}"
 	@echo ""
 	@echo "bgsFQDN       ${bgsFQDN}"
 	@echo "bskyFQDN      ${bskyFQDN}"
