@@ -34,6 +34,18 @@ This repository aims to get self-hosted a bluesky environment easy, with:
 
 Currently, my latest release is <strong>2025-09-13</strong>, based on the <strong>2025-09-13</strong> code from bluesky-social.<br>
 
+### Special notes about upstream breaking changes regarding selfhost
+
+- changes in Aug-Sep 2025, atproto-proxy(bluesky proxy header) is required within social-app, which value can tune only build time but not runtime.<br>
+  impact: there is no way 'build once, run with any DOMAINs' regarding social-app<br>
+  changes on selfhosting as the result:<br>
+   - for your own domain, you can re-use most prebuild images, with social-app built by yourself.
+   - for prebuild DOMAIN (mysky.local.com), you can re-use all prebuild images.
+   - it is better to test with prebuild domain first, before trying your own domain.
+   - to follow this upstream changes, build-phase is also changed and splited into two parts as below:
+      - (regacy) ```make build``` for most components, excepts social-app.
+      - added    ```make build-domainize``` for social-app specializing to your own domain.
+
 ## <a id="status"/>Current status regarding self-hosting
 
 As shown below, most features work as expected in the self-hosting environment.<br>
@@ -72,10 +84,9 @@ You can change the domain name by setting the environment variable as follows:
 
 ```bash
 # 1) Set domain name for self-hosting bluesky
-#    it is recommended to try below prebuild DOMAIN, then try your original domain in next step.
-#    it is required to build social-app image by yourself because of upstream's breaking changes during Aug-Sep 2025.
-#export DOMAIN=whatever.yourdomain.com
+#    it is better to try below prebuild DOMAIN first, before trying your own domain. refer the above special notes for detail.
 export DOMAIN=mysky.local.com
+#export DOMAIN=whatever.yourdomain.com
 
 # 2) Set 'asof' date (YYYY-MM-DD or 'latest') to select docker images and sources.
 #    Example: 2025-09-13 (latest prebuild) or 'latest' (following docker image naming).
