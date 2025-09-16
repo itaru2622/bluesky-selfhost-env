@@ -394,7 +394,8 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-social-app:${tagSocial}
+    image: itaru2622/bluesky-social-app:${asof}
+    #image: itaru2622/bluesky-social-app:${asof}${DOMAIN}
     profiles: ['', 'social-app']
     build:
       context: ./repos/social-app/
