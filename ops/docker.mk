@@ -38,7 +38,6 @@ OZONE_ADMIN_EMAIL=${OZONE_ADMIN_EMAIL} \
 OZONE_ADMIN_DIDS=${OZONE_ADMIN_DIDS} \
 OZONE_SERVER_DID=${OZONE_SERVER_DID} \
 EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID} \
-tagSocial=${tagSocial} \
 ' \
 	| cat))
 	@echo ${_envs} | sed 's/ /\n/g' | awk -F= -v c='=' '{print $$1 c $$2}'
@@ -48,33 +47,8 @@ _dockerUP_network:
 docker-pull:
 	DOMAIN= asof=${asof} ${dockerCompose} -f ${f} pull
 
-# There is breaking changes during Aug-Sep 2025 in social-app. it cannot work without burn envs in social-app image, so here is a gaurde let developer to know.
 build:
-ifeq ($(COMPOSE_PROFILES),social-app)
-	@echo "###to buld social-app, use below command instead of this target."
-	@echo "make build-domainize ..."
-	@echo "####"
-else ifeq ($(services),social-app)
-	@echo "###to buld social-app, use below command instead of this target."
-	@echo "make build-domainize ..."
-	@echo "####"
-else
-	$(eval _D=$(filter-out social-app,${COMPOSE_PROFILES}))
-	COMPOSE_PROFILES=${_D} DOMAIN= asof=${asof} ${dockerCompose} -f ${f} build ${services}
-	@echo "####"
-	@echo "####"
-	@echo "#### do not forget build social-app for your ${DOMAIN} with below command."
-	@echo "make build-domainize ..."
-	@echo "####"
-	@echo "####"
-endif
-
-
-# social-app requires to set env regarding DOMAIN in build time(i.e: image is required to be specialized for a DOMAIN)
-# to feed value via docker-compose service.build.args, it requires --build-arg option for each param or export envs.
-# to avoid set envs in other component images, this target is created.
-build-domainize: _load_vars
-	(export ${_envs}  COMPOSE_PROFILES=social-app;  ${dockerCompose} -f ${f} build ${services} )
+	COMPOSE_PROFILES=${COMPOSE_PROFILES} DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
 
 docker-start::      setupdir ${wDir}/config/caddy/Caddyfile ${wDir}/certs/root.crt ${wDir}/certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
 ifeq ($(auto_watchlog),true)
