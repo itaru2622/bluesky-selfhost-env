@@ -1,0 +1,30 @@
+diff --git a/boot.sh b/boot.sh
+new file mode 100755
+index 000000000..4a6c7f1f9
+--- /dev/null
++++ b/boot.sh
+@@ -0,0 +1,24 @@
++#!/bin/bash
++
++# rewrite placeholder to real val for each env var
++# at buildtime:
++#  export EXPO_PUBLIC_XXX=@@EXPO_PUBLIC_XXX@@
++#  export EXPO_PUBLIC_YYY=@@EXPO_PUBLIC_YYY@@
++# at runtime
++#  export EXPO_PUBLIC_XXX='real_val1'
++#  export EXPO_PUBLIC_YYY='real_val2'
++#  export PLACEHOLDER2REAL='EXPO_PUBLIC_XXX EXPO_PUBLIC_YYY' # space separated list of env names
++#  export REWRITE_TARGETS=/localStaticCDN/static/js/*.js
++#
++# then this script rewrite EXPO_PUBLIC_XXX and EXPO_PUBLIC_YYY into real_val1, real_val2 for TARGETS files
++
++
++for p in ${PLACEHOLDER2REAL};
++do
++	e=$(env | grep ^${p})
++	v=$(env | grep ^${p} | awk -F= '{print $2}')
++        sed -i "s|@@${p}@@|${v}|g" ${REWRITE_TARGETS}
++done
++
++# execute specified command
++$@
