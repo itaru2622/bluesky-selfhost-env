@@ -1,0 +1,30 @@
+diff --git a/Dockerfile b/Dockerfile
+index 93b17a86b..195ab67e2 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -33,6 +33,8 @@ ENV EXPO_PUBLIC_RELEASE_VERSION=$EXPO_PUBLIC_RELEASE_VERSION
+ ARG EXPO_PUBLIC_BUNDLE_IDENTIFIER
+ # If not set by GitHub workflows, we're probably in Render
+ ENV EXPO_PUBLIC_BUNDLE_IDENTIFIER=${EXPO_PUBLIC_BUNDLE_IDENTIFIER:-$RENDER_GIT_COMMIT}
++ARG EXPO_PUBLIC_BLUESKY_PROXY_DID=did:web:api.bsky.app
++ENV EXPO_PUBLIC_BLUESKY_PROXY_DID=$EXPO_PUBLIC_BLUESKY_PROXY_DID
+ 
+ #
+ # Sentry
+@@ -64,6 +66,7 @@ RUN \. "$NVM_DIR/nvm.sh" && \
+   echo "EXPO_PUBLIC_RELEASE_VERSION=$EXPO_PUBLIC_RELEASE_VERSION" >> .env && \
+   echo "EXPO_PUBLIC_BUNDLE_IDENTIFIER=$EXPO_PUBLIC_BUNDLE_IDENTIFIER" >> .env && \
+   echo "EXPO_PUBLIC_BUNDLE_DATE=$(date -u +"%y%m%d%H")" >> .env && \
++  echo "EXPO_PUBLIC_BLUESKY_PROXY_DID=$EXPO_PUBLIC_BLUESKY_PROXY_DID" >> .env && \
+   echo "EXPO_PUBLIC_SENTRY_DSN=$EXPO_PUBLIC_SENTRY_DSN" >> .env && \
+   npm install --global yarn && \
+   yarn && \
+@@ -103,6 +106,8 @@ ENTRYPOINT ["dumb-init", "--"]
+ 
+ WORKDIR /bskyweb
+ COPY --from=build-env /bskyweb /usr/bin/bskyweb
++COPY --from=build-env /usr/src/social-app/bskyweb/static  /localStaticCDN/static
++COPY --from=build-env /usr/src/social-app/boot.sh         /usr/local/bin/boot.sh
+ 
+ CMD ["/usr/bin/bskyweb"]
+ 
