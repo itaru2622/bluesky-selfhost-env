@@ -34,6 +34,16 @@ This repository aims to get self-hosted a bluesky environment easy, with:
 
 Currently, my latest release is <strong>2025-09-13</strong>, based on the <strong>2025-09-13</strong> code from bluesky-social.<br>
 
+### Special notes about big impact changes in upstream regarding selfhost
+
+- changes in Aug-Sep 2025, atproto-proxy(bluesky proxy header) is required by social-app, which value can tune only at build time.
+  It breaks 'build once, run with any domain' manner on this tool, and the manner is recovered by involving local static CDN in social-app container.
+  this technique is inspired from STATIC_CDN_HOST in social-app(bskyweb) codes.
+  to achieve it, social-app got some patches for bskyweb + Dockerfile + additional shell command and docker-compose*.yaml.<br>
+   - in docker-compose-build.yaml, EXPO_PUBLIC_BLUESKY_PROXY_DID=@@EXPO_PUBLIC_BLUESKY_PROXY_DID@@ as build arg, to embed placeholder(mark) within js files.
+   - on booting phase at runtime, it rewrites placeholder with real val by runtime env EXPO_PUBLIC_BLUESKY_PROXY_DID=did:web:..., before being used by social-app.
+   - refer comments in docker-compose.yaml for detail.
+
 ## <a id="status"/>Current status regarding self-hosting
 
 As shown below, most features work as expected in the self-hosting environment.<br>
@@ -298,14 +308,6 @@ make patch-dockerbuild
 
 # 1) Build the images
 make build DOMAIN= f=./docker-compose-builder.yaml
-
-# The following operation is obsolete and no longer supported due to its fragile nature (high cost and low return). Also, this patch has no effect on PDS scaling out (multiple PDS domains).
-# ~~ 2) Optionally apply a patch for self-hosting and rebuild the image ~~
-# ~~  'optional' signifies that applying this patch is not essential for achieving a self-hosting environment. ~~
-# ~~ NOTE: This operation will create a new branch, apply the patch, and keep you on that branch. ~~
-#
-# ~~ make _patch-selfhost-even-not-mandatory ~~
-# ~~ make build services=social-app f=./docker-compose-builder.yaml ~~
 ```
 
 [back to top](#top)
