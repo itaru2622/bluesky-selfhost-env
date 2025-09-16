@@ -36,15 +36,12 @@ Currently, my latest release is <strong>2025-09-13</strong>, based on the <stron
 
 ### Special notes about upstream breaking changes regarding selfhost
 
-- changes in Aug-Sep 2025, atproto-proxy(bluesky proxy header) is required within social-app, which value can tune only build time but not runtime.<br>
-  impact: there is no way 'build once, run with any DOMAINs' regarding social-app<br>
-  changes on selfhosting as the result:<br>
-   - for your own domain, you can re-use most prebuild images, with social-app built by yourself.
-   - for prebuild DOMAIN (mysky.local.com), you can re-use all prebuild images.
-   - it is better to test with prebuild domain first, before trying your own domain.
-   - to follow this upstream changes, build-phase is also changed and splited into two parts as below:
-      - (regacy) ```make build``` for most components, excepts social-app.
-      - added    ```make build-domainize``` for social-app specializing to your own domain.
+- changes in Aug-Sep 2025, atproto-proxy(bluesky proxy header) is required by social-app, which value can tune only at build time.
+  impact: BIG. it breaks 'build once, run with any domain'. so recovered by involving ``local static CDN within social-app``, inspired from STATIC_CDN_HOST in bskyweb codes.
+  to achieve it, social-app got some patches for bskyweb + Dockerfile + additional shell command<br>
+   - in docker-compose-build.yaml, EXPO_PUBLIC_XXX=@@EXPO_PUBLIC_XXX@@ as build arg, to embed placeholder(mark) within js files.
+   - at runtime, specify real env val like EXPO_PUBLIC_XXX=real, then rewrite placeholders by real value before being used by social-app.
+   - refer comments in docker-compose.yaml for detail.
 
 ## <a id="status"/>Current status regarding self-hosting
 
@@ -84,9 +81,7 @@ You can change the domain name by setting the environment variable as follows:
 
 ```bash
 # 1) Set domain name for self-hosting bluesky
-#    it is better to try below prebuild DOMAIN first, before trying your own domain. refer the above special notes for detail.
-export DOMAIN=mysky.local.com
-#export DOMAIN=whatever.yourdomain.com
+export DOMAIN=whatever.yourdomain.com
 
 # 2) Set 'asof' date (YYYY-MM-DD or 'latest') to select docker images and sources.
 #    Example: 2025-09-13 (latest prebuild) or 'latest' (following docker image naming).
@@ -312,11 +307,6 @@ make patch-dockerbuild
 
 # 1) Build the images
 make build DOMAIN= f=./docker-compose-builder.yaml
-
-# 2) apply patch and build image for selfhost domainize.
-# these are required by breaking changes in upstream during Aug-Sep 2025.
-make patch-selfhost-domainize
-make build-domainsize services=social-app f=./docker-compose-builder.yaml
 ```
 
 [back to top](#top)
