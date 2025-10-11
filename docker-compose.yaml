@@ -88,14 +88,14 @@ services:
   # debug for caddy>>> 
 
   test-wss:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     environment:
       - app=main:app
       - opts=--host 0.0.0.0 --port 8080
     working_dir: /opt/fastapi-samples/3catchall
 
   test-ws:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     environment:
       - app=main:app
       - opts=--host 0.0.0.0 --port 8080

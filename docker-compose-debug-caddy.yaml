@@ -53,14 +53,14 @@ services:
 # ends: to generate HTTPS certifications on-demand <<<<<
 
   test-wss:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     environment:
       - app=main:app
       - opts=--host 0.0.0.0 --port 8080
     working_dir: /opt/fastapi-samples/3catchall
 
   test-ws:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     environment:
       - app=main:app
       - opts=--host 0.0.0.0 --port 8080
@@ -69,7 +69,7 @@ services:
 # starts: fakes to check caddy mapping rule for social-app, pds, bsky(appview) >>>>>>>>>>
   # refer https://github.com/itaru2622/docker-fastapi.git for docker image of itaru2622/fastapi
   social-app:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     ports:
       - 8001:8100
     environment:
@@ -78,7 +78,7 @@ services:
     working_dir: /opt/fastapi-samples/3catchall
 
   pds:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     ports:
       - 2583:2583
     environment:
@@ -87,7 +87,7 @@ services:
     working_dir: /opt/fastapi-samples/3catchall
 
   bsky:
-    image: itaru2622/fastapi:bookworm
+    image: itaru2622/fastapi:trixie
     ports:
       - 2584:2584
     environment:
