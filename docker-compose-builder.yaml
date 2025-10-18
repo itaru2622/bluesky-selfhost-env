@@ -154,7 +154,7 @@ services:
       - database
 
   redis:
-    image: redis:7-bookworm
+    image: redis:8-bookworm
     volumes:
       - redis:/data/
     restart: always
