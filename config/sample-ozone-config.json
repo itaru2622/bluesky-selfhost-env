@@ -1,4 +1,4 @@
-{
+{ "policies": {
   "labelValues": [
     "label-test-ooa"
   ],
@@ -18,4 +18,5 @@
       "defaultSetting": "warn"
     }
   ]
+}
 }
