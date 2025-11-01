@@ -1,0 +1,36 @@
+diff --git a/Dockerfile b/Dockerfile
+index 65f9020..141664d 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,10 +1,20 @@
+ FROM node:20.11-alpine3.18 as build
+ 
++WORKDIR /usr/src/next-runtime-env
++RUN apk add git; npm install -g pnpm typescript; \
++    ( git clone https://github.com/itaru2622/next-runtime-env . -b next; \
++      rm -f pnpm-lock.yaml; \
++      pnpm i; \
++      pnpm build; \
++    )
++
++
+ WORKDIR /usr/src/ozone
+ 
+ RUN corepack enable
+ 
+ COPY package.json yarn.lock .yarnrc.yml ./
++RUN sed -i 's#"next-runtime-env": .*#"next-runtime-env": "file://usr/src/next-runtime-env",#' package.json
+ RUN yarn
+ COPY . .
+ RUN yarn build
+@@ -19,6 +29,10 @@ FROM node:20.11-alpine3.18
+ RUN apk add --update dumb-init
+ ENV TZ=Etc/UTC
+ 
++WORKDIR /usr/src/next-runtime-env
++COPY --from=build /usr/src/next-runtime-env /usr/src/next-runtime-env
++RUN chown -R node:node /usr/src/next-runtime-env
++
+ WORKDIR /usr/src/ozone
+ COPY --from=build /usr/src/ozone /usr/src/ozone
+ RUN chown -R node:node .
