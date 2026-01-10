@@ -181,8 +181,7 @@ services:
     restart: always
 
   plc:
-#   image: itaru2622/bluesky-did-method-plc:${asof}
-    image: itaru2622/bluesky-did-method-plc:latest
+    image: itaru2622/bluesky-did-method-plc:${asof}
     ports:
       - 2582:2582
     volumes:
@@ -405,8 +404,7 @@ services:
       - caddy
 
   jetstream:
-   #image: itaru2622/bluesky-jetstream:${asof}
-    image: itaru2622/bluesky-jetstream:latest
+    image: itaru2622/bluesky-jetstream:${asof}
     ports:
       - 6008:6008
       - 6009:6009
@@ -428,7 +426,6 @@ services:
   ozone-standalone:
     # moderation-api:
     image: itaru2622/bluesky-ozone:${asof}
-#   image: itaru2622/bluesky-ozone:latest
     ports:
       - 3000:3000
     volumes:
@@ -555,8 +552,7 @@ services:
       - caddy
 
   feed-generator:
-   #image: itaru2622/bluesky-feed-generator:${asof}
-    image: itaru2622/bluesky-feed-generator:latest
+    image: itaru2622/bluesky-feed-generator:${asof}
     ports:
       - 2586:3000
     environment:
