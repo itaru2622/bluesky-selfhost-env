@@ -15,6 +15,8 @@ volumes:
     name: opensearch
   bgs:
     name: bgs
+  relay:
+    name: relay
   bsky:
     name: bsky
   feed-generator:
@@ -284,6 +286,44 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
       - bgs:/data/bigsky
+    restart: always
+    depends_on:
+      - database
+      - caddy
+
+  relay:
+    image: itaru2622/bluesky-indigo-relay:${asof}
+    ports:
+      - 2472:2472
+      - 2473:2473
+    command: /relay serve
+    environment:
+      - ATP_PLC_HOST=https://${plcFQDN}
+      - RELAY_ADMIN_KEY=${RELAY_ADMIN_KEY}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/relay
+      - DATA_DIR=/data/relay
+      - DEBUG_MODE=1
+      - GOINSECURE=${GOINSECURE}
+#     - GODEBUG=netdns=go+4
+      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - LOG_DESTINATION=1
+      - LOG_ENABLED=true
+      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
+      - NODE_ENV=development
+      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - RELAY_NEW_HOSTS_PER_DAY_LIMIT=10000
+      - RELAY_DEFAULT_REPO_LIMIT=100000
+      - RELAY_PERSIST_DIR=/data/relay/events
+      - RELAY_REPLAY_WINDOW=87600h
+      - RELAY_TRUSTED_DOMAINS="*.${DOMAIN} ${pdsFQDN}"
+      - RELAY_API_LISTEN=:2472
+      - RELAY_METRICS_LISTEN=:2473
+      - RELAY_DISABLE_REQUEST_CRAWL=true
+    volumes:
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+      - relay:/data/relay
     restart: always
     depends_on:
       - database
