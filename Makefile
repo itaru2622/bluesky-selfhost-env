@@ -111,7 +111,7 @@ LOG_LEVEL_DEFAULT ?=debug
 #    # no plc in Sdep, comparing below line.
 #
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
-Sbsky ?=pds bgs bsky social-app palomar
+Sbsky ?=pds bgs bsky social-app palomar relay
 Sfeed ?=feed-generator
 #Sozone ?=ozone ozone-daemon
 Sozone ?=ozone-standalone
