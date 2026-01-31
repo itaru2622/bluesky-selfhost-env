@@ -320,6 +320,7 @@ services:
       - RELAY_API_LISTEN=:2472
       - RELAY_METRICS_LISTEN=:2473
       - RELAY_DISABLE_REQUEST_CRAWL=true
+      - RELAY_LENIENT_SYNC_VALIDATION=true
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
