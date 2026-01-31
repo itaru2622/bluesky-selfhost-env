@@ -11,6 +11,7 @@ DOMAIN ?=mysky.local.com
 # - take care for avoiding confusion, you may need to change other codes according to your trial.
 
 bgsFQDN       ?=bgs.${DOMAIN}
+relayFQDN     ?=relay.${DOMAIN}
 bskyFQDN      ?=bsky.${DOMAIN}
 feedgenFQDN   ?=feed-generator.${DOMAIN}
 jetstreamFQDN ?=jetstream.${DOMAIN}
@@ -231,6 +232,7 @@ echo:
 	@echo "asof:     ${asof}"
 	@echo ""
 	@echo "bgsFQDN       ${bgsFQDN}"
+	@echo "relayFQDN     ${relayFQDN}"
 	@echo "bskyFQDN      ${bskyFQDN}"
 	@echo "feedgenFQDN   ${feedgenFQDN}"
 	@echo "jetstreamFQDN ${jetstreamFQDN}"
