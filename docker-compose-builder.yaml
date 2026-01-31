@@ -294,7 +294,7 @@ services:
 
   bgs:
     image: itaru2622/bluesky-indigo-bgs:${asof}
-    profiles: ['', 'indigo']
+    profiles: ['', 'indigo-old']
     build:
       context: ./repos/indigo/
       dockerfile: cmd/bigsky/Dockerfile
