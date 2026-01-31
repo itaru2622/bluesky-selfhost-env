@@ -13,6 +13,7 @@ _load_vars:
 	$(eval _envs=$(shell cat ${passfile} | sed '1i\
 DOMAIN=${DOMAIN} \
 bgsFQDN=${bgsFQDN} \
+relayFQDN=${relayFQDN} \
 bskyFQDN=${bskyFQDN} \
 feedgenFQDN=${feedgenFQDN} \
 jetstreamFQDN=${jetstreamFQDN} \
