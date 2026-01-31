@@ -109,10 +109,10 @@ services:
     command: tail -f /dev/null
     environment:
       - ATP_PLC_HOST=https://${plcFQDN}
-      - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
+      - RELAY_ADMIN_KEY=${RELAY_ADMIN_KEY}
       - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
-      - DATA_DIR=/data/bigsky
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/relay
+      - DATA_DIR=/data/relay
       - DEBUG_MODE=1
       - GOINSECURE=${GOINSECURE}
       - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
@@ -232,7 +232,7 @@ services:
       - PDS_BLOBSTORE_DISK_LOCATION=/pds/blobs
       - PDS_BSKY_APP_VIEW_DID=did:web:${bskyFQDN}
       - PDS_BSKY_APP_VIEW_URL=https://${bskyFQDN}
-      - PDS_CRAWLERS=https://${bgsFQDN}
+      - PDS_CRAWLERS=https://${relayFQDN}
       - PDS_DATA_DIRECTORY=/pds
       - PDS_DEV_MODE=true
 #     - PDS_BLOBSTORE_DISK_TMP_LOCATION=/pds/image/tmp
@@ -362,7 +362,7 @@ services:
       - BSKY_DID_PLC_URL=https://${plcFQDN}
       - BSKY_LABELS_FROM_ISSUER_DIDS=${BSKY_LABELS_FROM_ISSUER_DIDS}
       - BSKY_PUBLIC_URL=https://${bskyFQDN}
-      - BSKY_REPO_PROVIDER=wss://${bgsFQDN}
+      - BSKY_REPO_PROVIDER=wss://${relayFQDN}
       - BSKY_SEARCH_URL=https://${palomarFQDN}
       - BSKY_SERVER_DID=did:web:${bskyFQDN}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
@@ -432,7 +432,7 @@ services:
     environment:
       # refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
 
-      - ATP_BGS_HOST=wss://${bgsFQDN}
+      - ATP_BGS_HOST=wss://${relayFQDN}
       - ATP_PLC_HOST=https://${plcFQDN}
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/palomar
 #     - ES_CERT_FILE=
@@ -462,7 +462,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
     environment:
-      - JETSTREAM_WS_URL=wss://${bgsFQDN}/xrpc/com.atproto.sync.subscribeRepos
+      - JETSTREAM_WS_URL=wss://${relayFQDN}/xrpc/com.atproto.sync.subscribeRepos
       - JETSTREAM_DATA_DIR=/data
       - JETSTREAM_LISTEN_ADDR=:6008
       - JETSTREAM_METRICS_LISTEN_ADDR=:6009
@@ -611,7 +611,7 @@ services:
       - FEEDGEN_SERVICE_DID=did:web:${feedgenFQDN}
       - FEEDGEN_SQLITE_LOCATION=/data/db.sqlite
       - FEEDGEN_PLC_URL=https://${plcFQDN}
-      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://${bgsFQDN}
+      - FEEDGEN_SUBSCRIPTION_ENDPOINT=wss://${relayFQDN}
       - FEEDGEN_SUBSCRIPTION_RECONNECT_DELAY=3000
       - GOINSECURE=${GOINSECURE}
       - NODE_ENV=development
