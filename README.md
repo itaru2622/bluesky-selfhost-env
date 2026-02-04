@@ -36,6 +36,11 @@ Currently, my latest release is <strong>2026-01-31</strong>, based on the <stron
 
 ### Special notes about big impact changes in upstream regarding selfhost
 
+- changes in end of Jan 2026, bgs(indigo/cmd/bgs) has gone and replaced to relay(indigo/cmd/relay) which requires PublicOnly scenario.
+  It breaks scenarios using privateIP, development etc. so the scenarios are recovered by involving new runtime env var (INDIGO_SSRF_PUBLIC_ONLY_SCENARIO).
+  It is allowed to use privateIP, only when INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false is set.
+  to achive it, indigo got patch in util/ssrf/ssrf.go and docker-compose*.yaml.<br>
+  It is safe to define INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false in all components regarding indigo repo becuase indigo/util/ssrf may be involved by any in indigo.
 - changes in Aug-Sep 2025, atproto-proxy(bluesky proxy header) is required by social-app, which value can tune only at build time.
   It breaks 'build once, run with any domain' manner on this tool, and the manner is recovered by involving local static CDN in social-app container.
   this technique is inspired from STATIC_CDN_HOST in social-app(bskyweb) codes.
