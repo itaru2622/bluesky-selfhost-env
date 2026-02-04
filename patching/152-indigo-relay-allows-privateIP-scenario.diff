@@ -1,0 +1,45 @@
+diff --git a/util/ssrf/ssrf.go b/util/ssrf/ssrf.go
+index 3ebf9698..6f51c48c 100644
+--- a/util/ssrf/ssrf.go
++++ b/util/ssrf/ssrf.go
+@@ -21,6 +21,8 @@ import (
+ 	"net/http"
+ 	"syscall"
+ 	"time"
++	"os"
++	"strconv"
+ )
+ 
+ func ipv4Net(a, b, c, d byte, subnetPrefixLen int) net.IPNet {
+@@ -90,7 +92,7 @@ func PublicOnlyControl(network string, address string, conn syscall.RawConn) err
+ 		return fmt.Errorf("%s is not a valid IP address", host)
+ 	}
+ 
+-	if !IsPublicIPAddress(ipaddress) {
++	if (isPublicOnlyScenario() && !IsPublicIPAddress(ipaddress)) {
+ 		return fmt.Errorf("%s is not a public IP address", ipaddress)
+ 	}
+ 
+@@ -101,6 +103,22 @@ func PublicOnlyControl(network string, address string, conn syscall.RawConn) err
+ 	return nil
+ }
+ 
++// check if scenario is PublicOnly by reading env var(INDIGO_SSRF_PUBLIC_ONLY_SCENARIO)
++//   false: only when env var exists and its value is false.
++//   true:  otherwise(no env, parse error, value is true).
++// it may be better to pass from cmd/... but changes should be the smallest.
++func isPublicOnlyScenario() bool {
++    publicOnly := true // default
++    if v, ok := os.LookupEnv("INDIGO_SSRF_PUBLIC_ONLY_SCENARIO"); ok {
++        parsed, err := strconv.ParseBool(v)
++        if err == nil {
++            publicOnly = parsed
++        }
++    }
++
++    return publicOnly
++}
++
+ // [net.Dialer] with [PublicOnlyControl] for `Control` function (for SSRF protection). Other fields are same default values as standard library.
+ func PublicOnlyDialer() *net.Dialer {
+ 	return &net.Dialer{
