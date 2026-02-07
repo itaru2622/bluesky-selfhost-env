@@ -121,14 +121,6 @@ http://test-ws.{$DOMAIN} {
 	reverse_proxy http://plc:2582
 }
 
-{$bgsFQDN} {
-        import cors
-	tls {$EMAIL4CERTS} {
-          on_demand
-        }
-	reverse_proxy http://bgs:2470
-}
-
 {$relayFQDN} {
 	import cors
 	tls {$EMAIL4CERTS} {
