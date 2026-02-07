@@ -13,8 +13,6 @@ volumes:
     name: database
   opensearch:
     name: opensearch
-  bgs:
-    name: bgs
   relay:
     name: relay
   bsky:
@@ -54,7 +52,6 @@ services:
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
-      - bgsFQDN=${bgsFQDN}
       - relayFQDN=${relayFQDN}
       - bskyFQDN=${bskyFQDN}
       - feedgenFQDN=${feedgenFQDN}
@@ -110,7 +107,6 @@ services:
     environment:
       - ATP_PLC_HOST=https://${plcFQDN}
       - RELAY_ADMIN_KEY=${RELAY_ADMIN_KEY}
-      - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/relay
       - DATA_DIR=/data/relay
       - DEBUG_MODE=1
@@ -263,38 +259,6 @@ services:
       - database
       - caddy
 
-  bgs:
-    image: itaru2622/bluesky-indigo-bgs:${asof}
-    ports:
-      - 2470:2470
-    command: /bigsky
-    environment:
-      - ATP_PLC_HOST=https://${plcFQDN}
-      - BGS_ADMIN_KEY=${BGS_ADMIN_KEY}
-      - CARSTORE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/carstore
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/bgs
-      - DATA_DIR=/data/bigsky
-      - DEBUG_MODE=1
-      - GOINSECURE=${GOINSECURE}
-#     - GODEBUG=netdns=go+4
-      - GOLOG_LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - LOG_DESTINATION=1
-      - LOG_ENABLED=true
-      - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
-      - NODE_ENV=development
-      - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
-      - RELAY_NEWPDS_PERDAY_LIMIT=10000
-      - INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false
-    volumes:
-      # supporting self-signed certificates, easiest way >>>>
-      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
-      # supporting self-signed certificates, easiest way <<<<
-      - bgs:/data/bigsky
-    restart: always
-    depends_on:
-      - database
-      - caddy
-
   relay:
     image: itaru2622/bluesky-indigo-relay:${asof}
     ports:
@@ -432,7 +396,7 @@ services:
     environment:
       # refer https://github.com/bluesky-social/indigo/tree/main/cmd/palomar
 
-      - ATP_BGS_HOST=wss://${relayFQDN}
+      - ATP_RELAY_HOST=wss://${relayFQDN}
       - ATP_PLC_HOST=https://${plcFQDN}
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/palomar
 #     - ES_CERT_FILE=
