@@ -27,7 +27,7 @@ async function main(opt: any)
 }
 
 const opt = yargs(process.argv.slice(2)).options({
-  host:        { type: 'string', default: process.env.DOMAIN ? `wss://bgs.${process.env.DOMAIN}` : 'wss://bsky.network', description: 'URL to subscribeRepos' },
+  host:        { type: 'string', default: process.env.DOMAIN ? `wss://relay.${process.env.DOMAIN}` : 'wss://bsky.network', description: 'URL to subscribeRepos' },
   tls:         { type: 'string', default: '0', description: 'ignore TLS verification(NODE_TLS_REJECT_UNAUTHORIZED)'},
 }).parseSync();
 
