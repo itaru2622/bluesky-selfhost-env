@@ -16,7 +16,6 @@ GEN_RANDOM_PASS="pwgen -c -n -B -s -1 10 1 | sed 's/$/_/'"
 ####### generate secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ADMIN_PASSWORD=$(eval "${GEN_LONG_PASS}")
-BGS_ADMIN_KEY=$(eval "${GEN_LONG_PASS}")
 RELAY_ADMIN_KEY=$(eval "${GEN_LONG_PASS}")
 #IMG_URI_KEY=$(eval "${GEN_LONG_PASS}")
 #IMG_URI_SALT=$(eval "${GEN_LONG_PASS}")
@@ -61,7 +60,6 @@ BSKY_LABELS_FROM_ISSUER_DIDS=${EXAMPLE_LABELER}
 ########### dump secrets   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
-echo "BGS_ADMIN_KEY=${BGS_ADMIN_KEY}"
 echo "RELAY_ADMIN_KEY=${RELAY_ADMIN_KEY}"
 #echo "IMG_URI_KEY=${IMG_URI_KEY}"
 #echo "IMG_URI_SALT=${IMG_URI_SALT}"
