@@ -10,7 +10,6 @@ DOMAIN ?=mysky.local.com
 # - it is strongly recommended that FQDNs should be renamed only if the components provided by the fediverse/integration partner.
 # - take care for avoiding confusion, you may need to change other codes according to your trial.
 
-bgsFQDN       ?=bgs.${DOMAIN}
 relayFQDN     ?=relay.${DOMAIN}
 bskyFQDN      ?=bsky.${DOMAIN}
 feedgenFQDN   ?=feed-generator.${DOMAIN}
@@ -111,7 +110,7 @@ LOG_LEVEL_DEFAULT ?=debug
 #    # no plc in Sdep, comparing below line.
 #
 Sdep  ?=caddy caddy-sidecar database redis opensearch plc test-wss test-ws test-indigo pgadmin
-Sbsky ?=pds bgs bsky social-app palomar relay
+Sbsky ?=pds relay bsky social-app palomar
 Sfeed ?=feed-generator
 #Sozone ?=ozone ozone-daemon
 Sozone ?=ozone-standalone
@@ -231,7 +230,6 @@ echo:
 	@echo "DOMAIN:   ${DOMAIN}"
 	@echo "asof:     ${asof}"
 	@echo ""
-	@echo "bgsFQDN       ${bgsFQDN}"
 	@echo "relayFQDN     ${relayFQDN}"
 	@echo "bskyFQDN      ${bskyFQDN}"
 	@echo "feedgenFQDN   ${feedgenFQDN}"
