@@ -55,6 +55,7 @@ services:
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
+      - relayFQDN=${relayFQDN}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       # CA certificates for self-signed. >>>
