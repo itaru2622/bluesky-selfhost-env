@@ -123,6 +123,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - NODE_ENV=development
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false
     volumes:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
 
@@ -189,6 +190,7 @@ services:
       - node.name=os-node
       - plugins.security.disabled=true
       - transport.host=127.0.0.1
+      - INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false
     ulimits:
       memlock:
         soft: -1
@@ -323,6 +325,7 @@ services:
       - NODE_ENV=development
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - RELAY_NEWPDS_PERDAY_LIMIT=10000
+      - INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
@@ -362,6 +365,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL_DEFAULT}
       - NODE_ENV=development
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
+      - INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false
       - RELAY_NEW_HOSTS_PER_DAY_LIMIT=10000
       - RELAY_DEFAULT_REPO_LIMIT=100000
       - RELAY_PERSIST_DIR=/data/relay/events
@@ -521,6 +525,7 @@ services:
       - GOINSECURE=${GOINSECURE}
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - PALOMAR_BIND=0.0.0.0:3999
+      - INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false
     restart: always
     depends_on:
       - opensearch
