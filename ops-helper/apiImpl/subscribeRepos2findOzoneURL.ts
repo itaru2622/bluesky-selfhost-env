@@ -59,7 +59,7 @@ const dom = process.env.DOMAIN ?? 'mysky.local.com'
 
 // options to support any deployment.
 const opt = yargs(process.argv.slice(2)).options({
-  bgsURL:    { type: 'string', default: 'wss://bgs.' + dom },
+  relayURL:  { type: 'string', default: 'wss://relay.' + dom },
   plcURL:    { type: 'string', default: 'https://plc.' + dom },
   tls:       { type: 'string', default: '0',          description: 'ignore TLS verification(NODE_TLS_REJECT_UNAUTHORIZED)'},
 }).parseSync();
@@ -67,7 +67,7 @@ const opt = yargs(process.argv.slice(2)).options({
 process.env['NODE_TLS_REJECT_UNAUTHORIZED']=opt.tls
 
 const sub = new Subscription({
-  service: opt.bgsURL,
+  service: opt.relayURL,
   method:  'com.atproto.sync.subscribeRepos',
   getState: () => ({}),
   validate: (val: unknown) => val as object, // TODO: validate with lexicon
