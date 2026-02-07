@@ -17,7 +17,6 @@ services:
       - DOMAIN=${DOMAIN}
       - EMAIL4CERTS=${EMAIL4CERTS}
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
-      - bgsFQDN=${bgsFQDN}
       - relayFQDN=${relayFQDN}
       - bskyFQDN=${bskyFQDN}
       - feedgenFQDN=${feedgenFQDN}
