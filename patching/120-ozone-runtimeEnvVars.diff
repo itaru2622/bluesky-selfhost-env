@@ -28,18 +28,18 @@ index bfc3470..9350629 100644
          <ToastContainer
            position="bottom-right"
 diff --git a/environment.d.ts b/environment.d.ts
-index 7a47cc2..33ab29f 100644
+index 8cadc87..b6b0529 100644
 --- a/environment.d.ts
 +++ b/environment.d.ts
-@@ -9,6 +9,8 @@ declare global {
+@@ -8,6 +8,8 @@ declare global {
+       NEXT_PUBLIC_QUEUE_CONFIG?: string
        NEXT_PUBLIC_OZONE_SERVICE_DID?: string // e.g. did:plc:xxx#atproto_labeler
        NEXT_PUBLIC_OZONE_PUBLIC_URL?: string // e.g. https://ozone.example.com (falls back to window.location.origin)
-       NEXT_PUBLIC_SOCIAL_APP_URL?: string // e.g. https://bsky.app
-+      NEXT_PUBLIC_SOCIAL_APP_DOMAIN?: string // e.g. bsky.app
 +      NEXT_PUBLIC_HANDLE_RESOLVER_URL?: string // e.g. https://api.bsky.app
-     }
-   }
- }
++      NEXT_PUBLIC_SOCIAL_APP_DOMAIN?: string // e.g. bsky.app
+       NEXT_PUBLIC_SOCIAL_APP_URL?: string // e.g. https://bsky.app
+       SNAPSHOT_API_URL?: string // e.g. http://localhost:3000
+       SNAPSHOT_AUTH_HEADER?: string
 diff --git a/lib/constants.ts b/lib/constants.ts
 index fe7c0e8..c286ac6 100644
 --- a/lib/constants.ts
