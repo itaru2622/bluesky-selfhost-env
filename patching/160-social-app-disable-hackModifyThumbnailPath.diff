@@ -1,18 +1,13 @@
 diff --git a/src/view/com/util/UserAvatar.tsx b/src/view/com/util/UserAvatar.tsx
-index 8862bd0e4..ba3440699 100644
+index a2eba43e1..c1e34f734 100644
 --- a/src/view/com/util/UserAvatar.tsx
 +++ b/src/view/com/util/UserAvatar.tsx
-@@ -444,9 +444,10 @@ export {PreviewableUserAvatar}
+@@ -617,7 +617,7 @@ export {PreviewableUserAvatar}
  // manually string-replace to use the smaller ones
  // -prf
  function hackModifyThumbnailPath(uri: string, isEnabled: boolean): string {
--  return isEnabled
--    ? uri.replace('/img/avatar/plain/', '/img/avatar_thumbnail/plain/')
--    : uri
+-  return isEnabled ? convertCdnPreset(uri, 'avatar_thumbnail') : uri
 +  return uri // disable hackModifyThumbnailPath
-+  //return isEnabled
-+    //? uri.replace('/img/avatar/plain/', '/img/avatar_thumbnail/plain/')
-+    //: uri
  }
  
  const styles = StyleSheet.create({
