@@ -6,7 +6,7 @@ index 65f9020..141664d 100644
  FROM node:20.11-alpine3.18 as build
  
 +WORKDIR /usr/src/next-runtime-env
-+RUN apk add git; npm install -g pnpm typescript; \
++RUN apk add git; npm install -g pnpm@"<11" typescript; \
 +    ( git clone https://github.com/itaru2622/next-runtime-env . -b next; \
 +      rm -f pnpm-lock.yaml; \
 +      pnpm i; \
