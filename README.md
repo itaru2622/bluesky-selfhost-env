@@ -109,7 +109,7 @@ export FEEDGEN_EMAIL=feedgen@example.com
 ## Install required tools (if missing).
 apt install -y make pwgen
 (cd ops-helper/apiImpl ; npm install)
-(sudo curl -o /usr/local/bin/websocat -L https://github.com/vi/websocat/releases/download/v1.13.0/websocat.x86_64-unknown-linux-musl; sudo chmod a+x /usr/local/bin/websocat)
+(sudo curl -o /usr/local/bin/websocat -L https://github.com/vi/websocat/releases/download/v1.14.1/websocat.x86_64-unknown-linux-musl; sudo chmod a+x /usr/local/bin/websocat)
 
 # 4) Check configuration.
 make echo
