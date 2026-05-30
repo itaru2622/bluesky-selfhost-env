@@ -1,8 +1,8 @@
 diff --git a/Dockerfile b/Dockerfile
-index 93b17a86b..195ab67e2 100644
+index fff191cc5..b9d96d49f 100644
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -33,6 +33,8 @@ ENV EXPO_PUBLIC_RELEASE_VERSION=$EXPO_PUBLIC_RELEASE_VERSION
+@@ -31,6 +31,8 @@ ENV EXPO_PUBLIC_RELEASE_VERSION=$EXPO_PUBLIC_RELEASE_VERSION
  ARG EXPO_PUBLIC_BUNDLE_IDENTIFIER
  # If not set by GitHub workflows, we're probably in Render
  ENV EXPO_PUBLIC_BUNDLE_IDENTIFIER=${EXPO_PUBLIC_BUNDLE_IDENTIFIER:-$RENDER_GIT_COMMIT}
@@ -11,20 +11,20 @@ index 93b17a86b..195ab67e2 100644
  
  #
  # Sentry
-@@ -64,6 +66,7 @@ RUN \. "$NVM_DIR/nvm.sh" && \
+@@ -47,6 +49,7 @@ RUN echo "Using bundle identifier: $EXPO_PUBLIC_BUNDLE_IDENTIFIER" && \
    echo "EXPO_PUBLIC_RELEASE_VERSION=$EXPO_PUBLIC_RELEASE_VERSION" >> .env && \
    echo "EXPO_PUBLIC_BUNDLE_IDENTIFIER=$EXPO_PUBLIC_BUNDLE_IDENTIFIER" >> .env && \
    echo "EXPO_PUBLIC_BUNDLE_DATE=$(date -u +"%y%m%d%H")" >> .env && \
 +  echo "EXPO_PUBLIC_BLUESKY_PROXY_DID=$EXPO_PUBLIC_BLUESKY_PROXY_DID" >> .env && \
-   echo "EXPO_PUBLIC_SENTRY_DSN=$EXPO_PUBLIC_SENTRY_DSN" >> .env && \
-   npm install --global yarn && \
-   yarn && \
-@@ -103,6 +106,8 @@ ENTRYPOINT ["dumb-init", "--"]
+   echo "EXPO_PUBLIC_SENTRY_DSN=$EXPO_PUBLIC_SENTRY_DSN" >> .env
+ 
+ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+@@ -111,6 +114,8 @@ ENTRYPOINT ["dumb-init", "--"]
  
  WORKDIR /bskyweb
- COPY --from=build-env /bskyweb /usr/bin/bskyweb
-+COPY --from=build-env /usr/src/social-app/bskyweb/static  /localStaticCDN/static
-+COPY --from=build-env /usr/src/social-app/boot.sh         /usr/local/bin/boot.sh
+ COPY --from=go-build /bskyweb /usr/bin/bskyweb
++COPY --from=go-build /usr/src/social-app/bskyweb/static  /localStaticCDN/static
++COPY --from=web-build /app/boot.sh                       /usr/local/bin/boot.sh
  
  CMD ["/usr/bin/bskyweb"]
  
