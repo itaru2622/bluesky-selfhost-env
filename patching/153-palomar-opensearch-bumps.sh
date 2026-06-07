@@ -4,7 +4,7 @@ echo "DOMAIN: ${DOMAIN}"
 echo "rDir:   ${rDir}"
 echo "pDir:   ${pDir}"
 
-d_=${rDir}/indigo
+d_=${rDir}/palomar
 v_=2
 
 echo "applying patch: under ${d_}"
