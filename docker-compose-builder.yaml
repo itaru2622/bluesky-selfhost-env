@@ -161,10 +161,10 @@ services:
     restart: always
 
   opensearch:
-    image: itaru2622/bluesky-indigo-opensearch:${asof}
-    profiles: ['', 'indigo']
+    image: itaru2622/bluesky-palomar-opensearch:${asof}
+    profiles: ['', 'palomar']
     build:
-      context: ./repos/indigo/
+      context: ./repos/palomar/
       dockerfile: cmd/palomar/Dockerfile.opensearch
       args:
        - http_proxy=${http_proxy}
@@ -452,10 +452,10 @@ services:
 
 
   palomar:
-    image: itaru2622/bluesky-indigo-palomar:${asof}
-    profiles: ['', 'indigo']
+    image: itaru2622/bluesky-palomar:${asof}
+    profiles: ['', 'palomar']
     build:
-      context: ./repos/indigo/
+      context: ./repos/palomar/
       dockerfile: cmd/palomar/Dockerfile
       args:
        - http_proxy=${http_proxy}
