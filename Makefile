@@ -80,7 +80,7 @@ f ?=${wDir}/docker-compose.yaml
 
 # folders of repos
 #_nrepo  ?=atproto indigo social-app feed-generator did-method-plc pds ozone jetstream
-_nrepo   ?=atproto indigo social-app feed-generator did-method-plc ozone jetstream
+_nrepo   ?=atproto indigo social-app feed-generator did-method-plc ozone jetstream palomar
 repoDirs ?=$(addprefix ${rDir}/, ${_nrepo})
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -93,6 +93,7 @@ gh_git ?=$(addsuffix :, git@github.com)
 # origin repo prefix to clone source, points code owner(org). DO NOT CHANGE THESE, FOR USUAL CASES. these are features for experts.
 origin_repo_bsky_prefix ?=${gh}bluesky-social/
 origin_repo_did_prefix  ?=${gh}did-method-plc/
+origin_repo_palomar_prefix  ?=${gh}itaru2622/
 
 fork_repo_prefix ?=
 #fork_repo_prefix =${gh_git}itaru2622/bluesky-
@@ -142,6 +143,11 @@ ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}indigo.git; git remote update fork)
 endif
 
+${rDir}/palomar:
+	git clone ${origin_repo_palomar_prefix}bluesky-palomar.git $@
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}palomar.git; git remote update fork)
+endif
 
 ${rDir}/social-app:
 	git clone ${origin_repo_bsky_prefix}social-app.git $@
