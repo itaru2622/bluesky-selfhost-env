@@ -30,6 +30,13 @@ ${rDir}/indigo/.dockerbuild:
 	touch $@
 	(cd ${rDir}/indigo; git add . ; git commit -m "update: dockerbuild"; )
 
+${rDir}/palomar/.dockerbuild:
+	@echo "make branch and applying patch..."
+	(cd ${rDir}/palomar; git status; git checkout ${branch2patch} -b dockerbuild )
+	for ops in `ls ${wDir}/patching/1*.sh | grep palomar`; do wDir=${wDir} rDir=${rDir} pDir=${wDir}/patching DOMAIN=${DOMAIN} asof=${asof}  $${ops} ; done
+	touch $@
+	(cd ${rDir}/palomar; git add . ; git commit -m "update: dockerbuild"; )
+
 ${rDir}/atproto/.dockerbuild:
 	@echo "make branch and applying patch..."
 	(cd ${rDir}/atproto; git status; git checkout ${branch2patch} -b dockerbuild )
