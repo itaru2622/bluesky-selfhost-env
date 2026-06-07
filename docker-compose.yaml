@@ -157,7 +157,7 @@ services:
     restart: always
 
   opensearch:
-    image: itaru2622/bluesky-indigo-opensearch:${asof}
+    image: itaru2622/bluesky-palomar-opensearch:${asof}
     ports:
       - 9200:9200
     environment:
@@ -386,7 +386,7 @@ services:
     restart: always
 
   palomar:
-    image: itaru2622/bluesky-indigo-palomar:${asof}
+    image: itaru2622/bluesky-palomar:${asof}
     ports:
       - 3999:3999
     volumes:
