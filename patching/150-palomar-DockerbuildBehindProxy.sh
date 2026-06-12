@@ -4,8 +4,8 @@ echo "DOMAIN: ${DOMAIN}"
 echo "rDir:   ${rDir}"
 echo "pDir:   ${pDir}"
 
-d_=${rDir}/indigo
-p_=${pDir}/150-indigo-DockerbuildBehindProxy.diff
+d_=${rDir}/palomar
+p_=${pDir}/150-palomar-DockerbuildBehindProxy.diff
 
 echo "applying patch: under ${d_} for ${p_}"
 
