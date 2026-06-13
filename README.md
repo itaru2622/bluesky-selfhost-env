@@ -36,6 +36,9 @@ Currently, my latest release is <strong>2026-05-30</strong>, based on the <stron
 
 ### Special notes about big impact changes in upstream regarding selfhost
 
+- changes in begining of June 2026, palomar(and its dependencies regarding search feature) was deleted from indigo repository by https://github.com/bluesky-social/indigo/pull/1397
+  It means, search engine was lost on selfhosting environment. so the code for palomar is salvaged and recovered into https://github.com/itaru2622/bluesky-palomar asof 2026-05-30.
+  Current palomar and search feature is based on the above code.
 - changes in end of Jan 2026, bgs(indigo/cmd/bgs) has gone and replaced to relay(indigo/cmd/relay) which requires PublicOnly scenario.
   It breaks scenarios using privateIP, development etc. so the scenarios are recovered by involving new runtime env var (INDIGO_SSRF_PUBLIC_ONLY_SCENARIO).
   It is allowed to use privateIP, only when INDIGO_SSRF_PUBLIC_ONLY_SCENARIO=false is set.
