@@ -445,6 +445,7 @@ services:
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
       # supporting self-signed certificates, easiest way <<<<
 #     - ./repos/atproto/services/ozone/api.js:/app/services/ozone/api.js:ro
+    command: boot.sh node /usr/src/ozone/service
     environment:
 #     https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
       - LOG_ENABLED=1
@@ -477,6 +478,8 @@ services:
       - OZONE_APPVIEW_PUSH_EVENTS=true
       - OZONE_PDS_DID=did:web:${pdsFQDN}
       - OZONE_PDS_URL=https://${pdsFQDN}
+      - PLACEHOLDER2REAL=NEXT_PUBLIC_PLC_DIRECTORY_URL NEXT_PUBLIC_OZONE_SERVICE_DID NEXT_PUBLIC_OZONE_PUBLIC_URL NEXT_PUBLIC_SOCIAL_APP_DOMAIN NEXT_PUBLIC_SOCIAL_APP_URL NEXT_PUBLIC_HANDLE_RESOLVER_URL
+      - REWRITE_TARGETS=/usr/src/ozone/.next/*/*/*.js /usr/src/ozone/.next/*/*/*/*.js
     restart: always
     depends_on:
       - database
