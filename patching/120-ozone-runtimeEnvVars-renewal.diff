@@ -2,7 +2,7 @@ diff --git a/.dockerbuild b/.dockerbuild
 new file mode 100644
 index 0000000..e69de29
 diff --git a/Dockerfile b/Dockerfile
-index 65f9020..9961fed 100644
+index 65f9020..62dabc4 100644
 --- a/Dockerfile
 +++ b/Dockerfile
 @@ -7,6 +7,29 @@ RUN corepack enable
@@ -35,6 +35,15 @@ index 65f9020..9961fed 100644
  RUN yarn build
  RUN rm -rf node_modules .next/cache
  RUN mv service/package.json package.json && mv service/yarn.lock yarn.lock
+@@ -23,6 +46,8 @@ WORKDIR /usr/src/ozone
+ COPY --from=build /usr/src/ozone /usr/src/ozone
+ RUN chown -R node:node .
+
++COPY --from=build /usr/src/ozone/boot.sh /usr/local/bin/boot.sh
++
+ ENTRYPOINT ["dumb-init", "--"]
+ EXPOSE 3000
+ ENV OZONE_PORT=3000
 diff --git a/environment.d.ts b/environment.d.ts
 index 8cadc87..b6b0529 100644
 --- a/environment.d.ts
