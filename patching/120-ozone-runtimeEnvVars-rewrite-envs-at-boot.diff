@@ -1,0 +1,54 @@
+diff --git a/boot.sh b/boot.sh
+new file mode 100755
+index 0000000..98e2ae1
+--- /dev/null
++++ b/boot.sh
+@@ -0,0 +1,48 @@
++#!/bin/sh
++#
++# rewrite placeholder to real val for env vars, targeting Next.JS 15.5.18 and lator...
++# at buildtime:
++#  export NEXT_PUBLIC_XXX=@@NEXT_PUBLIC_XXX@@
++#  export NEXT_PUBLIC_YYY=@@NEXT_PUBLIC_YYY@@
++#  export NEXT_PUBLIC_ZZZ_URL=https://NEXT_PUBLIC_ZZZ_URL.changeme.local.com
++# at runtime
++#  export PLACEHOLDERENV=/usr/src/ozone/.env
++#  export NEXT_PUBLIC_XXX='real_val1'
++#  export NEXT_PUBLIC_YYY='real_val2'
++#  export NEXT_PUBLIC_ZZZ_URL='https://...'
++#  export PLACEHOLDER2REAL='NEXT_PUBLIC_XXX  NEXT_PUBLIC_YYY NEXT_PUBLIC_ZZZ_URL' # space separated list of env names
++#  export REWRITE_TARGETS='/usr/src/ozone/.next/*/*/*.js /usr/src/ozone/.next/*/*/*/*.js'
++#
++
++set -e
++
++if [ -z "${PLACEHOLDERENV}" ]; then
++   PLACEHOLDERENV="`pwd`/.env"
++fi
++
++# Ensure the .env file exists in the current directory
++if [ ! -f ${PLACEHOLDERENV} ]; then
++  echo "Error: NOTFOUND env file"
++  exit 1
++fi
++
++# Loop through the space-separated list of environment variable names specified in PLACEHOLDER2REAL
++
++for p in ${PLACEHOLDER2REAL}; do
++
++  # 1. get build-time placeholder value from .env file, which are embeded in REWRITE_TARGETS files.
++  placeholder=$(grep "^${p}=" ${PLACEHOLDERENV} | cut -d'=' -f2-)
++
++  # Skip if the var/value is not found
++  if [ -z "${placeholder}" ]; then
++    echo "Warning: NOTFOUND ${p} in .env, skipping."
++    continue
++  fi
++
++  # 2. get the value to rewrite from current/runtime env vars, and execute rewrite
++  v=$(eval echo \$${p})
++  sed -i "s|${placeholder}|${v}|g" ${REWRITE_TARGETS}
++done
++
++# 3. go main process.
++exec "$@"
