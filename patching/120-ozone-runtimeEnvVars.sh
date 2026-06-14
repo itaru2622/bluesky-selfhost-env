@@ -6,12 +6,12 @@ echo "pDir:   ${pDir}"
 
 d_=${rDir}/ozone
 p_=${pDir}/120-ozone-runtimeEnvVars-renewal.diff
-#p2_=${pDir}/120-ozone-runtimeEnvVars-firstaid-next15.diff
+p2_=${pDir}/120-ozone-runtimeEnvVars-rewrite-envs-at-boot.diff
 
 pushd ${d_}
 
 echo "applying patch: under ${d_} for ${p_}"
 patch -p1 <  ${p_}
-#patch -p1 <  ${p2_}
+patch -p1 <  ${p2_}
 
 popd
