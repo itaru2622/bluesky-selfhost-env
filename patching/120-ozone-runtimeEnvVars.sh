@@ -5,7 +5,7 @@ echo "rDir:   ${rDir}"
 echo "pDir:   ${pDir}"
 
 d_=${rDir}/ozone
-p_=${pDir}/120-ozone-runtimeEnvVars-renewal.diff
+p_=${pDir}/120-ozone-runtimeEnvVars.diff
 p2_=${pDir}/120-ozone-runtimeEnvVars-rewrite-envs-at-boot.diff
 
 pushd ${d_}

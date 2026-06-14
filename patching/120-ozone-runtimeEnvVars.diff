@@ -1,32 +1,49 @@
-diff --git a/app/layout.tsx b/app/layout.tsx
-index bfc3470..9350629 100644
---- a/app/layout.tsx
-+++ b/app/layout.tsx
-@@ -5,6 +5,7 @@ import 'yet-another-react-lightbox/styles.css'
- import 'yet-another-react-lightbox/plugins/thumbnails.css'
- import 'yet-another-react-lightbox/plugins/captions.css'
- import { ToastContainer } from 'react-toastify'
-+import { PublicEnvScript } from 'next-runtime-env';
- 
- import { Shell } from '@/shell/Shell'
- import { CommandPaletteRoot } from '@/shell/CommandPalette/Root'
-@@ -36,6 +37,7 @@ export default function RootLayout({
-         isDarkModeEnabled() ? 'dark' : ''
-       }`}
-     >
-+      <head>
-       <title>Ozone</title>
-       <link
-         rel="icon"
-@@ -43,6 +45,8 @@ export default function RootLayout({
-         sizes="any"
-       />
-       <meta name="viewport" content="width=device-width, initial-scale=1" />
-+      <PublicEnvScript />
-+      </head>
-       <body className="h-full overflow-hidden">
-         <ToastContainer
-           position="bottom-right"
+diff --git a/.dockerbuild b/.dockerbuild
+new file mode 100644
+index 0000000..e69de29
+diff --git a/Dockerfile b/Dockerfile
+index 65f9020..62dabc4 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -7,6 +7,29 @@ RUN corepack enable
+ COPY package.json yarn.lock .yarnrc.yml ./
+ RUN yarn
+ COPY . .
++
++ARG NEXT_PUBLIC_PLC_DIRECTORY_URL=https://plc.directory
++ARG NEXT_PUBLIC_OZONE_SERVICE_DID=${NEXT_PUBLIC_OZONE_SERVICE_DID}
++ARG NEXT_PUBLIC_OZONE_PUBLIC_URL=${NEXT_PUBLIC_OZONE_PUBLIC_URL}
++ARG NEXT_PUBLIC_SOCIAL_APP_DOMAIN=bsky.app
++ARG NEXT_PUBLIC_SOCIAL_APP_URL=https://bsky.app
++ARG NEXT_PUBLIC_HANDLE_RESOLVER_URL=https://api.bsky.app
++
++ENV NEXT_PUBLIC_PLC_DIRECTORY_URL=${NEXT_PUBLIC_PLC_DIRECTORY_URL}
++ENV NEXT_PUBLIC_OZONE_SERVICE_DID=${NEXT_PUBLIC_OZONE_SERVICE_DID}
++ENV NEXT_PUBLIC_OZONE_PUBLIC_URL=${NEXT_PUBLIC_OZONE_PUBLIC_URL}
++ENV NEXT_PUBLIC_SOCIAL_APP_DOMAIN=${NEXT_PUBLIC_SOCIAL_APP_DOMAIN}
++ENV NEXT_PUBLIC_SOCIAL_APP_URL=${NEXT_PUBLIC_SOCIAL_APP_URL}
++ENV NEXT_PUBLIC_HANDLE_RESOLVER_URL=${NEXT_PUBLIC_HANDLE_RESOLVER_URL}
++
++
++RUN echo "NEXT_PUBLIC_PLC_DIRECTORY_URL=${NEXT_PUBLIC_PLC_DIRECTORY_URL}" > .env; \
++    echo "NEXT_PUBLIC_OZONE_SERVICE_DID=${NEXT_PUBLIC_OZONE_SERVICE_DID}" >> .env; \
++    echo "NEXT_PUBLIC_OZONE_PUBLIC_URL=${NEXT_PUBLIC_OZONE_PUBLIC_URL}"   >> .env; \
++    echo "NEXT_PUBLIC_SOCIAL_APP_DOMAIN=${NEXT_PUBLIC_SOCIAL_APP_DOMAIN}" >> .env; \
++    echo "NEXT_PUBLIC_SOCIAL_APP_URL=${NEXT_PUBLIC_SOCIAL_APP_URL}"       >> .env; \
++    echo "NEXT_PUBLIC_HANDLE_RESOLVER_URL=${NEXT_PUBLIC_HANDLE_RESOLVER_URL}" >> .env;
++
+ RUN yarn build
+ RUN rm -rf node_modules .next/cache
+ RUN mv service/package.json package.json && mv service/yarn.lock yarn.lock
+@@ -23,6 +46,8 @@ WORKDIR /usr/src/ozone
+ COPY --from=build /usr/src/ozone /usr/src/ozone
+ RUN chown -R node:node .
+
++COPY --from=build /usr/src/ozone/boot.sh /usr/local/bin/boot.sh
++
+ ENTRYPOINT ["dumb-init", "--"]
+ EXPOSE 3000
+ ENV OZONE_PORT=3000
 diff --git a/environment.d.ts b/environment.d.ts
 index 8cadc87..b6b0529 100644
 --- a/environment.d.ts
@@ -41,52 +58,20 @@ index 8cadc87..b6b0529 100644
        SNAPSHOT_API_URL?: string // e.g. http://localhost:3000
        SNAPSHOT_AUTH_HEADER?: string
 diff --git a/lib/constants.ts b/lib/constants.ts
-index fe7c0e8..c286ac6 100644
+index 2aeb991..f9415c8 100644
 --- a/lib/constants.ts
 +++ b/lib/constants.ts
-@@ -1,29 +1,32 @@
-+import { env } from 'next-runtime-env';
-+
- export const OAUTH_SCOPE = 'atproto transition:generic transition:chat.bsky'
-
- export const OZONE_SERVICE_DID =
--  process.env.NEXT_PUBLIC_OZONE_SERVICE_DID || undefined
-+  env('NEXT_PUBLIC_OZONE_SERVICE_DID') || undefined
-
- export const OZONE_PUBLIC_URL =
--  process.env.NEXT_PUBLIC_OZONE_PUBLIC_URL || undefined
-+  env('NEXT_PUBLIC_OZONE_PUBLIC_URL') || undefined
-
- export const PLC_DIRECTORY_URL =
--  process.env.NEXT_PUBLIC_PLC_DIRECTORY_URL ||
-+  env('NEXT_PUBLIC_PLC_DIRECTORY_URL') ||
-   (process.env.NODE_ENV === 'development'
-     ? 'http://localhost:2582'
-     : 'https://plc.directory')
+@@ -22,6 +22,8 @@ export const SOCIAL_APP_URL =
+     ? 'http://localhost:2584'
+     : 'https://bsky.app')
  
--export const QUEUE_CONFIG = process.env.NEXT_PUBLIC_QUEUE_CONFIG || '{}'
-+export const QUEUE_CONFIG = env('NEXT_PUBLIC_QUEUE_CONFIG') || '{}'
-
--export const QUEUE_SEED = process.env.NEXT_PUBLIC_QUEUE_SEED || ''
-+export const QUEUE_SEED = env('NEXT_PUBLIC_QUEUE_SEED') || ''
-
-+export const SOCIAL_APP_DOMAIN = env('NEXT_PUBLIC_SOCIAL_APP_DOMAIN') || 'bsky.app'
- export const SOCIAL_APP_URL =
--  process.env.NEXT_PUBLIC_SOCIAL_APP_URL ||
-+  env('NEXT_PUBLIC_SOCIAL_APP_URL') ||
-   (process.env.NODE_ENV === 'development'
-     ? 'http://localhost:2584'
--    : 'https://bsky.app')
-+    : `https://${SOCIAL_APP_DOMAIN}`)
-
++export const SOCIAL_APP_DOMAIN = process.env.NEXT_PUBLIC_SOCIAL_APP_DOMAIN || 'bsky.app'
++
  export const HANDLE_RESOLVER_URL =
--  process.env.NEXT_PUBLIC_HANDLE_RESOLVER_URL ||
-+  env('NEXT_PUBLIC_HANDLE_RESOLVER_URL') ||
+   process.env.NEXT_PUBLIC_HANDLE_RESOLVER_URL ||
    (process.env.NODE_ENV === 'development'
-     ? 'http://localhost:2584'
-     : 'https://api.bsky.app')
 diff --git a/lib/util.ts b/lib/util.ts
-index 0aa4460..ecec7d1 100644
+index 67107aa..16a6964 100644
 --- a/lib/util.ts
 +++ b/lib/util.ts
 @@ -1,5 +1,5 @@
@@ -105,15 +90,3 @@ index 0aa4460..ecec7d1 100644
  
  export const isBlueSkyAppUrl = (url: string) => blueSkyUrlMatcher.test(url)
  
-diff --git a/package.json b/package.json
-index 1a575bb..4f6f0b7 100644
---- a/package.json
-+++ b/package.json
-@@ -33,6 +33,7 @@
-     "date-fns": "^2.29.3",
-     "eslint": "^8.57.0",
-     "eslint-config-next": "15.2.4",
-+    "next-runtime-env": "^3.2.1",
-     "hls.js": "^1.5.13",
-     "kbar": "^0.1.0-beta.45",
-     "lande": "^1.0.10",
