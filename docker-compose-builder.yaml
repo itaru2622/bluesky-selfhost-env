@@ -529,6 +529,12 @@ services:
        - https_proxy=${https_proxy}
        - no_proxy=${no_proxy}
        - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+       - NEXT_PUBLIC_PLC_DIRECTORY_URL=https://NEXT_PUBLIC_PLC_DIRECTORY_URL.changeme.local.com
+       - NEXT_PUBLIC_OZONE_SERVICE_DID=@@NEXT_PUBLIC_OZONE_SERVICE_DID@@
+       - NEXT_PUBLIC_OZONE_PUBLIC_URL=https://NEXT_PUBLIC_OZONE_PUBLIC_URL.changeme.local.com
+       - NEXT_PUBLIC_SOCIAL_APP_DOMAIN=@@NEXT_PUBLIC_SOCIAL_APP_DOMAIN@@
+       - NEXT_PUBLIC_SOCIAL_APP_URL=https://NEXT_PUBLIC_SOCIAL_APP_URL.changeme.local.com
+       - NEXT_PUBLIC_HANDLE_RESOLVER_URL=https://NEXT_PUBLIC_HANDLE_RESOLVER_URL.changeme.local.com
     ports:
       - 3000:3000
     volumes:
