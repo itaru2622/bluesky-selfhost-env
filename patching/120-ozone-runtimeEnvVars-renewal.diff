@@ -1,0 +1,83 @@
+diff --git a/.dockerbuild b/.dockerbuild
+new file mode 100644
+index 0000000..e69de29
+diff --git a/Dockerfile b/Dockerfile
+index 65f9020..9961fed 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -7,6 +7,29 @@ RUN corepack enable
+ COPY package.json yarn.lock .yarnrc.yml ./
+ RUN yarn
+ COPY . .
++
++ARG NEXT_PUBLIC_PLC_DIRECTORY_URL=https://plc.directory
++ARG NEXT_PUBLIC_OZONE_SERVICE_DID=${NEXT_PUBLIC_OZONE_SERVICE_DID}
++ARG NEXT_PUBLIC_OZONE_PUBLIC_URL=${NEXT_PUBLIC_OZONE_PUBLIC_URL}
++ARG NEXT_PUBLIC_SOCIAL_APP_DOMAIN=bsky.app
++ARG NEXT_PUBLIC_SOCIAL_APP_URL=https://bsky.app
++ARG NEXT_PUBLIC_HANDLE_RESOLVER_URL=https://api.bsky.app
++
++ENV NEXT_PUBLIC_PLC_DIRECTORY_URL=${NEXT_PUBLIC_PLC_DIRECTORY_URL}
++ENV NEXT_PUBLIC_OZONE_SERVICE_DID=${NEXT_PUBLIC_OZONE_SERVICE_DID}
++ENV NEXT_PUBLIC_OZONE_PUBLIC_URL=${NEXT_PUBLIC_OZONE_PUBLIC_URL}
++ENV NEXT_PUBLIC_SOCIAL_APP_DOMAIN=${NEXT_PUBLIC_SOCIAL_APP_DOMAIN}
++ENV NEXT_PUBLIC_SOCIAL_APP_URL=${NEXT_PUBLIC_SOCIAL_APP_URL}
++ENV NEXT_PUBLIC_HANDLE_RESOLVER_URL=${NEXT_PUBLIC_HANDLE_RESOLVER_URL}
++
++
++RUN echo "NEXT_PUBLIC_PLC_DIRECTORY_URL=${NEXT_PUBLIC_PLC_DIRECTORY_URL}" > .env; \
++    echo "NEXT_PUBLIC_OZONE_SERVICE_DID=${NEXT_PUBLIC_OZONE_SERVICE_DID}" >> .env; \
++    echo "NEXT_PUBLIC_OZONE_PUBLIC_URL=${NEXT_PUBLIC_OZONE_PUBLIC_URL}"   >> .env; \
++    echo "NEXT_PUBLIC_SOCIAL_APP_DOMAIN=${NEXT_PUBLIC_SOCIAL_APP_DOMAIN}" >> .env; \
++    echo "NEXT_PUBLIC_SOCIAL_APP_URL=${NEXT_PUBLIC_SOCIAL_APP_URL}"       >> .env; \
++    echo "NEXT_PUBLIC_HANDLE_RESOLVER_URL=${NEXT_PUBLIC_HANDLE_RESOLVER_URL}" >> .env;
++
+ RUN yarn build
+ RUN rm -rf node_modules .next/cache
+ RUN mv service/package.json package.json && mv service/yarn.lock yarn.lock
+diff --git a/environment.d.ts b/environment.d.ts
+index 8cadc87..b6b0529 100644
+--- a/environment.d.ts
++++ b/environment.d.ts
+@@ -8,6 +8,8 @@ declare global {
+       NEXT_PUBLIC_QUEUE_CONFIG?: string
+       NEXT_PUBLIC_OZONE_SERVICE_DID?: string // e.g. did:plc:xxx#atproto_labeler
+       NEXT_PUBLIC_OZONE_PUBLIC_URL?: string // e.g. https://ozone.example.com (falls back to window.location.origin)
++      NEXT_PUBLIC_HANDLE_RESOLVER_URL?: string // e.g. https://api.bsky.app
++      NEXT_PUBLIC_SOCIAL_APP_DOMAIN?: string // e.g. bsky.app
+       NEXT_PUBLIC_SOCIAL_APP_URL?: string // e.g. https://bsky.app
+       SNAPSHOT_API_URL?: string // e.g. http://localhost:3000
+       SNAPSHOT_AUTH_HEADER?: string
+diff --git a/lib/constants.ts b/lib/constants.ts
+index 2aeb991..f9415c8 100644
+--- a/lib/constants.ts
++++ b/lib/constants.ts
+@@ -22,6 +22,8 @@ export const SOCIAL_APP_URL =
+     ? 'http://localhost:2584'
+     : 'https://bsky.app')
+ 
++export const SOCIAL_APP_DOMAIN = process.env.NEXT_PUBLIC_SOCIAL_APP_DOMAIN || 'bsky.app'
++
+ export const HANDLE_RESOLVER_URL =
+   process.env.NEXT_PUBLIC_HANDLE_RESOLVER_URL ||
+   (process.env.NODE_ENV === 'development'
+diff --git a/lib/util.ts b/lib/util.ts
+index 67107aa..16a6964 100644
+--- a/lib/util.ts
++++ b/lib/util.ts
+@@ -1,5 +1,5 @@
+ import { CollectionId } from '@/reports/helpers/subject'
+-import { SOCIAL_APP_URL } from './constants'
++import { SOCIAL_APP_URL, SOCIAL_APP_DOMAIN } from './constants'
+ import { AtUri } from '@atproto/api'
+ 
+ export function classNames(...classes: (string | undefined)[]) {
+@@ -57,7 +57,7 @@ export function takesKeyboardEvt(el?: EventTarget | null) {
+   )
+ }
+ 
+-const blueSkyUrlMatcher = new RegExp('(https?://)?.*bsky.app')
++const blueSkyUrlMatcher = new RegExp('(https?://)?.*'+ `${SOCIAL_APP_DOMAIN}`)
+ 
+ export const isBlueSkyAppUrl = (url: string) => blueSkyUrlMatcher.test(url)
+ 
