@@ -1,30 +1,75 @@
 diff --git a/boot.sh b/boot.sh
 new file mode 100755
-index 000000000..4a6c7f1f9
+index 000000000..af97957c1
 --- /dev/null
 +++ b/boot.sh
-@@ -0,0 +1,24 @@
-+#!/bin/bash
-+
-+# rewrite placeholder to real val for each env var
+@@ -0,0 +1,69 @@
++#!/bin/sh
++#
++# rewrite placeholder to real val for env vars, targeting Next.JS and EXPO Frameworks...
++# for Next.JS (ozone) ------------------------------------------------------------------
++# at buildtime:
++#  export NEXT_PUBLIC_XXX=@@NEXT_PUBLIC_XXX@@
++#  export NEXT_PUBLIC_YYY=@@NEXT_PUBLIC_YYY@@
++#  export NEXT_PUBLIC_ZZZ_URL=https://NEXT_PUBLIC_ZZZ_URL.changeme.local.com
++# at runtime
++#  export PLACEHOLDERENV=/usr/src/ozone/.env
++#  export NEXT_PUBLIC_XXX='real_val1'
++#  export NEXT_PUBLIC_YYY='real_val2'
++#  export NEXT_PUBLIC_ZZZ_URL='https://...'
++#  export PLACEHOLDER2REAL='NEXT_PUBLIC_XXX  NEXT_PUBLIC_YYY NEXT_PUBLIC_ZZZ_URL' # space separated list of env names
++#  export REWRITE_TARGETS='/usr/src/ozone/.next/*/*/*.js /usr/src/ozone/.next/*/*/*/*.js'
++#
++# then this script rewrite NEXT_PUBLIC_XXX and NEXT_PUBLIC_YYY NEXT_PUBLIC_ZZZ_URL  into real_val1, real_val2, https://... for TARGETS files
++# cf. you can specify multiple envs like PLACEHOLDERENV='/usr/src/ozone/.env  /tmp/rewrite_extra.env' with your own risk.
++#
++# for expo (social-app) ----------------------------------------------------------------
 +# at buildtime:
 +#  export EXPO_PUBLIC_XXX=@@EXPO_PUBLIC_XXX@@
 +#  export EXPO_PUBLIC_YYY=@@EXPO_PUBLIC_YYY@@
 +# at runtime
++#  export PLACEHOLDERENV=/bskyweb/.env
 +#  export EXPO_PUBLIC_XXX='real_val1'
 +#  export EXPO_PUBLIC_YYY='real_val2'
 +#  export PLACEHOLDER2REAL='EXPO_PUBLIC_XXX EXPO_PUBLIC_YYY' # space separated list of env names
 +#  export REWRITE_TARGETS=/localStaticCDN/static/js/*.js
 +#
 +# then this script rewrite EXPO_PUBLIC_XXX and EXPO_PUBLIC_YYY into real_val1, real_val2 for TARGETS files
++# cf. you can specify multiple envs like PLACEHOLDERENV='/bskyweb/.env  /tmp/rewrite_extra.env' with your own risk.
 +
++set -e
 +
-+for p in ${PLACEHOLDER2REAL};
-+do
-+	e=$(env | grep ^${p})
-+	v=$(env | grep ^${p} | awk -F= '{print $2}')
-+        sed -i "s|@@${p}@@|${v}|g" ${REWRITE_TARGETS}
++if [ -z "${PLACEHOLDERENV}" ]; then
++   PLACEHOLDERENV="`pwd`/.env"
++fi
++
++# Ensure the .env file exists in the current directory
++for f in ${PLACEHOLDERENV}; do
++  if [ ! -f ${f} ]; then
++    echo "Error: NOTFOUND env file ${f}"
++    exit 1
++  fi
 +done
 +
-+# execute specified command
-+$@
++# Loop through the space-separated list of environment variable names specified in PLACEHOLDER2REAL
++
++for p in ${PLACEHOLDER2REAL}; do
++
++  # 1. get placeholder value from .env file(s), use last one when multiple found.
++  placeholder=$(cat ${PLACEHOLDERENV} | grep "^${p}=" | tail -n 1 | awk -F= '{print $2}')
++
++  # Skip if the var/value is not found
++  if [ -z "${placeholder}" ]; then
++    echo "Warning: NOTFOUND ${p} in .env, skipping."
++    continue
++  fi
++
++  # 2. get the value to rewrite from current/runtime env vars
++  v=$(env | grep "^${p}=" | awk -F= '{print $2}')
++
++  # 3. rewrite placeholder to current/runtime env
++  sed -i "s|${placeholder}|${v}|g" ${REWRITE_TARGETS}
++done
++
++# 3. go main process.
++exec "$@"
