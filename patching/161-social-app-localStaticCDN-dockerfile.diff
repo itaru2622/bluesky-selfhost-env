@@ -1,5 +1,5 @@
 diff --git a/Dockerfile b/Dockerfile
-index fff191cc5..b9d96d49f 100644
+index fff191cc5..82548699e 100644
 --- a/Dockerfile
 +++ b/Dockerfile
 @@ -31,6 +31,8 @@ ENV EXPO_PUBLIC_RELEASE_VERSION=$EXPO_PUBLIC_RELEASE_VERSION
@@ -19,12 +19,13 @@ index fff191cc5..b9d96d49f 100644
    echo "EXPO_PUBLIC_SENTRY_DSN=$EXPO_PUBLIC_SENTRY_DSN" >> .env
  
  RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-@@ -111,6 +114,8 @@ ENTRYPOINT ["dumb-init", "--"]
+@@ -111,6 +114,9 @@ ENTRYPOINT ["dumb-init", "--"]
  
  WORKDIR /bskyweb
  COPY --from=go-build /bskyweb /usr/bin/bskyweb
 +COPY --from=go-build /usr/src/social-app/bskyweb/static  /localStaticCDN/static
 +COPY --from=web-build /app/boot.sh                       /usr/local/bin/boot.sh
++COPY --from=web-build /app/.env                          ./.env
  
  CMD ["/usr/bin/bskyweb"]
  
