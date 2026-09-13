@@ -370,15 +370,6 @@ services:
   bsync:
     # bsync
     image: itaru2622/bluesky-atproto-bsync:${asof}
-    profiles: ['', 'atproto']
-    build:
-      context: ./repos/atproto/
-      dockerfile: services/bsync/Dockerfile
-      args:
-       - http_proxy=${http_proxy}
-       - https_proxy=${https_proxy}
-       - no_proxy=${no_proxy}
-       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
     ports:
       - 3002:3002
     expose:
