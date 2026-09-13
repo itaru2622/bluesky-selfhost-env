@@ -36,6 +36,7 @@ Currently, my latest release is <strong>2026-09-12</strong>, based on the <stron
 
 ### Special notes about big impact changes in upstream regarding selfhost
 
+- changes in middle of Sept 2026, atproto started using safe fetch and safeClient for policy based constrol, and involves new env BSKY_DISABLE_SSRF_PROTECTION in additional to PDS_DISABLE_SSRF_PROTECTION as disabler for safe fetch. so those env vars are set to true by docker-compose, according to dev-env.
 - changes in middle of July 2026, social-app migrated all search to V2 and removed V1, then search posts became not available, as described in https://github.com/bluesky-social/atproto/ discussion 5480.
   It fixed by asof-2026-09-05 version with the workaround described in the discussion. This means, selfhosting environment also migrated to Search V2 from V1(palomar) to follow changes in latest social-app.
 - changes in middle of Aug 2026, The hash of past commits in indigo repo changed (likely due to a rebase). As a result, some tags may not appear in the output of ```git log --decorate=full main```, such as asof-2026-06-13...asof-2026-08-15. but note that the commit log messages during those period were still kept with the same datetime in main branch. It means, the code is kept but the hashes are changed.
