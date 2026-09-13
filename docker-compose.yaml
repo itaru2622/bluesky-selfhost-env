@@ -227,6 +227,7 @@ services:
     user: root
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
     environment:
+      - PDS_DISABLE_SSRF_PROTECTION=true
       - DEBUG_MODE=1
       - GOINSECURE=${GOINSECURE}
       - LOG_DESTINATION=1
@@ -322,6 +323,7 @@ services:
     user: root
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
     environment:
+      - BSKY_DISABLE_SSRF_PROTECTION=true
       - BSKY_ADMIN_PASSWORDS=${BSKY_ADMIN_PASSWORDS}
       - BSKY_BLOB_CACHE_LOC=/cache/
       - BSKY_BSYNC_API_KEY=${BSYNC_API_KEY}
