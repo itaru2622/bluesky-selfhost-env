@@ -1,8 +1,8 @@
 diff --git a/services/bsky/api.ts b/services/bsky/api.ts
-index 19287a32b..e853b7162 100644
+index 19287a32b..e54648c6e 100644
 --- a/services/bsky/api.ts
 +++ b/services/bsky/api.ts
-@@ -1,18 +1,64 @@
+@@ -1,18 +1,66 @@
  import assert from 'node:assert'
  import cluster from 'node:cluster'
 -import { BskyAppView, ServerConfig } from '@atproto/bsky'
@@ -40,7 +40,9 @@ index 19287a32b..e853b7162 100644
 +  const dataplane = await bsky.DataPlaneServer.create(
 +      db,
 +      env.dataplanePort,
-+      config.didPlcUrl
++      config.didPlcUrl,
++      // Resolves against an in-process PLC on localhost.
++      globalThis.fetch,
 +  )
 +
 +  const bsyncSub = new bsky.BsyncSubscription({ config, db, })
@@ -72,7 +74,7 @@ index 19287a32b..e853b7162 100644
    }
    process.on('SIGTERM', shutdown)
    process.on('disconnect', shutdown) // when clustering
-@@ -20,6 +66,11 @@ const main = async () => {
+@@ -20,6 +68,11 @@ const main = async () => {
  
  const getEnv = () => ({
    serviceSigningKey: process.env.BSKY_SERVICE_SIGNING_KEY || undefined,
