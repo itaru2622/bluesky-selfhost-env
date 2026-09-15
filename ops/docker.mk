@@ -22,6 +22,7 @@ pdsFQDN=${pdsFQDN} \
 plcFQDN=${plcFQDN} \
 publicApiFQDN=${publicApiFQDN} \
 socialappFQDN=${socialappFQDN} \
+videoFQDN=${videoFQDN} \
 docker_network=${docker_network} \
 asof=${asof} \
 dDir=${dDir} \
@@ -75,6 +76,12 @@ ifeq ($(auto_watchlog),true)
 docker-start-bsky-jetstream:: docker-watchlog
 endif
 
+docker-start-bsky-video:: _applySvideo _dockerUp
+ifeq ($(auto_watchlog),true)
+docker-start-bsky-video:: docker-watchlog
+endif
+
+
 # execute publishFeed on feed-generator
 publishFeed:
 	DOMAIN=${DOMAIN} asof=${asof} docker_network=${docker_network} ${dockerCompose} -f ${f} exec feed-generator /app/scripts/publishFeed.exp ${FEEDGEN_PUBLISHER_HANDLE} "${FEEDGEN_PUBLISHER_PASSWORD}" https://${pdsFQDN} whats-alf
@@ -118,3 +125,5 @@ _applySozone:
 	$(eval services=${Sozone})
 _applySjetstream:
 	$(eval services=${Sjetstream})
+_applySvideo:
+	$(eval services=${Svideo})
