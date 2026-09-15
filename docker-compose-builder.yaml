@@ -28,11 +28,21 @@ volumes:
     name: redis
   jetstream:
     name: jetstream
+  video:
+    name: video
 # ozone:
 # ozone-daemon:
 # plc:
 # palomar:
 # social-app:
+
+configs:
+   const_rewrite_targets.env:
+      content: |
+        # picked from https://github.com/bluesky-social/social-app/blob/main/src/lib/constants.ts
+        # force rewrite hard coded value by boot.sh in case of social-app (, and ozone-standalone also support).
+        VIDEO_SERVICE=https://video.bsky.app
+        VIDEO_SERVICE_DID=did:web:video.bsky.app
 
 networks:
  default:
@@ -759,3 +769,32 @@ services:
       # supporting self-signed certificates, easiest way <<<<
       - feed-generator:/data/
 #     - ${rDir}/feed-generator:/app
+
+  video:
+    image: itaru2622/bluesky-video-lun4:develop
+    profiles: ['', 'video']
+    build:
+       context: ./repos/video/
+       dockerfile: Dockerfile
+       args:
+       - http_proxy=${http_proxy}
+       - https_proxy=${https_proxy}
+       - no_proxy=${no_proxy}
+       - JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS}
+    ports:
+      - 3003:3000
+    environment:
+      - PORT=3000
+      - SERVER_HOSTNAME=${videoFQDN}
+      - FRONTEND_URL=https://${socialappFQDN}
+      - APPVIEW_URL=https://${bskyFQDN}
+      - ATPROTO_PLC_URL=https://${plcFQDN}
+#     - ALLOWED_DID=
+      - DB_PATH=/data/data.db
+      - GOINSECURE=${GOINSECURE}
+    restart: always
+    volumes:
+      # supporting self-signed certificates, easiest way >>>>
+      - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      # supporting self-signed certificates, easiest way <<<<
+      - video:/data/
