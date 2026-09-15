@@ -190,6 +190,15 @@ ozone-standalone.{$DOMAIN} {
 	reverse_proxy http://jetstream:6008
 }
 
+{$videoFQDN} {
+        import cors
+	tls {$EMAIL4CERTS} {
+          on_demand
+        }
+	reverse_proxy http://video:3000
+}
+
+
 {$pdsFQDN} {
         import cors
 	tls {$EMAIL4CERTS} {
