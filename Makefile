@@ -20,6 +20,7 @@ pdsFQDN       ?=pds.${DOMAIN}
 plcFQDN       ?=plc.${DOMAIN}
 publicApiFQDN ?=public.api.${DOMAIN}
 socialappFQDN ?=social-app.${DOMAIN}
+videoFQDN     ?=video.${DOMAIN}
 
 # email address to get public-signed certs ("internal" for self-signed certs by caddy)
 EMAIL4CERTS ?=internal
@@ -94,6 +95,7 @@ gh_git ?=$(addsuffix :, git@github.com)
 origin_repo_bsky_prefix ?=${gh}bluesky-social/
 origin_repo_did_prefix  ?=${gh}did-method-plc/
 origin_repo_palomar_prefix  ?=${gh}itaru2622/
+origin_repo_video_prefix    ?=${gh}itaru2622/
 
 fork_repo_prefix ?=
 #fork_repo_prefix =${gh_git}itaru2622/bluesky-
@@ -116,6 +118,7 @@ Sfeed ?=feed-generator
 #Sozone ?=ozone ozone-daemon
 Sozone ?=ozone-standalone
 Sjetstream ?=jetstream
+Svideo ?=video
 
 # load passfile content as Makefile variables if exists
 ifeq ($(shell test -e ${passfile} && echo -n exists),exists)
@@ -190,6 +193,12 @@ ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}jetstream.git; git remote update fork)
 endif
 
+${rDir}/video:
+	git clone ${origin_repo_video_prefix}bluesky-video-lun4.git $@
+ifneq ($(fork_repo_prefix),)
+	-(cd $@; git remote add fork ${fork_repo_prefix}video-lun4.git; git remote update fork)
+endif
+
 
 # delete all repos.
 delRepoDirAll:
@@ -246,6 +255,7 @@ echo:
 	@echo "plcFQDN       ${plcFQDN}"
 	@echo "publicApiFQDN ${publicApiFQDN}"
 	@echo "socialappFQDN ${socialappFQDN}"
+	@echo "videoFQDN     ${videoFQDN}"
 	@echo "EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID}"
 	@echo ""
 	@echo "EMAIL4CERTS: ${EMAIL4CERTS}"
