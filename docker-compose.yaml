@@ -666,7 +666,8 @@ services:
       - FRONTEND_URL=https://${socialappFQDN}
       - APPVIEW_URL=https://${bskyFQDN}
       - ATPROTO_PLC_URL=https://${plcFQDN}
-#     - ALLOWED_DID=
+      - ALLOWED_AUDIENCES=did:web:${pdsFQDN}
+#     - ALLOWED_DIDS=
       - DB_PATH=/data/data.db
       - GOINSECURE=${GOINSECURE}
     restart: always
