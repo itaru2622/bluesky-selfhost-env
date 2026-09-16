@@ -773,7 +773,7 @@ services:
 #     - ${rDir}/feed-generator:/app
 
   video:
-    image: itaru2622/bluesky-video-lun4:develop
+    image: itaru2622/bluesky-video:develop
     profiles: ['', 'video']
     build:
        context: ./repos/video/
