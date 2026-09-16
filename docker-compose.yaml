@@ -356,6 +356,8 @@ services:
       - BSKY_SERVER_DID=did:web:${bskyFQDN}
       - BSKY_SEARCH_V2_OVERRIDE_HEADER=${BSKY_SEARCH_V2_OVERRIDE_HEADER}
       - BSKY_SERVICE_SIGNING_KEY=${BSKY_SERVICE_SIGNING_KEY}
+      - BSKY_VIDEO_PLAYLIST_URL_PATTERN=https://${videoFQDN}/watch/%s/%s/playlist.m3u8
+      - BSKY_VIDEO_THUMBNAIL_URL_PATTERN=https://${videoFQDN}/watch/%s/%s/thumbnail.jpg
       - DEBUG_MODE=1
       - DID_PLC_URL=https://${plcFQDN}
       - ENABLE_MIGRATIONS=false
