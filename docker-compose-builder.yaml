@@ -793,7 +793,9 @@ services:
       - ATPROTO_PLC_URL=https://${plcFQDN}
       - ALLOWED_AUDIENCES=did:web:${pdsFQDN}
 #     - ALLOWED_DIDS=
-      - DB_PATH=/data/data.db
+      - DB_PATH=/data/db/data.db
+      - VIDEO_UPLOAD_TMP_DIR=/data/upload_tmp
+      - VIDEO_CONVERT_TMP_DIR=/data/conv_tmp
       - GOINSECURE=${GOINSECURE}
     restart: always
     volumes:
