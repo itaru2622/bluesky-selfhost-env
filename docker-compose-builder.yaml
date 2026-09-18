@@ -796,6 +796,10 @@ services:
       - DB_PATH=/data/db/data.db
       - VIDEO_UPLOAD_TMP_DIR=/data/upload_tmp
       - VIDEO_CONVERT_TMP_DIR=/data/conv_tmp
+#     thumbnail command
+      - VIDEO_THUMBNAIL_CMD_GET=ffmpeg -i %s -ss 00:00:01.000 -vframes 1 -vf scale=480:-1 -y %s
+#     video convert command by encoding
+      - VIDEO_CONV_CMD_ENCODE=ffmpeg -i %s -profile:v baseline -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls -hls_segment_filename %s %s
       - GOINSECURE=${GOINSECURE}
     restart: always
     volumes:
