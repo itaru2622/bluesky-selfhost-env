@@ -81,6 +81,7 @@ Test results with 'asof-2024-06-02' and later:<BR>
           -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
    -  ok: Subscribe to events from pds/bgs(relay)/ozone by firehose/websocket.
    -  ok: Subscribe to events from jetstream, since 2024-10-19r1
+   -  ok: upload video from social-app as experimental feature.
    -  not yet: Others.
 
 [back to top](#top)
@@ -255,6 +256,10 @@ make api_ozone_member_add   role=  did=did:plc:
 make docker-start-bsky-jetstream
 ```
 
+### <a id="ops4-run-video"/>4-4) Deploy Video Service (experimental)
+```bash
+make docker-start-bsky-video
+```
 
 ### <a id="ops5-play"/>5) Play with self-hosted blusky.
 
@@ -518,6 +523,7 @@ Therefore, all of the methods below are involved for safety when using self-sign
 | ozone          | https://github.com/bluesky-social/ozone.git            |
 | did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
 | jetstream      | https://github.com/bluesky-social/jetstream.git        |
+| video          | https://github.com/itaru2622/bluesky-video-lun4        |
 
 other dependencies:
 
@@ -604,6 +610,7 @@ nameserver 192.168.1.27
 special thanks to prior works on self-hosting.
    - https://github.com/ikuradon/atproto-starter-kit/tree/main
    - https://github.com/bluesky-social/atproto/discussions/2026 and https://syui.ai/blog/post/2024/01/08/bluesky/
+   - https://github.com/lun-4/douga  for unofficial implementation of video service..
 
 hacks in bluesky:
    - https://github.com/bluesky-social/social-app/blob/main/docs/build.md
