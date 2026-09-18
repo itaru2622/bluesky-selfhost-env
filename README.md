@@ -519,11 +519,12 @@ Therefore, all of the methods below are involved for safety when using self-sign
 | indigo         | https://github.com/bluesky-social/indigo.git           |
 | social-app     | https://github.com/bluesky-social/social-app.git       |
 | feed-generator | https://github.com/bluesky-social/feed-generator.git   |
-| pds            | https://github.com/bluesky-social/pds.git              |
+| pds            | https://github.com/bluesky-social/atproto/tree/main/services/pds |
 | ozone          | https://github.com/bluesky-social/ozone.git            |
 | did-method-plc | https://github.com/did-method-plc/did-method-plc.git   |
-| jetstream      | https://github.com/bluesky-social/jetstream.git        |
-| video          | https://github.com/itaru2622/bluesky-video-lun4        |
+| jetstream      | https://github.com/bluesky-social/jetstream-legacy.git |
+| palomar        | https://github.com/itaru2622/bluesky-palomar.git       |
+| video          | https://github.com/itaru2622/bluesky-video-lun4.git    |
 
 other dependencies:
 
