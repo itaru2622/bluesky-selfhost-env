@@ -58,6 +58,10 @@ ${rDir}/jetstream/.dockerbuild:
 	touch $@
 	(cd ${rDir}/jetstream; git add . ; git commit -m "update: dockerbuild"; )
 
+${rDir}/video/.dockerbuild:
+	@echo "make branch and applying patch..."
+	(cd ${rDir}/video; git status; git checkout ${branch2patch} -b dockerbuild )
+
 _patch-selfhost-even-not-mandatory: ${rDir}/social-app/.selfhost-${DOMAIN}
 ${rDir}/social-app/.selfhost-${DOMAIN}::
 	@echo "make branch and applying patch..."
