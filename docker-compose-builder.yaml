@@ -1,5 +1,3 @@
-version: "3.9"
-
 volumes:
   caddy-data:
     name: caddy-data
