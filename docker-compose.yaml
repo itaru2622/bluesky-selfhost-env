@@ -659,7 +659,7 @@ services:
       - feed-generator:/data/
 
   video:
-    image: itaru2622/bluesky-video:develop
+    image: itaru2622/bluesky-video:${asof}
     ports:
       - 3003:3000
     environment:
