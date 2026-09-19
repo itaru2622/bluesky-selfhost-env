@@ -81,7 +81,7 @@ Test results with 'asof-2024-06-02' and later:<BR>
           -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
    -  ok: Subscribe to events from pds/bgs(relay)/ozone by firehose/websocket.
    -  ok: Subscribe to events from jetstream, since 2024-10-19r1
-   -  ok: upload video from social-app as experimental feature.
+   -  ok: upload video from social-app as experimental feature, since asof 2026-09-19.
    -  not yet: Others.
 
 [back to top](#top)
