@@ -96,6 +96,7 @@ origin_repo_bsky_prefix ?=${gh}bluesky-social/
 origin_repo_did_prefix  ?=${gh}did-method-plc/
 origin_repo_palomar_prefix  ?=${gh}itaru2622/
 origin_repo_video_prefix    ?=${gh}itaru2622/
+origin_repo_jetstream_prefix  ?=${gh}itaru2622/
 
 fork_repo_prefix ?=
 #fork_repo_prefix =${gh_git}itaru2622/bluesky-
@@ -188,7 +189,7 @@ endif
 
 
 ${rDir}/jetstream:
-	git clone ${origin_repo_bsky_prefix}jetstream-legacy.git $@
+	git clone ${origin_repo_jetstream_prefix}bluesky-jetstream.git $@
 ifneq ($(fork_repo_prefix),)
 	-(cd $@; git remote add fork ${fork_repo_prefix}jetstream.git; git remote update fork)
 endif
