@@ -32,7 +32,7 @@ This repository aims to get self-hosted a bluesky environment easy, with:
  - Simplicity: all bluesky components run on one host, powered by docker-compose.
  - Minimal remapping: the simplest possible mapping rules between FQDN, reverse proxy, and docker-container, for easy understanding and tuning.
 
-Currently, my latest release is <strong>2026-09-19</strong>, based on the <strong>2026-09-19</strong> code from bluesky-social.<br>
+Currently, my latest release is <strong>2026-09-26</strong>, based on the <strong>2026-09-26</strong> code from bluesky-social.<br>
 
 ### Special notes about big impact changes in upstream regarding selfhost
 
@@ -81,7 +81,7 @@ Test results with 'asof-2024-06-02' and later:<BR>
           -  NOTE: without workaround tool, the view is not changed. refer https://github.com/bluesky-social/atproto/issues/2552
    -  ok: Subscribe to events from pds/bgs(relay)/ozone by firehose/websocket.
    -  ok: Subscribe to events from jetstream, since 2024-10-19r1
-   -  ok: upload video from social-app as experimental feature, since asof 2026-09-19.
+   -  ok: upload video from social-app as experimental feature, since asof 2026-09-26.
    -  not yet: Others.
 
 [back to top](#top)
@@ -100,8 +100,8 @@ You can change the domain name by setting the environment variable as follows:
 export DOMAIN=whatever.yourdomain.com
 
 # 2) Set 'asof' date (YYYY-MM-DD or 'latest') to select docker images and sources.
-#    Example: 2026-09-19 (latest prebuild) or 'latest' (following docker image naming).
-export asof=2026-09-19
+#    Example: 2026-09-26 (latest prebuild) or 'latest' (following docker image naming).
+export asof=2026-09-26
 
 # 3) Set email addresses:
 
