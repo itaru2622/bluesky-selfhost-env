@@ -437,7 +437,7 @@ services:
 #     envs to rewrite from placeholder to real (space separated list) ---v
       - PLACEHOLDER2REAL=EXPO_PUBLIC_BLUESKY_PROXY_DID VIDEO_SERVICE VIDEO_SERVICE_DID
 #      target files to rewrite  ---v
-      - REWRITE_TARGETS=/localStaticCDN/static/js/*.js
+      - REWRITE_TARGETS=/localStaticCDN/static/*/*.js /localStaticCDN/static/_expo/static/js/*/*.js
 #      local folder, re-use existing env for almost same manner --v
       - STATIC_CDN_HOST=/localStaticCDN
 #      end of special envs to rewrite hardcoded EXPO_PUBLIC_ envs at built phase.
