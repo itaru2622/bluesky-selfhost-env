@@ -673,7 +673,7 @@ services:
 #     - ALLOWED_DIDS=
       - DB_PATH=/data/db/data.db
       - VIDEO_UPLOAD_TMP_DIR=/data/upload_tmp
-      - VIDEO_CONVERT_TMP_DIR=/data/conv_tmp
+      - VIDEO_CONVERT_DIR=/data/conv
 #     thumbnail command
       - VIDEO_THUMBNAIL_CMD_GET=ffmpeg -ss 00:00:01.000 -i %s -vframes 1 -vf scale=480:-2 -y %s
 #     video convert command by encoding
