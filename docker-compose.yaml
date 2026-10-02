@@ -247,6 +247,8 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}
       - PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD}
       - PDS_BLOBSTORE_DISK_LOCATION=/pds/blobs
+      # limit blob upload size to 300*1024*1024(300MB) to support video
+      - PDS_BLOB_UPLOAD_LIMIT=314572800
       - PDS_BSKY_APP_VIEW_DID=did:web:${bskyFQDN}
       - PDS_BSKY_APP_VIEW_URL=https://${bskyFQDN}
       - PDS_CRAWLERS=https://${relayFQDN}
