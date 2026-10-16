@@ -1,8 +1,8 @@
 diff --git a/bskyweb/cmd/bskyweb/server.go b/bskyweb/cmd/bskyweb/server.go
-index ec5261dee..f123b8658 100644
+index aab6ee024..a3a147504 100644
 --- a/bskyweb/cmd/bskyweb/server.go
 +++ b/bskyweb/cmd/bskyweb/server.go
-@@ -205,6 +205,10 @@ func serve(cctx *cli.Context) error {
+@@ -258,6 +258,10 @@ func serve(cctx *cli.Context) error {
  		}
  		return http.FS(fsys)
  	}())
@@ -13,11 +13,11 @@ index ec5261dee..f123b8658 100644
  
  	// enable some special endpoints for the "canonical" deployment (bsky.app). not having these enabled should *not* impact regular operation
  	if canonicalInstance {
-@@ -224,6 +228,7 @@ func serve(cctx *cli.Context) error {
+@@ -277,6 +281,7 @@ func serve(cctx *cli.Context) error {
  	}
  
  	e.GET("/iframe/*", echo.WrapHandler(staticHandler))
-+	e.GET("/localStaticCDN/static/*", echo.WrapHandler(http.StripPrefix("/localStaticCDN/", localStaticCDNHandler)))
++	e.GET("/localStaticCDN/*", echo.WrapHandler(http.StripPrefix("/localStaticCDN/", localStaticCDNHandler)))
  	e.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", staticHandler)), func(next echo.HandlerFunc) echo.HandlerFunc {
  		return func(c echo.Context) error {
  			c.Response().Before(func() {
