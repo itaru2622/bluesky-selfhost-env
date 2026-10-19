@@ -1,0 +1,44 @@
+diff --git a/Dockerfile b/Dockerfile
+index eb603bc77..31b8237c0 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -84,7 +84,7 @@ ENV GOARCH="amd64"
+ ENV CGO_ENABLED=1
+ ENV GOEXPERIMENT="loopvar"
+ 
+-COPY --from=web-build /app/bskyweb ./bskyweb
++COPY --from=web-build /app ./
+ 
+ # DEBUG
+ RUN find ./bskyweb/static
+@@ -104,7 +104,8 @@ RUN cd bskyweb/ && \
+ #
+ # Stage 3: runtime image.
+ #
+-FROM debian:bookworm-slim
++#FROM debian:bookworm-slim
++FROM golang:1.26-bookworm
+ 
+ ENV GODEBUG=netdns=go
+ ENV TZ=Etc/UTC
+@@ -118,9 +119,17 @@ ENTRYPOINT ["dumb-init", "--"]
+ 
+ WORKDIR /bskyweb
+ COPY --from=go-build /bskyweb /usr/bin/bskyweb
+-COPY --from=go-build /usr/src/social-app/bskyweb/static  /localStaticCDN/static
+-COPY --from=web-build /app/boot.sh                       /usr/local/bin/boot.sh
+-COPY --from=web-build /app/.env                          ./.env
++
++ARG localCopy=/opt/social-app
++COPY --from=go-build /usr/src/social-app  ${localCopy}
++RUN ln -sf ${localCopy}/bskyweb  /localStaticCDN ; \
++    ln -sf ${localCopy}/boot.sh  /usr/local/bin/boot.sh ; \
++    ln -sf ${localCopy}/.env    ./.env ;
++COPY --from=go-build /bskyweb ${localCopy}/bskyweb/bskyweb
++
++# expose folder contents, to use it from another container with --volumes-from
++VOLUME ${localCopy}
++VOLUME /bskyweb
+ 
+ CMD ["/usr/bin/bskyweb"]
+ 
