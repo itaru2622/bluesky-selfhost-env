@@ -418,10 +418,12 @@ services:
       - caddy
 
   social-app:
-    image: itaru2622/bluesky-social-app:${asof}
+   #image: itaru2622/bluesky-social-app:${asof}
+    image: itaru2622/bluesky-social-app:debug
     ports:
       - 8100:8100
-    command: /usr/local/bin/boot.sh /usr/bin/bskyweb serve
+    command: /usr/local/bin/boot.sh /usr/bin/bskyweb serve --debug
+    working_dir: /opt/social-app/bskyweb
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
