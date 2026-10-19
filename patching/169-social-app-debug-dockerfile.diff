@@ -1,8 +1,27 @@
 diff --git a/Dockerfile b/Dockerfile
-index eb603bc77..31b8237c0 100644
+index eb603bc77..c995fde7d 100644
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -84,7 +84,7 @@ ENV GOARCH="amd64"
+@@ -4,7 +4,8 @@
+ # Uses the official pnpm image. Node is auto-downloaded by pnpm using the
+ # `devEngines.runtime` field in package.json (onFail: "download").
+ #
+-FROM ghcr.io/pnpm/pnpm:11 AS web-build
++ARG base=ghcr.io/pnpm/pnpm:11
++FROM ${base} AS web-build
+ 
+ WORKDIR /app
+ 
+@@ -74,7 +75,7 @@ RUN SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN \
+ # copying the bskyweb/ tree from stage 1 is enough for go:embed to find
+ # everything.
+ #
+-FROM golang:1.26-bookworm AS go-build
++FROM golang:1.26-trixie AS go-build
+ 
+ WORKDIR /usr/src/social-app
+ 
+@@ -84,7 +85,7 @@ ENV GOARCH="amd64"
  ENV CGO_ENABLED=1
  ENV GOEXPERIMENT="loopvar"
  
@@ -11,30 +30,32 @@ index eb603bc77..31b8237c0 100644
  
  # DEBUG
  RUN find ./bskyweb/static
-@@ -104,7 +104,8 @@ RUN cd bskyweb/ && \
+@@ -104,7 +105,7 @@ RUN cd bskyweb/ && \
  #
  # Stage 3: runtime image.
  #
 -FROM debian:bookworm-slim
-+#FROM debian:bookworm-slim
-+FROM golang:1.26-bookworm
++FROM ${base}
  
  ENV GODEBUG=netdns=go
  ENV TZ=Etc/UTC
-@@ -118,9 +119,17 @@ ENTRYPOINT ["dumb-init", "--"]
+@@ -117,10 +118,19 @@ RUN apt-get update && apt-get install --yes \
+ ENTRYPOINT ["dumb-init", "--"]
  
  WORKDIR /bskyweb
- COPY --from=go-build /bskyweb /usr/bin/bskyweb
+-COPY --from=go-build /bskyweb /usr/bin/bskyweb
 -COPY --from=go-build /usr/src/social-app/bskyweb/static  /localStaticCDN/static
 -COPY --from=web-build /app/boot.sh                       /usr/local/bin/boot.sh
 -COPY --from=web-build /app/.env                          ./.env
 +
 +ARG localCopy=/opt/social-app
 +COPY --from=go-build /usr/src/social-app  ${localCopy}
-+RUN ln -sf ${localCopy}/bskyweb  /localStaticCDN ; \
++COPY --from=go-build /bskyweb             ${localCopy}/bskyweb/bskyweb
++
++RUN ln -sf ${localCopy}/bskyweb/bskyweb /usr/bin/bskyweb ; \
++    ln -sf ${localCopy}/bskyweb  /localStaticCDN ; \
 +    ln -sf ${localCopy}/boot.sh  /usr/local/bin/boot.sh ; \
 +    ln -sf ${localCopy}/.env    ./.env ;
-+COPY --from=go-build /bskyweb ${localCopy}/bskyweb/bskyweb
 +
 +# expose folder contents, to use it from another container with --volumes-from
 +VOLUME ${localCopy}
