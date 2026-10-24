@@ -41,6 +41,9 @@ configs:
         # force rewrite hard coded value by boot.sh in case of social-app (, and ozone-standalone also support).
         VIDEO_SERVICE=https://video.bsky.app
         VIDEO_SERVICE_DID=did:web:video.bsky.app
+        COLOR_BRAND=#006AFF
+        COLOR_AVATAR=#0070FF
+        COLOR_MOUSEOVER=#4291FF
 
 networks:
  default:
@@ -433,13 +436,16 @@ services:
         target: /bskyweb/const_rewrite_targets.env
     environment:
       - PLACEHOLDERENV=/bskyweb/.env /bskyweb/const_rewrite_targets.env
+      - COLOR_BRAND=#00BB00
+      - COLOR_AVATAR=#00BB00
+      - COLOR_MOUSEOVER=#DDDDDD
       - VIDEO_SERVICE=https://${videoFQDN}
       - VIDEO_SERVICE_DID=did:web:${videoFQDN}
 #      starts special envs to rewrite hardcoded EXPO_PUBLIC_ envs at built phase.
 #      real env values to use   ---v
       - EXPO_PUBLIC_BLUESKY_PROXY_DID=${EXPO_PUBLIC_BLUESKY_PROXY_DID}
 #     envs to rewrite from placeholder to real (space separated list) ---v
-      - PLACEHOLDER2REAL=EXPO_PUBLIC_BLUESKY_PROXY_DID VIDEO_SERVICE VIDEO_SERVICE_DID
+      - PLACEHOLDER2REAL=EXPO_PUBLIC_BLUESKY_PROXY_DID VIDEO_SERVICE VIDEO_SERVICE_DID COLOR_BRAND COLOR_AVATAR COLOR_MOUSEOVER
 #      target files to rewrite  ---v
       - REWRITE_TARGETS=/localStaticCDN/static/*/*.js /localStaticCDN/static/_expo/static/js/*/*.js
 #      local folder, re-use existing env for almost same manner --v
