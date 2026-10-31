@@ -370,7 +370,7 @@ services:
       - 2584:2584
     expose:
       - 2584
-    command: node --enable-source-maps --import=./tracer.ts api.ts
+    command: node --enable-source-maps --import=./tracer.ts --import=@atproto/bsky/telemetry api.ts
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. >>>>
     user: root
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
