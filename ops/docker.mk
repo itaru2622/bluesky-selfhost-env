@@ -48,8 +48,15 @@ _dockerUP_network:
 docker-pull:
 	DOMAIN= asof=${asof} ${dockerCompose} -f ${f} pull
 
-build:
-	COMPOSE_PROFILES=${COMPOSE_PROFILES} DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
+build:: _buildx_mk
+build::
+	BUILDX_BUILDER=bluesky-buildx COMPOSE_PROFILES=${COMPOSE_PROFILES} DOMAIN=${DOMAIN} asof=${asof} ${dockerCompose} -f ${f} build ${services}
+build:: _buildx_rm
+
+_buildx_mk:
+	docker buildx create --name bluesky-buildx --driver docker-container
+_buildx_rm:
+	docker buildx rm bluesky-buildx
 
 docker-start::      setupdir ${wDir}/config/caddy/Caddyfile ${wDir}/certs/root.crt ${wDir}/certs/ca-certificates.crt ${passfile} _applySdep _dockerUp
 ifeq ($(auto_watchlog),true)
