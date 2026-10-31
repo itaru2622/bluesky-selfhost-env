@@ -390,7 +390,7 @@ services:
       - 3002:3002
     expose:
       - 3002
-    command: node --enable-source-maps --import=./tracer.ts index.ts
+    command: node --enable-source-maps --import=@atproto/bsync/telemetry index.ts
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. >>>>
     user: root
     # to fix permision mismatch between volume owner(root) and process user(uid:1000, i.e: node), run as root. <<<<
