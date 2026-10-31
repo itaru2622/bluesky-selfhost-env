@@ -1,5 +1,5 @@
 diff --git a/bskyweb/cmd/bskyweb/renderer.go b/bskyweb/cmd/bskyweb/renderer.go
-index 0ff62deaa..7839a979f 100644
+index 464f6eafc..c9f3dcb37 100644
 --- a/bskyweb/cmd/bskyweb/renderer.go
 +++ b/bskyweb/cmd/bskyweb/renderer.go
 @@ -45,12 +45,14 @@ func (l *RendererLoader) Get(path string) (io.Reader, error) {
@@ -9,9 +9,9 @@ index 0ff62deaa..7839a979f 100644
 +	prefix      string
  }
  
- func NewRenderer(prefix string, fs *embed.FS, debug bool) *Renderer {
+ func NewRenderer(prefix string, fsys fs.FS, debug bool) *Renderer {
  	return &Renderer{
- 		TemplateSet: pongo2.NewSet(prefix, NewRendererLoader(prefix, fs)),
+ 		TemplateSet: pongo2.NewSet(prefix, NewRendererLoader(prefix, fsys)),
  		Debug:       debug,
 +		prefix:      prefix,
  	}
