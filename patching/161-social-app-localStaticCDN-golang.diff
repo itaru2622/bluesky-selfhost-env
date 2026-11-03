@@ -1,11 +1,11 @@
 diff --git a/bskyweb/cmd/bskyweb/server.go b/bskyweb/cmd/bskyweb/server.go
-index aab6ee024..a3a147504 100644
+index cb7dc64dc..82060838a 100644
 --- a/bskyweb/cmd/bskyweb/server.go
 +++ b/bskyweb/cmd/bskyweb/server.go
-@@ -258,6 +258,10 @@ func serve(cctx *cli.Context) error {
- 		}
- 		return http.FS(fsys)
- 	}())
+@@ -281,6 +281,10 @@ func serve(cctx *cli.Context) error {
+ 		return fsys
+ 	}()
+ 	staticHandler := http.FileServer(http.FS(staticRoot))
 +	// yet another static files, for localStaticCDN. it returns local file in the folder(not from embedFS bundled with bskyweb binary)
 +	localStaticCDNHandler := http.FileServer(func() http.FileSystem {
 +		return http.FS(os.DirFS("/localStaticCDN")) // hardcoded to reduce security risk.
@@ -13,8 +13,8 @@ index aab6ee024..a3a147504 100644
  
  	// enable some special endpoints for the "canonical" deployment (bsky.app). not having these enabled should *not* impact regular operation
  	if canonicalInstance {
-@@ -277,6 +281,7 @@ func serve(cctx *cli.Context) error {
- 	}
+@@ -300,6 +304,7 @@ func serve(cctx *cli.Context) error {
+ 	e.GET("/robots.txt", robotsHandler(staticRoot, robotsDisallowAll))
  
  	e.GET("/iframe/*", echo.WrapHandler(staticHandler))
 +	e.GET("/localStaticCDN/*", echo.WrapHandler(http.StripPrefix("/localStaticCDN/", localStaticCDNHandler)))
