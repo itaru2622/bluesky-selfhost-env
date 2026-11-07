@@ -361,7 +361,7 @@ services:
       - BSKY_VIDEO_THUMBNAIL_URL_PATTERN=https://${videoFQDN}/watch/%s/%s/thumbnail.jpg
       - DEBUG_MODE=1
       - DID_PLC_URL=https://${plcFQDN}
-      - ENABLE_MIGRATIONS=false
+      - ENABLE_MIGRATIONS=
       - GOINSECURE=${GOINSECURE}
       - LOG_DESTINATION=1
       - LOG_ENABLED=true
