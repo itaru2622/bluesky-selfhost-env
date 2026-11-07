@@ -246,7 +246,8 @@ services:
     profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
-      dockerfile: services/pds/Dockerfile
+      dockerfile: Dockerfile
+      target: pds
       args:
        - http_proxy=${http_proxy}
        - https_proxy=${https_proxy}
@@ -360,7 +361,8 @@ services:
     profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
-      dockerfile: services/bsky/Dockerfile
+      dockerfile: Dockerfile
+      target: bsky
       args:
        - http_proxy=${http_proxy}
        - https_proxy=${https_proxy}
@@ -427,7 +429,8 @@ services:
     profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
-      dockerfile: services/bsync/Dockerfile
+      dockerfile: Dockerfile
+      target: bsync
       args:
        - http_proxy=${http_proxy}
        - https_proxy=${https_proxy}
@@ -643,7 +646,8 @@ services:
     profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
-      dockerfile: services/ozone/Dockerfile
+      dockerfile: Dockerfile
+      target: ozone
       args:
        - http_proxy=${http_proxy}
        - https_proxy=${https_proxy}
@@ -693,7 +697,8 @@ services:
     profiles: ['', 'atproto']
     build:
       context: ./repos/atproto/
-      dockerfile: services/ozone/Dockerfile
+      dockerfile: Dockerfile
+      target: ozone
       args:
        - http_proxy=${http_proxy}
        - https_proxy=${https_proxy}
