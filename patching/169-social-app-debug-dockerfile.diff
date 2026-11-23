@@ -1,0 +1,36 @@
+diff --git a/Dockerfile b/Dockerfile
+index 012eab128..9638d3dbb 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -84,7 +84,7 @@ ENV GOARCH="amd64"
+ ENV CGO_ENABLED=1
+ ENV GOEXPERIMENT="loopvar"
+ 
+-COPY --from=web-build /app/bskyweb ./bskyweb
++COPY --from=web-build /app ./
+ 
+ # DEBUG
+ RUN find ./bskyweb/static
+@@ -120,15 +120,15 @@ WORKDIR /bskyweb
+ COPY --from=go-build /bskyweb /usr/bin/bskyweb
+ COPY --from=web-build /app/boot.sh                /usr/local/bin/boot.sh
+ 
+-ARG localCopy=/opt/social-app/bskyweb
+-WORKDIR ${localCopy}
+-COPY --from=go-build /usr/src/social-app/bskyweb  ${localCopy}
+-COPY --from=web-build /app/.env                   ${localCopy}/.env
++ARG localCopy=/opt/social-app
++WORKDIR ${localCopy}/bskyweb
++COPY --from=go-build /usr/src/social-app          ${localCopy}
+ 
+ # re-layout /bskyweb and /localStaticCDN
+-RUN rm -rf                      /bskyweb ; \
+-    ln -sf ${localCopy}         /bskyweb ; \
+-    ln -sf ${localCopy}         /localStaticCDN ;
++RUN rm -rf                              /bskyweb ; \
++    ln -sf ${localCopy}/bskyweb         /bskyweb ; \
++    ln -sf ${localCopy}/bskyweb         /localStaticCDN ; \
++    ln -sf ${localCopy}/.env           ./.env ;
+ 
+ CMD ["/usr/bin/bskyweb"]
+ 
