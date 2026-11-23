@@ -421,7 +421,7 @@ services:
     image: itaru2622/bluesky-social-app:${asof}
     ports:
       - 8100:8100
-    command: /usr/local/bin/boot.sh /usr/bin/bskyweb serve
+    command: /usr/local/bin/boot.sh /usr/bin/bskyweb serve --debug
     volumes:
       # supporting self-signed certificates, easiest way >>>>
       - ./certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
